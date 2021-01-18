@@ -20,6 +20,7 @@ int Option_command_parser (int argc, char** argv) {
         {"all-nodes", no_argument,          NULL,       'e'},
         {"help",    no_argument,            NULL,       'h'},
         {"threads", required_argument,      NULL,       'j'},
+        {"random", no_argument,            NULL,       'r'},
         {0,0,0,0}
     };
 
@@ -36,6 +37,7 @@ int Option_command_parser (int argc, char** argv) {
     opt.interface = 0;
     opt.allNodes = 0;
     opt.nbThreads = -1;
+    opt.randomTopo = 0;
 
 
     while ((optValue = getopt_long(argc, argv, optString, long_options, NULL)) != -1) {
@@ -43,6 +45,10 @@ int Option_command_parser (int argc, char** argv) {
         {
             case 'j' :
                 opt.nbThreads = atoi(optarg);
+                break;
+
+            case 'r' :
+                opt.randomTopo = 1;
                 break;
 
             case 'h' :
@@ -132,7 +138,7 @@ int Option_command_parser (int argc, char** argv) {
         return -1;
     }
 
-    if (opt.filename == NULL || opt.labelsOrId == -1 || opt.loadingMode == -1) {
+    if ((opt.filename == NULL || opt.labelsOrId == -1 || opt.loadingMode == -1) && !opt.randomTopo) {
         return -1;
     }
 

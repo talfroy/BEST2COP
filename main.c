@@ -9,7 +9,7 @@
 #include "include/Option.h"
 #include "include/Best2cop.h"
 
-struct Options opt;
+//struct Options opt;
 
 
 void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible);
@@ -18,7 +18,7 @@ void print_all_iter(FILE* output, int* tab, int size);
 
 void Main_get_all_infos();
 
-void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, BinHeap_t** heap, int iter);
+void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, Pfront_t** heap, int iter);
 
 int main(int argc, char** argv)
 {
@@ -53,7 +53,7 @@ int main(int argc, char** argv)
         INFO("Topology succesfully loaded\n");
 
         gettimeofday(&start, NULL);
-        sr = SrGraph_create_from_topology(topo);
+        sr = SrGraph_create_from_topology_best_m2(topo);
         gettimeofday(&stop, NULL);
         //SrGraph_print_in_file(sr, stdout);
 
@@ -87,6 +87,25 @@ int main(int argc, char** argv)
 
             INFO("Segment Routing Graph succesfully loaded\n");
         }
+    } else if (opt.randomTopo) {
+        topo = Topology_create_random(1000, 1000);
+
+        gettimeofday(&start, NULL);
+        sr = SrGraph_create_from_topology_best_m2(topo);
+        gettimeofday(&stop, NULL);
+
+
+
+        if (sr == NULL) {
+            ERROR("The Segment Routing Graph can't be computed\n");
+            Topology_free(topo);
+            return EXIT_FAILURE;
+        }
+
+        INFO("Segment Routing Graph succesfully computed\n");
+        INFO("Tranformation takes %ld us\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+
+        //SrGraph_print_in_file(sr, stdout);
     } else {
         ERROR("Please choose an available loading mode\n");
     }
@@ -122,7 +141,7 @@ int main(int argc, char** argv)
     }
 
     ParetoFront_t*** dist = NULL;
-    BinHeap_t** pfront = NULL;
+    Pfront_t** pfront = NULL;
     int maxIter = 0;
 
     if (opt.allNodes) {
@@ -169,7 +188,7 @@ int main(int argc, char** argv)
 
             for (int j = 0 ; j <= maxIter ; j++) {
                 for (int k = 0 ; k < sr->nbNode ; k++) {
-                    BinHeap_free(&pfront[j][k]);
+                    Pfront_free(&pfront[j][k]);
                     ParetoFront_free(dist[j][k]);
                 }
                 free(pfront[j]);
@@ -214,7 +233,7 @@ int main(int argc, char** argv)
 
         for (int j = 0 ; j < maxIter ; j++) {
             for (int k = 0 ; k < sr->nbNode ; k++) {
-                BinHeap_free(&pfront[j][k]);
+                Pfront_free(&pfront[j][k]);
                 ParetoFront_free(dist[j][k]);
             }
             free(pfront[j]);
@@ -234,7 +253,7 @@ int main(int argc, char** argv)
 }
 
 
-void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, __attribute__((unused)) BinHeap_t** heap, int iter)
+void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, __attribute__((unused)) Pfront_t** heap, int iter)
 {
     for (int i = 0 ; i < nbNodes ; i++) {
         for (int k = 0 ; k < iter ; k++) {

@@ -7,19 +7,26 @@ and https://www.geeksforgeeks.org/heap-sort/ */
 
 #include "base.h"
 
+typedef struct Nodes_s Nodes_t;
+
+struct Nodes_s {
+    int nodeId;
+    my_m1 m1;
+    my_m2 m2;
+};
 
 typedef struct BinHeap_s BinHeap_t;
 
 /**
  * @brief This structure represent a stack in which are
- * store all the active indexes, means all the indexes for which it exists
- * a path in the correponding dictionary
+ * active nodes, for the dijkstra computing
  */
 
 struct BinHeap_s {
-    my_m1* keys;
+    Nodes_t* keys;
     int heapSize;
     int maxSize;
+    int* isPresent;
 };
 
 /**
@@ -32,34 +39,29 @@ struct BinHeap_s {
 void BinHeap_init(BinHeap_t* bp, int size);
 
 
-/**
- * @brief insert a new index in the heap if there is
- * still place in
- * 
- * @param bp            binary heap
- * @param key           value on the new active index
- */
+int parent(int i); 
+  
+ 
+int left(int i);
+  
 
-void BinHeap_insert_key(BinHeap_t* bp, my_m1 key);
+int right(int i);
 
+void swap(Nodes_t* x, Nodes_t* y);
 
-/**
- * @brief sort the heap (Quick Sort)
- */
+void swap_int(int* x, int* y);
 
-void BinHeap_sort(BinHeap_t* bp);
+void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2);
 
+void BinHeap_min_heapify(BinHeap_t* bp, int i);
 
-/**
- * @brief Only use for debug
- */
+int BinHeap_extract_min(BinHeap_t* bp);
+
+void BinHeap_free(BinHeap_t* bp);
 
 void BinHeap_print(BinHeap_t* bp);
 
+void BinHeap_decrease_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2);
 
-BinHeap_t* BinHeap_merge_sort(BinHeap_t* pfront, BinHeap_t* pfcand);
-
-
-void BinHeap_free(BinHeap_t* bh);
 
 #endif

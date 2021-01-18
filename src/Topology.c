@@ -163,12 +163,13 @@ void Topology_free(Topology_t* topo)
 void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes)
 {
-    myStack* stack = initStack(nbNodes);
+    BinHeap_t bp;
+    BinHeap_init(&bp, nbNodes);
 
-    if (stack == NULL) {
-        ERROR("Stack for dijkstra can't be created\n");
-        return;
-    }
+    // if (stack == NULL) {
+    //     ERROR("Stack for dijkstra can't be created\n");
+    //     return;
+    // }
 
     for (int i = 0 ; i < nbNodes ; i++) {
         (*m1dists)[i] = INF;
@@ -197,20 +198,23 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
                     (*m1dists)[neighbor->infos.edgeDst] = pathM1;
                     parents[neighbor->infos.edgeDst][0] = 1;
                     parents[neighbor->infos.edgeDst][1] = currNode;
-                    empile(neighbor->infos.edgeDst, stack);
+                    //empile(neighbor->infos.edgeDst, stack);
+                    BinHeap_insert_key(&bp, neighbor->infos.edgeDst, neighbor->infos.m1, neighbor->infos.m2);
                 }
             } else if (pathM2 < (*m2dists)[neighbor->infos.edgeDst]) {
                 (*m2dists)[neighbor->infos.edgeDst] = pathM2;
                 (*m1dists)[neighbor->infos.edgeDst] = neighbor->infos.m1 + (*m1dists)[currNode];
                 parents[neighbor->infos.edgeDst][0] = 1;
                 parents[neighbor->infos.edgeDst][1] = currNode;
-                empile(neighbor->infos.edgeDst, stack);
+                //empile(neighbor->infos.edgeDst, stack);
+                BinHeap_insert_key(&bp, neighbor->infos.edgeDst, neighbor->infos.m1, neighbor->infos.m2);
             }
         }
-        currNode = depile(stack);
+        //currNode = depile(stack);
+        currNode = BinHeap_extract_min(&bp);
     }
     
-    freeStack(stack);
+    //freeStack(stack);
 
     for (int i = 0 ; i < nbNodes ; i++) {
         if (i != root) {
@@ -281,4 +285,32 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
             (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
         }
     }
+}
+
+
+int rand_a_b(int a, int b)
+{
+    return rand()%(b - a) + a;
+}
+
+
+Topology_t* Topology_create_random(int size, my_m2 max_m2)
+{
+    srand(time(NULL));
+    Topology_t* topo = Topology_init(size);
+
+    for (int i = 0 ; i < size ; i++) {
+        for (int j = 0 ; j < size ; j++) {
+            if (i == j) {
+                continue;
+            }
+            my_m1 m1 = rand_a_b(1, max_m2);
+            my_m2 m2 = rand_a_b(1, INT_MAX / 10 - 1);
+            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
+            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
+        }
+
+    }
+
+    return topo;
 }

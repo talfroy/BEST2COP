@@ -75,6 +75,15 @@ Edge_t* Edge_copy(Edge_t* old)
 }
 
 
+void Edge_print_list(Edge_t* list, FILE* output)
+{
+    for (Edge_t* tmp = list ; tmp != NULL ; tmp = tmp->next) {
+        fprintf(output, " (%d ; %d) ", tmp->m1, tmp->m2);
+    }
+    printf("\n");
+}
+
+
 Edge_t* Edge_merge_flex(Edge_t* best_m1, Edge_t* best_m2)
 {
     Edge_t* flex = NULL;
@@ -85,10 +94,10 @@ Edge_t* Edge_merge_flex(Edge_t* best_m1, Edge_t* best_m2)
             Edge_free(flex);
             flex = NULL;
         }
-        flex = Edge_new(flex, best_m2->m1, best_m2->m2);
+        return Edge_new(flex, best_m2->m1, best_m2->m2);
     } else if (flex->m1 < best_m2->m1) {
         if (flex->m2 > best_m2->m2) {
-            flex = Edge_new(flex, best_m2->m1, best_m2->m2);
+            return Edge_new(flex, best_m2->m1, best_m2->m2);
         }
     } else {
         if (flex->m2 > best_m2->m2) {

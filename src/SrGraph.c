@@ -71,7 +71,7 @@ void SrGraph_free(SrGraph_t* graph)
 
 
 
-SrGraph_t* SrGraph_create_from_topology(Topology_t* topo)
+SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
 {
     SrGraph_t* graph = SrGraph_init(topo->nbNode);
 
@@ -103,27 +103,69 @@ SrGraph_t* SrGraph_create_from_topology(Topology_t* topo)
 }
 
 
-SrGraph_t* SrGraph_create_flex_algo(Topology_t* topo)
+SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo)
 {
     SrGraph_t* graph = SrGraph_init(topo->nbNode);
 
     if (graph == NULL) {
-        ERROR("Can't compute with an empty topology\n");
+        ERROR("Segment Routing Graph can't be initialized\n");
         return NULL;
     }
 
-
+  //  #pragma omp parallel for
     for (int i = 0 ; i < topo->nbNode ; i++) {
-        dikjstra_best_m2(&graph->succ, &graph->pred, topo->succ, i,
-                            &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
-
         dikjstra_best_m1(&graph->succ, &graph->pred, topo->succ, i,
-                            &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
+                    &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
     }
 
-    graph = SrGraph_add_adjacencies(graph, topo);
+    for (int i = 0 ; i < topo->nbNode ; i++) {
+        for (Llist_t* tmp = topo->succ[i] ; tmp != NULL ; tmp = tmp->next) {
+            my_m1 m1 = tmp->infos.m1;
+            my_m2 m2 = tmp->infos.m2;
+            int dst = tmp->infos.edgeDst;
+            if (m1 < graph->m1dists[i][dst]) {
+                graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
+                graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
+            }
+        }
+    }
+
 
     return graph;
+}
+
+SrGraph_t* SrGraph_merge_sr_graph(SrGraph_t* best_m1, SrGraph_t* best_m2, int size)
+{
+    SrGraph_t* flex = SrGraph_init(size);
+
+    int nbNode = size;
+    for (int src = 0 ; src < nbNode ; src++) {
+        for (int dst = 0 ; dst < nbNode ; dst++) {
+            if (src == dst) {
+                continue;
+            }
+            flex->succ[src][dst] = Edge_merge_flex(best_m1->succ[src][dst], best_m2->succ[src][dst]);
+            flex->pred[dst][src] = Edge_merge_flex(best_m1->pred[dst][src], best_m2->pred[dst][src]);
+        }
+    }
+    return flex;
+}
+
+
+SrGraph_t* SrGraph_create_flex_algo(Topology_t* topo)
+{
+    if (topo == NULL) {
+        ERROR("Can't compute with an empty topology\n");
+        return NULL;
+    }
+    SrGraph_t* best_m1 = SrGraph_create_from_topology_best_m1(topo);
+    SrGraph_t* best_m2 = SrGraph_create_from_topology_best_m2(topo);
+    SrGraph_t* flex = SrGraph_merge_sr_graph(best_m1, best_m2, topo->nbNode);
+
+    SrGraph_free(best_m1);
+    SrGraph_free(best_m2);
+
+    return flex;
 }
 
 
@@ -358,7 +400,7 @@ SrGraph_t* SrGraph_create_diablo(int nbNode, int nbPlinks, char mode)
     return graph;
 }
 
-int rand_a_b(int a, int b)
+int rand_c_d(int a, int b)
 {
     return rand()%(b - a) + a;
 }
@@ -380,8 +422,8 @@ SrGraph_t* SrGraph_create_random_topo(int nbNode, int maxSpread)
             }
 
             for (int k = 0 ; k < 2 ; k++) {
-                my_m1 m1 = rand_a_b(1, maxSpread);
-                my_m2 m2 = rand_a_b(1, INT_MAX / 10 - 1);
+                my_m1 m1 = rand_c_d(1, maxSpread);
+                my_m2 m2 = rand_c_d(1, INT_MAX / 10 - 1);
                 sr->succ[i][j] = Edge_new(sr->succ[i][j], m1, m2);
                 sr->pred[j][i] = Edge_new(sr->pred[j][i], m1, m2);
             }
@@ -397,9 +439,11 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output)
 {
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {
-            for (Edge_t* edge = sr->succ[i][j] ; edge != NULL ; edge = edge->next) {
-                fprintf(output, "%d %d %d %d\n", i, j, edge->m1, edge->m2);
-            }
+            // for (Edge_t* edge = sr->succ[i][j] ; edge != NULL ; edge = edge->next) {
+            //     fprintf(output, "%d %d %d %d\n", i, j, edge->m1, edge->m2);
+            // }
+            fprintf(output, "%d -> %d : ", i, j);
+            Edge_print_list(sr->succ[i][j], output);
         }
     }
 }
@@ -421,7 +465,7 @@ my_m1 SrGraph_get_max_spread(SrGraph_t* sr)
         }
     }
 
-    INFO("There is %d adjacencies\n", nbEdge- (sr->nbNode) * (sr->nbNode - 1));
+    INFO("There are %d adjacencies\n", nbEdge- (sr->nbNode) * (sr->nbNode - 1));
     return max;
 }
 
@@ -720,7 +764,7 @@ SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr)
 
 
 
-bool hasapath(BinHeap_t** pfront, int dst)
+bool hasapath(Pfront_t** pfront, int dst)
 {
     for (int i = 0 ; i <= SEG_MAX ; i++) {
         if (pfront[i][dst].heapSize != 0) {

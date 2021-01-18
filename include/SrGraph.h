@@ -7,6 +7,7 @@
 #include "Dict.h"
 #include "LabelTable.h"
 #include "Edge.h"
+#include "Pfront.h"
 
 typedef struct SrGraph_s SrGraph_t;
 
@@ -56,7 +57,9 @@ SrGraph_t* SrGraph_init(int nbNodes);
  * @return return the corresponding SR graph (at least full-mech)
  */
 
-SrGraph_t* SrGraph_create_from_topology(Topology_t* topo);
+SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo);
+
+SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo);
 
 
 /**
@@ -203,9 +206,11 @@ long int SrGraph_crash_test(SrGraph_t* graph, Dict_t** dist, my_m1 cstrM1, int n
 
 SrGraph_t* SrGraph_create_flex_algo(Topology_t* topo);
 
+SrGraph_t* SrGraph_merge_sr_graph(SrGraph_t* best_m1, SrGraph_t* best_m2, int size);
+
 SrGraph_t* SrGraph_add_adjacencies(SrGraph_t* graph, Topology_t* topo);
 
 
-bool hasapath(BinHeap_t** pfront, int dst);
+bool hasapath(Pfront_t** pfront, int dst);
 
 #endif

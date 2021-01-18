@@ -2,7 +2,7 @@
 
 
 
-int Best2cop(BinHeap_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src, my_m1 cstrM1, my_m2 cstrM2, my_m1 dictSize, char full, __attribute__((unused)) int** iters)
+int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src, my_m1 cstrM1, my_m2 cstrM2, my_m1 dictSize, char full, __attribute__((unused)) int** iters)
 {
     //Start of init
     int maxIter = SEG_MAX;
@@ -14,19 +14,19 @@ int Best2cop(BinHeap_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int sr
 
     int nbIter = 1;
 
-    (*pfront) = malloc((maxIter + 1) * sizeof(BinHeap_t*));
+    (*pfront) = malloc((maxIter + 1) * sizeof(Pfront_t*));
     ASSERT(pfront, -1);
 
     for (int i = 0 ; i <= maxIter ; i++) {
-        (*pfront)[i] = malloc(graph->nbNode * sizeof(BinHeap_t));
+        (*pfront)[i] = malloc(graph->nbNode * sizeof(Pfront_t));
         ASSERT((*pfront)[i], -1);
 
         for (int j = 0 ; j < graph->nbNode ; j++) {
-            BinHeap_init(&(*pfront)[i][j], dictSize);
+            Pfront_init(&(*pfront)[i][j], dictSize);
         }
     }
 
-    BinHeap_insert_key(&(*pfront)[0][src], 0);
+    Pfront_insert_key(&(*pfront)[0][src], 0);
 
     Dict_t* dist = malloc(graph->nbNode * sizeof(Dict_t));
     ASSERT(dist, -1);
@@ -83,8 +83,8 @@ int Best2cop(BinHeap_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int sr
 
             Dict_t pf_cand;
             Dict_init(&pf_cand, dictSize);
-            BinHeap_t pfcandlist;
-            BinHeap_init(&pfcandlist, dictSize);
+            Pfront_t pfcandlist;
+            Pfront_init(&pfcandlist, dictSize);
             int t = 0;
             my_m1 imax = 0;
 
@@ -95,7 +95,7 @@ int Best2cop(BinHeap_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int sr
             Best2cop_cpt_extendable_paths(nextextendable + dst, pfront, &pf_cand, dist + dst, &pfcandlist, t, imax, nbIter, dst, &(*pf)[nbIter][dst]);
 
             Dict_free(&pf_cand);
-            BinHeap_free(&pfcandlist);
+            Pfront_free(&pfcandlist);
         }
 
         Extendable_list_free(extendable);
@@ -142,7 +142,7 @@ my_m2 update_min_igp(my_m2 old, Extendable_t* nextext) {
     return MIN(nextext->infos.m2, update_min_igp(old, nextext->next));
 }
 
-void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, BinHeap_t* pfcandlist, 
+void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, Pfront_t* pfcandlist, 
                             Dict_t* dist_v, SrGraph_t* graph, int* t, my_m1* imax, my_m1 c1, my_m2 c2)
 {
     *imax = 0;
@@ -157,7 +157,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                 if (d1v <= c1 && d2v <= c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v);
                     if (pf_cand->paths[d1v] == INF) {
-                        BinHeap_insert_key(pfcandlist, d1v);
+                        Pfront_insert_key(pfcandlist, d1v);
                         *t = *t + 1;
                     }
                     Dict_add(pf_cand, d1v, d2v);
@@ -170,8 +170,8 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
 }
 
 
-void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, BinHeap_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, BinHeap_t* pfcandlist, int t, int imax, int iter, int dst, ParetoFront_t** pf)
+void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
+                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int t, int imax, int iter, int dst, ParetoFront_t** pf)
 {
     if (t * log(t) + t + (*pfront)[iter-1][dst].heapSize < imax / 10) {
         Best2cop_cpt_extendable_paths_select(nextextendable, pfront, pf_cand, dist_v, pfcandlist, iter, dst, pf);
@@ -181,18 +181,18 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, BinHeap_t*** p
 }
 
 
-void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, BinHeap_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, BinHeap_t* pfcandlist, int iter, int dst, ParetoFront_t** pf)
+void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_t*** pfront, 
+                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int iter, int dst, ParetoFront_t** pf)
 {
-    BinHeap_sort(pfcandlist);
-    BinHeap_t* d1_it = BinHeap_merge_sort(&(*pfront)[iter-1][dst], pfcandlist);
+    Pfront_sort(pfcandlist);
+    Pfront_t* d1_it = Pfront_merge_sort(&(*pfront)[iter-1][dst], pfcandlist);
 
     my_m2 last_d2 = INF;
     for (int i = 0 ; i < d1_it->heapSize ; i++) {
         my_m1 d1 = d1_it->keys[i];
         if (dist_v->paths[d1] < last_d2) {
             last_d2 = dist_v->paths[d1];
-            BinHeap_insert_key(&(*pfront)[iter][dst], d1);
+            Pfront_insert_key(&(*pfront)[iter][dst], d1);
             (*pf) = ParetoFront_new((*pf), d1, dist_v->paths[d1]);
             if (pf_cand->paths[d1] != INF) {
                 (*nextextendable) = Extendable_new(d1, pf_cand->paths[d1], (*nextextendable));
@@ -200,19 +200,19 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, BinHeap
         }
     }
 
-    BinHeap_free(d1_it);
+    Pfront_free(d1_it);
     free(d1_it);
 }
 
 
-void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, BinHeap_t*** pfront, 
+void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, int imax, ParetoFront_t** pf)
 {
     my_m2 last_d2 = INF;
     for (my_m1 i = 0 ; i <= imax ; i++) {
         if (dist_v->paths[i] < last_d2) {
             last_d2 = dist_v->paths[i];
-            BinHeap_insert_key(&(*pfront)[iter][dst], i);
+            Pfront_insert_key(&(*pfront)[iter][dst], i);
             (*pf) = ParetoFront_new((*pf), i, dist_v->paths[i]);
             if (pf_cand->paths[i] != INF) {
                 (*nextextendable) = Extendable_new(i, pf_cand->paths[i], (*nextextendable));

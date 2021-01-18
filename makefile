@@ -50,6 +50,13 @@ unitFlex : $(OBJ) unitFlex.o
 unitFlex.o: test_unit_flex.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
+unitBinHeap : $(OBJ) BinHeap.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Test unit bin heap succesfully compiled"
+
+BinHeap.o: test_unit_binheap.c
+	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
+
 worstRandom : $(OBJ) worstRandom.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst random succesfully compiled"
@@ -102,6 +109,10 @@ clean:
 	@rm -rf eval.o
 	@rm -rf gmon.out
 	@rm -rf profiler.txt
+	@rm -rf unitFlex
+	@rm -rf unitFlex.o
+	@rm -rf unitBinHeap
+	@rm -rf BinHeap.o
 	@echo ${info} "Main program clean succesfully done"
 
 

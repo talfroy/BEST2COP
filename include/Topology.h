@@ -7,6 +7,7 @@
 #include "ScopeStack.h"
 #include "Dict.h"
 #include "Edge.h"
+#include "BinHeap.h"
 
 #define NB_NODE_MAX    1500
 
@@ -106,5 +107,7 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
 
 
 long int my_pow(long int x, int y);
+
+Topology_t* Topology_create_random(int size, my_m2 max_m2);
 
 #endif

@@ -27,4 +27,6 @@ void Edge_free(Edge_t* edge);
 
 Edge_t* Edge_merge_flex(Edge_t* best_m1, Edge_t* best_m2);
 
+void Edge_print_list(Edge_t* list, FILE* output);
+
 #endif

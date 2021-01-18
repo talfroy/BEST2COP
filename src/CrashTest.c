@@ -13,18 +13,18 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 
     Dict_add(dist + src, 0, 0);
 
-    BinHeap_t** pfront = malloc((SEG_MAX + 1) * sizeof(BinHeap_t*));
+    Pfront_t** pfront = malloc((SEG_MAX + 1) * sizeof(Pfront_t*));
     ASSERT(pfront, -1);
 
     for (int i = 0 ; i <= SEG_MAX ; i++) {
-        pfront[i] = malloc(graph->nbNode * sizeof(BinHeap_t));
+        pfront[i] = malloc(graph->nbNode * sizeof(Pfront_t));
         ASSERT(pfront[i], -1);
         for (int j = 0 ; j < graph->nbNode ; j++) {
-            BinHeap_init(&pfront[i][j], cstrM1 + 1);
+            Pfront_init(&pfront[i][j], cstrM1 + 1);
         }
     }
 
-    BinHeap_insert_key(&pfront[0][src], 0);
+    Pfront_insert_key(&pfront[0][src], 0);
 
     Extendable_list_t* extendable = NULL;
 
@@ -54,8 +54,8 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 
             Dict_t pf_cand;
             Dict_init(&pf_cand, cstrM1 + 1);
-            BinHeap_t pfcandlist;
-            BinHeap_init(&pfcandlist, cstrM1 + 1);
+            Pfront_t pfcandlist;
+            Pfront_init(&pfcandlist, cstrM1 + 1);
 
             CrashTest_extend_path(graph, extendable, dist + dst, &pf_cand, &pfcandlist, dst);
 
@@ -64,7 +64,7 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
             CrashTest_cpt_extendable_paths(nextextendable + dst, &pfront, realSpread, dist + dst, nbPlLinks, dst, graph->nbNode, nbIter, cstrM1);
 
             Dict_free(&pf_cand);
-            BinHeap_free(&pfcandlist);
+            Pfront_free(&pfcandlist);
         }
 
         Extendable_list_free(extendable);
@@ -93,7 +93,7 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 
     for (int i = 0 ; i <= SEG_MAX ; i++) {
         for (int j = 0 ; j < graph->nbNode ; j++) {
-            BinHeap_free(&pfront[i][j]);
+            Pfront_free(&pfront[i][j]);
         }
         free(pfront[i]);
     }
@@ -104,7 +104,7 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 }
 
 
-void CrashTest_extend_path(SrGraph_t* graph, Extendable_list_t* extendable, Dict_t* dist_v, Dict_t* pf_cand, BinHeap_t* pfcandlist, int dst)
+void CrashTest_extend_path(SrGraph_t* graph, Extendable_list_t* extendable, Dict_t* dist_v, Dict_t* pf_cand, Pfront_t* pfcandlist, int dst)
 {
     for (Extendable_list_t* d_list = extendable ; d_list != NULL ; d_list = d_list->next) {
         int edgeSrc = d_list->node;
@@ -115,14 +115,14 @@ void CrashTest_extend_path(SrGraph_t* graph, Extendable_list_t* extendable, Dict
 
                 Dict_add(dist_v, d1v, d2v);
                 Dict_add(pf_cand, d1v, d2v);
-                BinHeap_insert_key(pfcandlist, d1v);
+                Pfront_insert_key(pfcandlist, d1v);
             }
         }
     }
 }
 
 
-void CrashTest_cpt_extendable_paths(Extendable_t** nextextendable, BinHeap_t*** pfront, int realSpread, Dict_t* dist_v, 
+void CrashTest_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, int realSpread, Dict_t* dist_v, 
                                     int dst, int nbPara, int nbNode, int currStep, int cstrM1)
 {
     long int nbIter;
@@ -135,7 +135,7 @@ void CrashTest_cpt_extendable_paths(Extendable_t** nextextendable, BinHeap_t*** 
 
     for (int i = 0 ; i < nbIter ; i++) {
         if (dist_v->paths[i] != -1) {
-            BinHeap_insert_key(&(*pfront)[currStep][dst], i);
+            Pfront_insert_key(&(*pfront)[currStep][dst], i);
             (*nextextendable) = Extendable_new(1, 1, (*nextextendable));
         }
     }

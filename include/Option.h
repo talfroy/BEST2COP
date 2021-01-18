@@ -25,9 +25,10 @@ struct Options {
     char allNodes;          /**< define if we need to mesure on all nodes */
     char interface;         /**< activate the interactive mode */
     char nbThreads;
+    char randomTopo;
 };
 
-extern struct Options opt;
+struct Options opt;
 
 
 /**
