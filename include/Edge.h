@@ -25,4 +25,6 @@ Edge_t* Edge_copy(Edge_t* old);
 
 void Edge_free(Edge_t* edge);
 
+Edge_t* Edge_merge_flex(Edge_t* best_m1, Edge_t* best_m2);
+
 #endif

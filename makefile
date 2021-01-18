@@ -43,6 +43,13 @@ worstSprint : $(OBJ) worstSprint.o
 worstSprint.o: worstSprint.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
+unitFlex : $(OBJ) unitFlex.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Test unit flex succesfully compiled"
+
+unitFlex.o: test_unit_flex.c
+	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
+
 worstRandom : $(OBJ) worstRandom.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst random succesfully compiled"

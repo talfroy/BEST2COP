@@ -73,3 +73,28 @@ Edge_t* Edge_copy(Edge_t* old)
     Edge_t* last = Edge_copy(old->next);
     return Edge_new(last, old->m1, old->m2);
 }
+
+
+Edge_t* Edge_merge_flex(Edge_t* best_m1, Edge_t* best_m2)
+{
+    Edge_t* flex = NULL;
+
+    flex = Edge_new(NULL, best_m1->m1, best_m1->m2);
+    if (flex->m1 > best_m2->m1) {
+        if (flex->m2 >= best_m2->m2) {
+            Edge_free(flex);
+            flex = NULL;
+        }
+        flex = Edge_new(flex, best_m2->m1, best_m2->m2);
+    } else if (flex->m1 < best_m2->m1) {
+        if (flex->m2 > best_m2->m2) {
+            flex = Edge_new(flex, best_m2->m1, best_m2->m2);
+        }
+    } else {
+        if (flex->m2 > best_m2->m2) {
+            Edge_free(flex);
+            flex = Edge_new(NULL, best_m2->m1, best_m2->m2);
+        }
+    }
+    return flex;
+}
