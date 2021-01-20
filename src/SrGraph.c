@@ -82,6 +82,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
 
   //  #pragma omp parallel for
     for (int i = 0 ; i < topo->nbNode ; i++) {
+        //printf("Computing dijkstra for node %d\n", i);
         dikjstra_best_m2(&graph->succ, &graph->pred, topo->succ, i,
                     &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
     }
@@ -439,11 +440,14 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output)
 {
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {
-            // for (Edge_t* edge = sr->succ[i][j] ; edge != NULL ; edge = edge->next) {
-            //     fprintf(output, "%d %d %d %d\n", i, j, edge->m1, edge->m2);
-            // }
-            fprintf(output, "%d -> %d : ", i, j);
-            Edge_print_list(sr->succ[i][j], output);
+            if (i == j) {
+                continue;
+            }
+            for (Edge_t* edge = sr->succ[i][j] ; edge != NULL ; edge = edge->next) {
+                fprintf(output, "%d %d %d %d\n", i, j, edge->m1, edge->m2);
+            }
+            // fprintf(output, "%d -> %d : ", i, j);
+            // Edge_print_list(sr->succ[i][j], output);
         }
     }
 }

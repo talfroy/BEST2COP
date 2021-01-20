@@ -86,6 +86,8 @@ typedef char bool;
         fprintf(stdout,GREEN "TEST PASS - file : \"%s\", line : %d, function \"%s\". " WHITE  __VA_ARGS__ "\n",__FILE__,__LINE__,__func__); \
     }
 
+# define RAND(min, max) \
+    ((rand()%(int)(((max) + 1)-(min)))+ (min))
 
 
 #endif

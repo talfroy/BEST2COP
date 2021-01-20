@@ -35,24 +35,27 @@ int main (int argc, char**argv)
     long int means[NB_FILE];
     int nbIter;
     char fileName[128];
+    char worstFile[128];
     char timeFile[128];
-    FILE* file = NULL;
+    FILE* fileRes = NULL;
     FILE* worstTopo = NULL;
     my_m1 dictSize = MIN(1000, maxSpread * SEG_MAX);
 
     for (int i = 100 ; i <= 1000 ; i += 100) {
-        memset(fileName, 0, 128);
-        sprintf(fileName, "RND/resultsSpread%s/worstTopo%d.isp", argv[1], i);
+        memset(worstFile, 0, 128);
+        sprintf(worstFile, "RND/resultsSpread%s/worstTopo%d.isp", argv[1], i);
 
         for (int j = 0 ; j < NB_FILE ; j++) {
-            sr[j] = SrGraph_create_random_topo(i, maxSpread);
+            memset(fileName, 0, 128);
+            sprintf(fileName, "RND/resultsSpread%s/topo%d/sr_topo%d.isp", argv[1], i, j);
+            sr[j] = SrGraph_load_with_id(fileName, i, 0, 0);
             memset(timeFile, 0, 128);
             sprintf(timeFile, "RND/resultsSpread%s/resultsTime%d/timeTopo%d.res", argv[1], i, j);
-            file = fopen(timeFile, "w");
+            fileRes = fopen(timeFile, "w");
 
             times = malloc(i / 10 * sizeof(long int));
 
-            omp_set_num_threads(12);
+            omp_set_num_threads(omp_get_max_threads());
 
             for (int k = 0 ; k < i / 10 ; k++) {
                 
@@ -71,7 +74,7 @@ int main (int argc, char**argv)
 
                 times[k] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
-                fprintf(file, "%ld\n", times[k]);
+                fprintf(fileRes, "%ld\n", times[k]);
                 
                 for (int l = 0 ; l <= SEG_MAX ; l++) {
                     for (int k = 0 ; k < i ; k++) {
@@ -86,7 +89,7 @@ int main (int argc, char**argv)
                 free(dist);
             }
 
-            fclose(file);
+            fclose(fileRes);
 
             means[j] = Main_get_mean(times, i / 10);
 

@@ -43,6 +43,13 @@ worstSprint : $(OBJ) worstSprint.o
 worstSprint.o: worstSprint.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
+genRandom : $(OBJ) generate_random.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Worst sprint succesfully compiled"
+
+generate_random.o: generate_random.c
+	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
+
 unitFlex : $(OBJ) unitFlex.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Test unit flex succesfully compiled"
@@ -113,6 +120,8 @@ clean:
 	@rm -rf unitFlex.o
 	@rm -rf unitBinHeap
 	@rm -rf BinHeap.o
+	@rm -rf generate_random.o
+	@rm -rf genRandom
 	@echo ${info} "Main program clean succesfully done"
 
 
@@ -156,6 +165,13 @@ rnddirs:
 	@for i in 100 500 1000 ; do \
 		for j in $$(seq 1 10) ; do \
 			mkdir -p RND/resultsSpread$$i/resultsTime$$(($$j * 100)) ; \
+		done; \
+	done;
+
+rnddirsGen:
+	@for i in 100 500 1000 ; do \
+		for j in $$(seq 1 10) ; do \
+			mkdir -p RND/resultsSpread$$i/topo$$(($$j * 100)) ; \
 		done; \
 	done;
 

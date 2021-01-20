@@ -88,7 +88,8 @@ int main(int argc, char** argv)
             INFO("Segment Routing Graph succesfully loaded\n");
         }
     } else if (opt.randomTopo) {
-        topo = Topology_create_random(1000, 1000);
+        topo = Topology_create_random(100, NULL, NULL);
+        INFO("Topology succesfully loaded\n");
 
         gettimeofday(&start, NULL);
         sr = SrGraph_create_from_topology_best_m2(topo);

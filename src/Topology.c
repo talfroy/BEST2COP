@@ -181,7 +181,11 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
     (*m1dists)[root] = 0;
     (*m2dists)[root] = 0;
 
-    int parents[nbNodes][NB_NODE_MAX];
+    int** parents = malloc(nbNodes * sizeof(int*));
+    for (int i = 0 ; i < nbNodes ; i++) {
+        parents[i] = malloc(NB_NODE_MAX * sizeof(int));
+        memset(parents[i], 0, NB_NODE_MAX * sizeof(int));
+    }
 
     memset(parents, 0, nbNodes * NB_NODE_MAX * sizeof(int));
 
@@ -215,6 +219,7 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
     }
     
     //freeStack(stack);
+    BinHeap_free(&bp);
 
     for (int i = 0 ; i < nbNodes ; i++) {
         if (i != root) {
@@ -222,6 +227,12 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
             (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
         }
     }
+
+    for (int i = 0 ; i < nbNodes ; i++) {
+        free(parents[i]);
+    }
+
+    free(parents);
 }
 
 
@@ -230,12 +241,15 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
 void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes)
 {
-    myStack* stack = initStack(nbNodes);
+    // myStack* stack = initStack(nbNodes);
 
-    if (stack == NULL) {
-        ERROR("Stack for dijkstra can't be created\n");
-        return;
-    }
+    // if (stack == NULL) {
+    //     ERROR("Stack for dijkstra can't be created\n");
+    //     return;
+    // }
+
+    BinHeap_t bp;
+    BinHeap_init(&bp, nbNodes);
 
     for (int i = 0 ; i < nbNodes ; i++) {
         (*m1dists)[i] = INF;
@@ -264,20 +278,22 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
                     (*m2dists)[neighbor->infos.edgeDst] = pathM2;
                     parents[neighbor->infos.edgeDst][0] = 1;
                     parents[neighbor->infos.edgeDst][1] = currNode;
-                    empile(neighbor->infos.edgeDst, stack);
+                    //empile(neighbor->infos.edgeDst, stack);
+                    BinHeap_insert_key(&bp, neighbor->infos.edgeDst, neighbor->infos.m2, neighbor->infos.m1);
                 }
             } else if (pathM1 < (*m1dists)[neighbor->infos.edgeDst]) {
                 (*m1dists)[neighbor->infos.edgeDst] = pathM1;
                 (*m2dists)[neighbor->infos.edgeDst] = neighbor->infos.m2 + (*m2dists)[currNode];
                 parents[neighbor->infos.edgeDst][0] = 1;
                 parents[neighbor->infos.edgeDst][1] = currNode;
-                empile(neighbor->infos.edgeDst, stack);
+                //empile(neighbor->infos.edgeDst, stack);
+                BinHeap_insert_key(&bp, neighbor->infos.edgeDst, neighbor->infos.m2, neighbor->infos.m1);
             }
         }
-        currNode = depile(stack);
+        currNode = BinHeap_extract_min(&bp);
     }
     
-    freeStack(stack);
+    //freeStack(stack);
 
     for (int i = 0 ; i < nbNodes ; i++) {
         if (i != root) {
@@ -294,20 +310,22 @@ int rand_a_b(int a, int b)
 }
 
 
-Topology_t* Topology_create_random(int size, my_m2 max_m2)
+Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[])
 {
-    srand(time(NULL));
     Topology_t* topo = Topology_init(size);
 
     for (int i = 0 ; i < size ; i++) {
-        for (int j = 0 ; j < size ; j++) {
+        for (int j = i + 1 ; j < size ; j++) {
             if (i == j) {
                 continue;
             }
-            my_m1 m1 = rand_a_b(1, max_m2);
-            my_m2 m2 = rand_a_b(1, INT_MAX / 10 - 1);
+            my_m1 m1 = v_delay[RAND(0, 10000)];
+            my_m2 m2 = v_igp[RAND(0, 10000)];
+            //printf("add a new arc (%d -> %d)\n", i, j);
             topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
             topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
         }
 
     }
