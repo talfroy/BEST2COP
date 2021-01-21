@@ -154,14 +154,9 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
     for (Extendable_list_t* d_list = extendable ; d_list != NULL ; d_list = d_list->next) {
         int edgeSrc = d_list->node;
         for (Extendable_t* path = d_list->ext ; path != NULL ; path = path->next) {
-            //printf("Iteration -> %d\n", edgeSrc);
             for (Edge_t* edge = graph->pred[dst][edgeSrc] ; edge != NULL ; edge = edge->next) {
                 my_m1 d1v = path->infos.m1 + edge->m1;
                 my_m2 d2v = path->infos.m2 + edge->m2;
-                if (d1v < 0) {
-                    printf("Problem : %d + %d = %d\n", path->infos.m1, edge->m1, d1v);
-                }
-                //printf("(%d -> %d) : (%d ; %d)\n", edgeSrc, dst, d1v, d2v);
 
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v);
@@ -174,7 +169,6 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                     *imax = MAX(*imax, d1v);
                 }
             }
-            //printf("Fin Iteration\n");
         }
     }
 }
