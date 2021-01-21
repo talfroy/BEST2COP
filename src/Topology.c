@@ -187,7 +187,7 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
         memset(parents[i], 0, NB_NODE_MAX * sizeof(int));
     }
 
-    memset(parents, 0, nbNodes * NB_NODE_MAX * sizeof(int));
+    //memset(parents, 0, nbNodes * NB_NODE_MAX * sizeof(int));
 
     for (int currNode = root, nbSeen = 0 ; nbSeen < nbNodes * nbNodes && currNode != -1 ; nbSeen++) {
         for (Llist_t* neighbor = ingraph[currNode] ; neighbor != NULL ; neighbor = neighbor->next) {
