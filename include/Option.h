@@ -20,12 +20,13 @@ struct Options {
     char* output;           /**< output file */
     int accuracy;           /**< delay trueness (1 means that accuracy is about 0.1ms) */
     char biDir;             /**< define if the links are uni-directionals or bi */
-    char full;              /**< use to put SEG_MAX to INF*/
+    char analyse;              /**< use to put SEG_MAX to INF*/
     int src;                /**< source node */
     char allNodes;          /**< define if we need to mesure on all nodes */
     char interface;         /**< activate the interactive mode */
     char nbThreads;
     char randomTopo;
+    bool flex;
 };
 
 struct Options opt;

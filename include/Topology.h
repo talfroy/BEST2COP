@@ -62,7 +62,7 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
 LinkInfos* Topology_get_edge_infos(Topology_t* topo, int src, int dst, int adjType);
 
 
-void Topology_print(Topology_t* topo);
+void Topology_print(Topology_t* topo, char* topoF);
 
 
 /**

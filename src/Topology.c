@@ -127,18 +127,22 @@ LinkInfos* Topology_get_edge_infos(Topology_t* topo, int src, int dst, int adjTy
 
 
 
-void Topology_print(Topology_t* topo)
+void Topology_print(Topology_t* topo, char* topoF)
 {
     if (topo == NULL) {
         return;
     }
-    
+    FILE* file = fopen(topoF, "w");
     printf("PRINT TOPO : succ\n\n");
     for (int i = 0 ; i < topo->nbNode ; i++) {
-        printf("node %d : ", i);
-        Llist_print_infos(topo->succ[i], stdout);
-        printf("\n");
+        for (Llist_t* tmp = topo->succ[i] ; tmp != NULL ; tmp = tmp->next) {
+            //printf("Petit test %d\n", tmp->infos.edgeDst);
+            fprintf(file, "%d %d %d %d\n", i, tmp->infos.edgeDst, tmp->infos.m1, tmp->infos.m2);
+        }
     }
+
+    fclose(file);
+    printf("fin d'écriture de la topo\n");
 }
 
 
@@ -187,14 +191,15 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
         memset(parents[i], 0, NB_NODE_MAX * sizeof(int));
     }
 
-    memset(parents, 0, nbNodes * NB_NODE_MAX * sizeof(int));
 
     for (int currNode = root, nbSeen = 0 ; nbSeen < nbNodes * nbNodes && currNode != -1 ; nbSeen++) {
         for (Llist_t* neighbor = ingraph[currNode] ; neighbor != NULL ; neighbor = neighbor->next) {
             if (neighbor->infos.edgeDst == root || neighbor->infos.m1 == INF || neighbor->infos.m2 == INF) {
                 continue;
             }
-
+            if ((neighbor->infos.m1 + (*m1dists)[currNode]) > 10000 || (neighbor->infos.m1 + (*m1dists)[currNode]) < 0) {
+                printf("node %d -> %d + %d\n", currNode, neighbor->infos.m1, (*m1dists)[currNode]);
+            }
             if ((pathM2 = neighbor->infos.m2 + (*m2dists)[currNode]) == (*m2dists)[neighbor->infos.edgeDst]) {
                 if ((pathM1 = neighbor->infos.m1 + (*m1dists)[currNode]) == (*m1dists)[neighbor->infos.edgeDst]) {
                     parents[neighbor->infos.edgeDst][++parents[neighbor->infos.edgeDst][0]] = currNode;
@@ -230,6 +235,9 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
 
     for (int i = 0 ; i < nbNodes ; i++) {
         free(parents[i]);
+        if ((*m1dists)[i] > 10000 || (*m1dists)[i] < 0) {
+            printf("Un soucis de %d -> %d\n", root,i);
+        }
     }
 
     free(parents);

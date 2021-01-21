@@ -2,14 +2,14 @@
 
 
 
-int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src, my_m1 cstrM1, my_m2 cstrM2, my_m1 dictSize, char full, __attribute__((unused)) int** iters)
+int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src, my_m1 cstrM1, my_m2 cstrM2, my_m1 dictSize, char analyse, __attribute__((unused)) int** iters)
 {
     //Start of init
     int maxIter = SEG_MAX;
     my_m2* minIgp = malloc(graph->nbNode * sizeof(my_m2));
 
-    if (full) {
-        maxIter = MAX(maxIter, 5 * SEG_MAX);
+    if (analyse) {
+        maxIter = MAX(maxIter, 10 * SEG_MAX);
     }
 
     int nbIter = 1;
@@ -65,7 +65,7 @@ int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src
 
     if (iters != NULL) {
         for (int i = 0 ; i < graph->nbNode ; i++) {
-            (*iters)[i] = -2;
+            (*iters)[i] = -1;
             minIgp[i] = INF;
         }
         (*iters)[src] = 0;
@@ -103,12 +103,16 @@ int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src
 
         for (int i = 0 ; i < graph->nbNode ; i++) {
             if (nextextendable[i] != NULL) {
-                if (full) {
+                if (analyse == ANALYSE_DCLC) {
                     tmp_igp = update_min_igp(minIgp[i], nextextendable[i]);
                     if (tmp_igp < minIgp[i]) {
                         (*iters)[i] = nbIter;
                     }
                     minIgp[i] = tmp_igp;
+                }
+
+                if (analyse == ANALYSE_2COP) {
+                    (*iters)[i] = nbIter;
                 }
                 extendable = Extendable_list_new(extendable, i, NULL);
                 extendable->ext = Extendable_copy(nextextendable[i]);
@@ -150,11 +154,13 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
     for (Extendable_list_t* d_list = extendable ; d_list != NULL ; d_list = d_list->next) {
         int edgeSrc = d_list->node;
         for (Extendable_t* path = d_list->ext ; path != NULL ; path = path->next) {
+            printf("Iteration -> %d\n", edgeSrc);
             for (Edge_t* edge = graph->pred[dst][edgeSrc] ; edge != NULL ; edge = edge->next) {
                 my_m1 d1v = path->infos.m1 + edge->m1;
                 my_m2 d2v = path->infos.m2 + edge->m2;
+                printf("(%d -> %d) : (%d ; %d)\n", edgeSrc, dst, d1v, d2v);
 
-                if (d1v <= c1 && d2v <= c2 && dist_v->paths[d1v] > d2v) {
+                if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v);
                     if (pf_cand->paths[d1v] == INF) {
                         Pfront_insert_key(pfcandlist, d1v);
@@ -165,6 +171,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                     *imax = MAX(*imax, d1v);
                 }
             }
+            printf("Fin Iteration\n");
         }
     }
 }
