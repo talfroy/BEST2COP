@@ -9,7 +9,8 @@ int Option_command_parser (int argc, char** argv) {
         {"sr",      no_argument,            NULL,       's'},
         {"labels",  no_argument,            NULL,       'l'},
         {"id",      no_argument,            NULL,       'i'},
-        {"full",    no_argument,            NULL,       'u'},
+        {"2COP",    no_argument,            NULL,       'u'},
+        {"DCLC",    no_argument,            NULL,       'w'},
         {"accu",    required_argument,      NULL,       'a'},
         {"output",  required_argument,      NULL,       'o'},
         {"bi-dir",  required_argument,      NULL,       'b'},
@@ -20,7 +21,7 @@ int Option_command_parser (int argc, char** argv) {
         {"all-nodes", no_argument,          NULL,       'e'},
         {"help",    no_argument,            NULL,       'h'},
         {"threads", required_argument,      NULL,       'j'},
-        {"random", no_argument,            NULL,       'r'},
+        {"flex",    no_argument,            NULL,       'r'},
         {0,0,0,0}
     };
 
@@ -32,12 +33,13 @@ int Option_command_parser (int argc, char** argv) {
     opt.loadingMode = -1;
     opt.accuracy = 1;
     opt.labelsOrId = -1;
-    opt.full = 0;
+    opt.analyse = 0;
     opt.src = -1;
     opt.interface = 0;
     opt.allNodes = 0;
     opt.nbThreads = -1;
     opt.randomTopo = 0;
+    opt.flex = false;
 
 
     while ((optValue = getopt_long(argc, argv, optString, long_options, NULL)) != -1) {
@@ -48,7 +50,7 @@ int Option_command_parser (int argc, char** argv) {
                 break;
 
             case 'r' :
-                opt.randomTopo = 1;
+                opt.flex = true;
                 break;
 
             case 'h' :
@@ -120,7 +122,11 @@ int Option_command_parser (int argc, char** argv) {
                 break;
 
             case 'u' :
-                opt.full = 1;
+                opt.analyse = ANALYSE_2COP;
+                break;
+
+            case 'w' :
+                opt.analyse = ANALYSE_DCLC;
                 break;
 
 			case ':':

@@ -36,6 +36,10 @@ typedef char bool;
 #define WHITE   "\x1B[37m"
 
 
+#define ANALYSE_DCLC            1
+#define ANALYSE_2COP            2
+
+
 
 #define ADJACENCY_SEGMENT       1
 #define NODE_SEGMENT            2

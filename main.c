@@ -53,7 +53,11 @@ int main(int argc, char** argv)
         INFO("Topology succesfully loaded\n");
 
         gettimeofday(&start, NULL);
-        sr = SrGraph_create_from_topology_best_m2(topo);
+        if (opt.flex) {
+            sr = SrGraph_create_flex_algo(topo);
+        } else {
+            sr = SrGraph_create_from_topology_best_m2(topo);
+        }
         gettimeofday(&stop, NULL);
         //SrGraph_print_in_file(sr, stdout);
 
@@ -87,26 +91,6 @@ int main(int argc, char** argv)
 
             INFO("Segment Routing Graph succesfully loaded\n");
         }
-    } else if (opt.randomTopo) {
-        topo = Topology_create_random(100, NULL, NULL);
-        INFO("Topology succesfully loaded\n");
-
-        gettimeofday(&start, NULL);
-        sr = SrGraph_create_from_topology_best_m2(topo);
-        gettimeofday(&stop, NULL);
-
-
-
-        if (sr == NULL) {
-            ERROR("The Segment Routing Graph can't be computed\n");
-            Topology_free(topo);
-            return EXIT_FAILURE;
-        }
-
-        INFO("Segment Routing Graph succesfully computed\n");
-        INFO("Tranformation takes %ld us\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
-
-        //SrGraph_print_in_file(sr, stdout);
     } else {
         ERROR("Please choose an available loading mode\n");
     }
@@ -158,23 +142,27 @@ int main(int argc, char** argv)
             isFeasible[i] = malloc(sr->nbNode * sizeof(int));
             dist = NULL;
             pfront = NULL;
+
+            //printf("Iter %d\n", i);
             gettimeofday(&start, NULL);
 
-            iterMax[i] = Best2cop(&pfront, &dist, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.full, &iters[i]);
+            iterMax[i] = Best2cop(&pfront, &dist, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
 
             gettimeofday(&stop, NULL);
+
+            //printf("Fin Iter %d\n", i);
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
             //printf("\r");
 
-            if (opt.full) {
-                maxIter = 5 * SEG_MAX;
+            if (opt.analyse) {
+                maxIter = 10 * SEG_MAX;
             } else {
                 maxIter = SEG_MAX ;
             }
 
             for (int j = 0 ; j < sr->nbNode ; j++) {
-                if (iters[i][j] > SEG_MAX) {
+                if (iters[i][j] > SEG_MAX || iters[i][j] < 0) {
                     if (!hasapath(pfront, j)) {
                         isFeasible[i][j] = 0;
                     } else {
@@ -200,7 +188,7 @@ int main(int argc, char** argv)
             free(dist);
         }
 
-        max_of_tab(output, times, iters, sr->nbNode, opt.full, isFeasible);
+        max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible);
         for (int i = 0 ; i < sr->nbNode ; i++) {
             free(iters[i]);
             free(isFeasible[i]);
@@ -215,18 +203,18 @@ int main(int argc, char** argv)
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
-        int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.full, NULL);
+        int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL);
 
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
-        if (opt.full) {
+        if (opt.analyse) {
             fprintf(output, "Execution stop after %d iterations\n", iter);
         }
         fprintf(output, "Execution takes %ld us\n", time);
 
         //Main_display_results(output, dist, sr->nbNode, pfront, iter);
-        if (opt.full) {
+        if (opt.analyse) {
             maxIter = sr->nbNode;
         } else {
             maxIter = SEG_MAX + 1;
@@ -279,9 +267,9 @@ void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full,
         }
     } else {
         fprintf(output, "NODE_ID C2 NB_THREADS TIME\n");
-    for (int i = 0 ; i < size ; i++) {
-        fprintf(output, "%d %d %d %ld\n", i, opt.cstr1, opt.nbThreads, tab[i]);
-    }
+        for (int i = 0 ; i < size ; i++) {
+            fprintf(output, "%d %d %d %ld\n", i, opt.cstr1, opt.nbThreads, tab[i]);
+        }
     }
 }
 

@@ -213,4 +213,7 @@ SrGraph_t* SrGraph_add_adjacencies(SrGraph_t* graph, Topology_t* topo);
 
 bool hasapath(Pfront_t** pfront, int dst);
 
+
+void SrGraph_check_m1(SrGraph_t*);
+
 #endif
