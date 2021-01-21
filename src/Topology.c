@@ -82,6 +82,9 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
             src = LabelTable_get_id(&labels, srcLabel);
             dst = LabelTable_get_id(&labels, destLabel);
             m1 *= my_pow(10, precision);
+            // if (m1 < 0) {
+            //     ERROR("There is an Error line %d, value = %lf\n", nbLine, m1);
+            // }
             topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
             topo->pred[dst] = Llist_new(topo->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
             if (biDir) {
@@ -197,9 +200,9 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
             if (neighbor->infos.edgeDst == root || neighbor->infos.m1 == INF || neighbor->infos.m2 == INF) {
                 continue;
             }
-            if ((neighbor->infos.m1 + (*m1dists)[currNode]) > 10000 || (neighbor->infos.m1 + (*m1dists)[currNode]) < 0) {
-                printf("node %d -> %d + %d\n", currNode, neighbor->infos.m1, (*m1dists)[currNode]);
-            }
+            // if ((neighbor->infos.m1 + (*m1dists)[currNode]) > 10000 || (neighbor->infos.m1 + (*m1dists)[currNode]) < 0) {
+            //     printf("node %d -> %d + %d\n", currNode, neighbor->infos.m1, (*m1dists)[currNode]);
+            // }
             if ((pathM2 = neighbor->infos.m2 + (*m2dists)[currNode]) == (*m2dists)[neighbor->infos.edgeDst]) {
                 if ((pathM1 = neighbor->infos.m1 + (*m1dists)[currNode]) == (*m1dists)[neighbor->infos.edgeDst]) {
                     parents[neighbor->infos.edgeDst][++parents[neighbor->infos.edgeDst][0]] = currNode;
@@ -235,9 +238,9 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
 
     for (int i = 0 ; i < nbNodes ; i++) {
         free(parents[i]);
-        if ((*m1dists)[i] > 10000 || (*m1dists)[i] < 0) {
-            printf("Un soucis de %d -> %d\n", root,i);
-        }
+        // if ((*m1dists)[i] > 10000 || (*m1dists)[i] < 0) {
+        //     printf("Un soucis de %d -> %d\n", root,i);
+        // }
     }
 
     free(parents);
@@ -329,6 +332,9 @@ Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[])
             }
             my_m1 m1 = v_delay[RAND(0, 10000)];
             my_m2 m2 = v_igp[RAND(0, 10000)];
+            if (m1 < 0) {
+                printf("There is a problem in random part : %d\n", m1);
+            }
             //printf("add a new arc (%d -> %d)\n", i, j);
             topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
             topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);

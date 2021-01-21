@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     Topology_t** topo = malloc(nb_sample * sizeof(Topology_t*));
 
 
-    omp_set_num_threads(4);
+    omp_set_num_threads(omp_get_max_threads());
     
 
     for (int i = 100 ; i <= 1000 ; i += 100) {

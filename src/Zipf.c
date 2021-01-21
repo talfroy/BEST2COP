@@ -26,13 +26,13 @@ float get_c(float min, float max, float courbure)
 void fill_tab(float c, int tab[], float courbure, float min, float max)
 {
     float sum_prob = 0.0;
-    int index = 0.0;
+    int index = 0;
     for (float i = min ; i <= max ; i++) {
         sum_prob += c / powf(i, courbure);
-        while (sum_prob >= index/10000.0) {
-            tab[(int)index] = (int)i;
+        while (sum_prob >= (float)index/10000.0) {
+            tab[index] = (int)i;
             index++;
-            if (index >= 10000.0) {
+            if (index >= 10000) {
                 return;
             }
         }

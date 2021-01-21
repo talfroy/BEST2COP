@@ -91,7 +91,7 @@ typedef char bool;
     }
 
 # define RAND(min, max) \
-    ((rand()%(int)(((max) + 1)-(min)))+ (min))
+    ((rand()%(int)(((max))-(min)))+ (min))
 
 
 #endif

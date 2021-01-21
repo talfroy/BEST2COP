@@ -115,7 +115,7 @@ void SrGraph_check_m1(SrGraph_t*sr)
                     printf("Aie coup dur pour guillaume\n");
                 }
                 if (tmp->m1 > 10000 || tmp->m1 < 0) {
-                    printf("La c'est la merde\n");
+                    printf("La c'est la merde : %d\n", tmp->m1);
                 }
             }
         }
