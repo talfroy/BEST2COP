@@ -62,7 +62,6 @@ int main(int argc, char** argv) {
             sr[j] = SrGraph_create_from_topology_best_m2(topo[j]);
             SrGraph_check_m1(sr[j]);
             SrGraph_print_in_file(sr[j], file[j]);
-
             fclose(file[j]);
             SrGraph_free(sr[j]);
             Topology_free(topo[j]);
