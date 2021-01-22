@@ -50,7 +50,7 @@ void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
         return;
     }
 
-    if (bp->isPresent[node] != -1) {
+    if (bp->isPresent[node] != -1 && bp->isPresent[node] != -2) {
         BinHeap_decrease_key(bp, node, m1, m2);
         return;
     }
@@ -65,7 +65,6 @@ void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
     bp->keys[i].m1 = m1;
     bp->keys[i].m2 = m2;
     bp->isPresent[node] = i;
-
     while (i != 0 && bp->keys[parent(i)].m2 > bp->keys[i].m2)
     {
         //printf("Swap act\n");
@@ -119,6 +118,7 @@ int BinHeap_extract_min(BinHeap_t* bp)
 
 void BinHeap_free(BinHeap_t* bp)
 {
+	free(bp->isPresent);
     free(bp->keys);
 }
 

@@ -205,8 +205,8 @@ int main(int argc, char** argv)
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
-        //int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
-        int iter = 0;
+        int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
+        // int iter = 0;
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
