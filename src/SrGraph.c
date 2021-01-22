@@ -482,7 +482,7 @@ my_m1 SrGraph_get_max_spread(SrGraph_t* sr)
     int nbEdge = 0;
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {
-            for (Edge_t* tmp = sr->succ[i][j] ; tmp != NULL ; tmp = tmp->next) {
+            for (Edge_t* tmp = sr->pred[i][j] ; tmp != NULL ; tmp = tmp->next) {
                 // if (tmp->m1 == INF) {
                 //     return -1;
                 // }

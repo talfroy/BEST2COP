@@ -282,6 +282,8 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
 
             pathM1 = neighbor->infos.m1 + (*m1dists)[currNode];
             pathM2 = neighbor->infos.m2 + (*m2dists)[currNode];
+            // printf("Path m1 : %d\n", pathM1);
+            // printf("Path m2 : %d\n", pathM2);
             // if ((*m1dists)[currNode] == INF) {
             //     printf("M1 == INF : %d\n", currNode);
             // }
@@ -289,9 +291,7 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
             //     printf("M2 == INF : %d\n", currNode);
             // }
 
-            if (currNode == root) {
-                printf("neigh = %d\n", neighbor->infos.edgeDst);
-            }
+            
 
             if (pathM1 == (*m1dists)[neighbor->infos.edgeDst]) {
                 if (pathM2 == (*m2dists)[neighbor->infos.edgeDst]) {
@@ -314,29 +314,21 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
         }
         currNode = BinHeap_extract_min(&bp);
         //currNode = depile(stack);
-        //printf("nb seen = %d\n", nbSeen);
+        //printf("new curr node = %d\n", currNode);
     }
     
     //freeStack(stack);
     BinHeap_free(&bp);
 
-    if (succOutGraph != NULL) {
-        for (int i = 0 ; i < nbNodes ; i++) {
-            if (i != root) {
-                if ((*m1dists)[i] == INF || (*m2dists)[i] == INF) {
-                    printf("%d -> %d\n", root, i);
-                }
-                (*succOutGraph)[root][i] = Edge_add((*succOutGraph)[root][i], (*m1dists)[i], (*m2dists)[i]);
-                (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
-            }
+    for (int i = 0 ; i < nbNodes ; i++) {
+        if (i != root) {
+            (*succOutGraph)[root][i] = Edge_add((*succOutGraph)[root][i], (*m1dists)[i], (*m2dists)[i]);
+            (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
         }
     }
 
 
     for (int i = 0 ; i < nbNodes ; i++) {
-        if ((*m1dists)[i] == INF/* || (*m2dists)[i] == INF*/) {
-            //printf("%d -> %d\n", root, i);
-        }
         free(parents[i]);
         // if ((*m1dists)[i] > 10000 || (*m1dists)[i] < 0) {
         //     printf("Un soucis de %d -> %d\n", root,i);

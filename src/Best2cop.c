@@ -169,6 +169,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                         Pfront_insert_key(pfcandlist, d1v);
                         *t = *t + 1;
                     }
+
                     Dict_add(pf_cand, d1v, d2v);
 
                     *imax = MAX(*imax, d1v);
@@ -190,8 +191,6 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pf
     // } else {
     //     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
     // }
-    t++;
-    t--;
     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
 }
 

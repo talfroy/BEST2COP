@@ -55,7 +55,7 @@ void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
         return;
     }
 
-    if (bp->isPresent[node] != -2) {
+    if (bp->isPresent[node] == -2) {
         return;
     }
 

@@ -56,7 +56,7 @@ int main(int argc, char** argv)
         if (opt.flex) {
             sr = SrGraph_create_flex_algo(topo);
         } else {
-            sr = SrGraph_create_from_topology_best_m1(topo);
+            sr = SrGraph_create_from_topology_best_m2(topo);
         }
         gettimeofday(&stop, NULL);
         //SrGraph_print_in_file(sr, stdout);
@@ -144,7 +144,7 @@ int main(int argc, char** argv)
             dist = NULL;
             pfront = NULL;
 
-            //printf("Iter %d\n", i);
+            printf("Iter %d\n", i);
             gettimeofday(&start, NULL);
 
             iterMax[i] = Best2cop(&pfront, &dist, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
