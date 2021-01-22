@@ -113,6 +113,11 @@ int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src
 
                 if (analyse == ANALYSE_2COP) {
                     (*iters)[i] = nbIter;
+                    // if (src == 208 && i == 8) {
+                    //     printf("for node %d ", i);
+                    //     Extendable_print(nextextendable[i]);
+                    //     printf("\n");
+                    // }
                 }
                 extendable = Extendable_list_new(extendable, i, NULL);
                 extendable->ext = Extendable_copy(nextextendable[i]);
@@ -177,11 +182,17 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
 void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int t, int imax, int iter, int dst, ParetoFront_t** pf)
 {
-    if (t * log(t) + t + (*pfront)[iter-1][dst].heapSize < imax / 10) {
-        Best2cop_cpt_extendable_paths_select(nextextendable, pfront, pf_cand, dist_v, pfcandlist, iter, dst, pf);
-    } else {
-        Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
-    }
+    // if (t * log(t) + t + (*pfront)[iter-1][dst].heapSize < imax / 10) {
+    //     if (dst == 8) {
+    //         printf("On est dans select\n");
+    //     }
+    //     Best2cop_cpt_extendable_paths_select(nextextendable, pfront, pf_cand, dist_v, pfcandlist, iter, dst, pf);
+    // } else {
+    //     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
+    // }
+    t++;
+    t--;
+    Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
 }
 
 
@@ -190,6 +201,9 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_
 {
     Pfront_sort(pfcandlist);
     Pfront_t* d1_it = Pfront_merge_sort(&(*pfront)[iter-1][dst], pfcandlist);
+    if (dst == 8) {
+        Pfront_print(d1_it, stdout);
+    }
 
     my_m2 last_d2 = INF;
     for (int i = 0 ; i < d1_it->heapSize ; i++) {

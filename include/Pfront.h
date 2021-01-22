@@ -54,7 +54,7 @@ void Pfront_sort(Pfront_t* bp);
  * @brief Only use for debug
  */
 
-void Pfront_print(Pfront_t* bp);
+void Pfront_print(Pfront_t* pf, FILE* out);
 
 
 Pfront_t* Pfront_merge_sort(Pfront_t* pfront, Pfront_t* pfcand);

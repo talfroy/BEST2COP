@@ -42,6 +42,15 @@ int Pfront_union(Pfront_t* pfront, Pfront_t* pfcand)
     }
 }
 
+
+void Pfront_print(Pfront_t* pf, FILE* out)
+{
+    for (int i = 0 ; i < pf->heapSize ; i++) {
+        fprintf(out, " %d ", pf->keys[i]);
+    }
+    printf("\n");
+}
+
 Pfront_t* Pfront_merge_sort(Pfront_t* pfront, Pfront_t* pfcand)
 {
     Pfront_t* ret = malloc(sizeof(Pfront_t));

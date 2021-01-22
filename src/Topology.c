@@ -82,6 +82,9 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
             src = LabelTable_get_id(&labels, srcLabel);
             dst = LabelTable_get_id(&labels, destLabel);
             m1 *= my_pow(10, precision);
+            if (m1 < 1) {
+                m1 = 1;
+            }
             topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
             topo->pred[dst] = Llist_new(topo->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
             if (biDir) {
@@ -206,7 +209,7 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
                     parents[neighbor->infos.edgeDst][0] = 1;
                     parents[neighbor->infos.edgeDst][1] = currNode;
                     //empile(neighbor->infos.edgeDst, stack);
-                    BinHeap_insert_key(&bp, neighbor->infos.edgeDst, neighbor->infos.m1, neighbor->infos.m2);
+                    BinHeap_insert_key(&bp, neighbor->infos.edgeDst, pathM1, pathM2);
                 }
             } else if (pathM2 < (*m2dists)[neighbor->infos.edgeDst]) {
                 (*m2dists)[neighbor->infos.edgeDst] = pathM2;
@@ -214,7 +217,7 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
                 parents[neighbor->infos.edgeDst][0] = 1;
                 parents[neighbor->infos.edgeDst][1] = currNode;
                 //empile(neighbor->infos.edgeDst, stack);
-                BinHeap_insert_key(&bp, neighbor->infos.edgeDst, neighbor->infos.m1, neighbor->infos.m2);
+                BinHeap_insert_key(&bp, neighbor->infos.edgeDst, pathM1, pathM2);
             }
         }
         //currNode = depile(stack);
@@ -285,7 +288,7 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
                     parents[neighbor->infos.edgeDst][0] = 1;
                     parents[neighbor->infos.edgeDst][1] = currNode;
                     //empile(neighbor->infos.edgeDst, stack);
-                    BinHeap_insert_key(&bp, neighbor->infos.edgeDst, neighbor->infos.m2, neighbor->infos.m1);
+                    BinHeap_insert_key(&bp, neighbor->infos.edgeDst, pathM2, pathM1);
                 }
             } else if (pathM1 < (*m1dists)[neighbor->infos.edgeDst]) {
                 (*m1dists)[neighbor->infos.edgeDst] = pathM1;
@@ -293,7 +296,7 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
                 parents[neighbor->infos.edgeDst][0] = 1;
                 parents[neighbor->infos.edgeDst][1] = currNode;
                 //empile(neighbor->infos.edgeDst, stack);
-                BinHeap_insert_key(&bp, neighbor->infos.edgeDst, neighbor->infos.m2, neighbor->infos.m1);
+                BinHeap_insert_key(&bp, neighbor->infos.edgeDst, pathM2, pathM1);
             }
         }
         currNode = BinHeap_extract_min(&bp);

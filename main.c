@@ -116,6 +116,7 @@ int main(int argc, char** argv)
     }
 
 
+
     maxSpread *= SEG_MAX;
     opt.cstr1 *= my_pow(10, opt.accuracy);
     my_m1 max_dict_size = MIN(maxSpread, opt.cstr1);
@@ -200,10 +201,11 @@ int main(int argc, char** argv)
     } else {
         dist = NULL;
         pfront = NULL;
+        int* itersSolo = malloc(sr->nbNode * sizeof(int));
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
-        int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL);
+        int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
 
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
@@ -215,7 +217,7 @@ int main(int argc, char** argv)
 
         //Main_display_results(output, dist, sr->nbNode, pfront, iter);
         if (opt.analyse) {
-            maxIter = sr->nbNode;
+            maxIter = 10 * SEG_MAX;
         } else {
             maxIter = SEG_MAX + 1;
         }
@@ -229,8 +231,13 @@ int main(int argc, char** argv)
             free(dist[j]);
         }
 
+        for (int i = 0 ; i < sr->nbNode ; i++) {
+            fprintf(output, "%d %d %d\n", opt.src, i, itersSolo[i]);
+        }
+
         free(pfront);
         free(dist);
+        free(itersSolo);
     }
     if (opt.interface) {
         free(opt.filename);
