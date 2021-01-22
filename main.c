@@ -56,7 +56,7 @@ int main(int argc, char** argv)
         if (opt.flex) {
             sr = SrGraph_create_flex_algo(topo);
         } else {
-            sr = SrGraph_create_from_topology_best_m2(topo);
+            sr = SrGraph_create_from_topology_best_m1(topo);
         }
         gettimeofday(&stop, NULL);
         //SrGraph_print_in_file(sr, stdout);
@@ -205,8 +205,8 @@ int main(int argc, char** argv)
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
-        int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
-
+        //int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
+        int iter = 0;
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
@@ -231,8 +231,10 @@ int main(int argc, char** argv)
             free(dist[j]);
         }
 
-        for (int i = 0 ; i < sr->nbNode ; i++) {
-            fprintf(output, "%d %d %d\n", opt.src, i, itersSolo[i]);
+        if (opt.analyse) {
+            for (int i = 0 ; i < sr->nbNode ; i++) {
+                fprintf(output, "%d %d %d\n", opt.src, i, itersSolo[i]);
+            }
         }
 
         free(pfront);

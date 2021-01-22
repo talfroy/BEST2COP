@@ -55,6 +55,10 @@ void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
         return;
     }
 
+    if (bp->isPresent[node] != -2) {
+        return;
+    }
+
     bp->heapSize++;
     int i = bp->heapSize - 1;
     bp->keys[i].nodeId = node;
@@ -105,7 +109,7 @@ int BinHeap_extract_min(BinHeap_t* bp)
     int root = bp->keys[0].nodeId;
     bp->keys[0] = bp->keys[bp->heapSize-1];
     bp->isPresent[bp->keys[0].nodeId] = 0;
-    bp->isPresent[root] = -1;
+    bp->isPresent[root] = -2;
     bp->heapSize--;
     BinHeap_min_heapify(bp, 0);
 

@@ -10,12 +10,12 @@
 #include "include/Best2cop.h"
 
 int main() {
-    Topology_t* topo = Topology_load_from_file("test_flex.isp", 1, 0);
-    SrGraph_t* flex = SrGraph_create_flex_algo(topo);
-
-    SrGraph_print_in_file(flex, stdout);
-
-    SrGraph_free(flex);
-    Topology_free(topo);
+    Topology_t* topo = Topology_load_from_file("geoSprint", 1, 0);
+    int* m1dists, *m2dists;
+    m1dists = malloc(sizeof(int) * topo->nbNode);
+    m2dists = malloc(sizeof(int) * topo->nbNode);
+    dikjstra_best_m1(NULL, NULL, topo->succ, 0, &m1dists, &m2dists, topo->nbNode);
+    free(m1dists);
+    free(m2dists);
     return 0;
 }

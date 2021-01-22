@@ -82,9 +82,7 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
             src = LabelTable_get_id(&labels, srcLabel);
             dst = LabelTable_get_id(&labels, destLabel);
             m1 *= my_pow(10, precision);
-            if (m1 < 1) {
-                m1 = 1;
-            }
+            
             topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
             topo->pred[dst] = Llist_new(topo->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
             if (biDir) {
@@ -250,12 +248,12 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
 void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes)
 {
-    // myStack* stack = initStack(nbNodes);
+    myStack* stack = initStack(nbNodes);
 
-    // if (stack == NULL) {
-    //     ERROR("Stack for dijkstra can't be created\n");
-    //     return;
-    // }
+    if (stack == NULL) {
+        ERROR("Stack for dijkstra can't be created\n");
+        return;
+    }
 
     BinHeap_t bp;
     BinHeap_init(&bp, nbNodes);
@@ -270,18 +268,33 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
     (*m1dists)[root] = 0;
     (*m2dists)[root] = 0;
 
-    int parents[nbNodes][NB_NODE_MAX];
+    int** parents = malloc(nbNodes * sizeof(int*));
+    for (int i = 0 ; i < nbNodes ; i++) {
+        parents[i] = malloc(NB_NODE_MAX * sizeof(int));
+        memset(parents[i], 0, NB_NODE_MAX * sizeof(int));
+    }
 
-    memset(parents, 0, nbNodes * NB_NODE_MAX * sizeof(int));
-
-    for (int currNode = root, nbSeen = 0 ; nbSeen < nbNodes * nbNodes && currNode != -1 ; nbSeen++) {
+    for (int currNode = root, nbSeen = 0 ; nbSeen <= nbNodes * nbNodes && currNode != -1 ; nbSeen++) {
         for (Llist_t* neighbor = ingraph[currNode] ; neighbor != NULL ; neighbor = neighbor->next) {
             if (neighbor->infos.edgeDst == root || neighbor->infos.m1 == INF || neighbor->infos.m2 == INF) {
                 continue;
             }
 
-            if ((pathM1 = neighbor->infos.m1 + (*m1dists)[currNode]) == (*m1dists)[neighbor->infos.edgeDst]) {
-                if ((pathM2 = neighbor->infos.m2 + (*m2dists)[currNode]) == (*m2dists)[neighbor->infos.edgeDst]) {
+            pathM1 = neighbor->infos.m1 + (*m1dists)[currNode];
+            pathM2 = neighbor->infos.m2 + (*m2dists)[currNode];
+            // if ((*m1dists)[currNode] == INF) {
+            //     printf("M1 == INF : %d\n", currNode);
+            // }
+            // if ((*m2dists)[currNode] == INF) {
+            //     printf("M2 == INF : %d\n", currNode);
+            // }
+
+            if (currNode == root) {
+                printf("neigh = %d\n", neighbor->infos.edgeDst);
+            }
+
+            if (pathM1 == (*m1dists)[neighbor->infos.edgeDst]) {
+                if (pathM2 == (*m2dists)[neighbor->infos.edgeDst]) {
                     parents[neighbor->infos.edgeDst][++parents[neighbor->infos.edgeDst][0]] = currNode;
                 } else if (pathM2 > (*m2dists)[neighbor->infos.edgeDst]) {
                     (*m2dists)[neighbor->infos.edgeDst] = pathM2;
@@ -292,7 +305,7 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
                 }
             } else if (pathM1 < (*m1dists)[neighbor->infos.edgeDst]) {
                 (*m1dists)[neighbor->infos.edgeDst] = pathM1;
-                (*m2dists)[neighbor->infos.edgeDst] = neighbor->infos.m2 + (*m2dists)[currNode];
+                (*m2dists)[neighbor->infos.edgeDst] = pathM2;
                 parents[neighbor->infos.edgeDst][0] = 1;
                 parents[neighbor->infos.edgeDst][1] = currNode;
                 //empile(neighbor->infos.edgeDst, stack);
@@ -300,16 +313,38 @@ void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
             }
         }
         currNode = BinHeap_extract_min(&bp);
+        //currNode = depile(stack);
+        //printf("nb seen = %d\n", nbSeen);
     }
     
     //freeStack(stack);
+    BinHeap_free(&bp);
 
-    for (int i = 0 ; i < nbNodes ; i++) {
-        if (i != root) {
-            (*succOutGraph)[root][i] = Edge_add((*succOutGraph)[root][i], (*m1dists)[i], (*m2dists)[i]);
-            (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
+    if (succOutGraph != NULL) {
+        for (int i = 0 ; i < nbNodes ; i++) {
+            if (i != root) {
+                if ((*m1dists)[i] == INF || (*m2dists)[i] == INF) {
+                    printf("%d -> %d\n", root, i);
+                }
+                (*succOutGraph)[root][i] = Edge_add((*succOutGraph)[root][i], (*m1dists)[i], (*m2dists)[i]);
+                (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
+            }
         }
     }
+
+
+    for (int i = 0 ; i < nbNodes ; i++) {
+        if ((*m1dists)[i] == INF/* || (*m2dists)[i] == INF*/) {
+            //printf("%d -> %d\n", root, i);
+        }
+        free(parents[i]);
+        // if ((*m1dists)[i] > 10000 || (*m1dists)[i] < 0) {
+        //     printf("Un soucis de %d -> %d\n", root,i);
+        // }
+    }
+
+
+    free(parents);
 }
 
 

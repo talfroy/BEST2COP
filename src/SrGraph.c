@@ -132,7 +132,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo)
         return NULL;
     }
 
-  //  #pragma omp parallel for
+    #pragma omp parallel for
     for (int i = 0 ; i < topo->nbNode ; i++) {
         dikjstra_best_m1(&graph->succ, &graph->pred, topo->succ, i,
                     &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
@@ -475,20 +475,35 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output)
 my_m1 SrGraph_get_max_spread(SrGraph_t* sr)
 {
     my_m1 max = 0;
+    my_m1 minM1 = INF;
+    my_m2 minM2 = INF;
+    my_m2 maxM2 = 0;
+    int nbzero = 0;
     int nbEdge = 0;
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {
             for (Edge_t* tmp = sr->succ[i][j] ; tmp != NULL ; tmp = tmp->next) {
-                if (tmp->m1 == INF) {
-                    return -1;
-                }
+                // if (tmp->m1 == INF) {
+                //     return -1;
+                // }
+                minM1 = MIN(minM1, tmp->m1);
+                minM2 = MIN(minM2, tmp->m2);
+                maxM2 = MAX(maxM2, tmp->m2);
                 max = MAX(max, tmp->m1);
+                if (!tmp->m1) {
+                    nbzero++;
+                }
                 nbEdge++;
             }
         }
     }
 
     INFO("There are %d adjacencies\n", nbEdge- (sr->nbNode) * (sr->nbNode - 1));
+    RESULTS("Max delay : %d\n", max);
+    RESULTS("Min delay : %d\n", minM1);
+    RESULTS("Max igp : %d\n", maxM2);
+    RESULTS("Min igp : %d\n", minM2);
+    RESULTS("NB edges with 0 : %d\n", nbzero);
     return max;
 }
 
