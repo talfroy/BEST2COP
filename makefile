@@ -3,7 +3,7 @@ OBJDIR= obj
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ  = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 PG ?= -pg
-FLAGS := -Wall -Wextra -O3  -fopenmp
+FLAGS := -Wall -Wextra -Werror -O3  -fopenmp
 #$(PG)
 CC ?= gcc
 

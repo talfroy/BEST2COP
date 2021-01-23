@@ -144,7 +144,7 @@ int main(int argc, char** argv)
             dist = NULL;
             pfront = NULL;
 
-            printf("Iter %d\n", i);
+            //printf("Iter %d\n", i);
             gettimeofday(&start, NULL);
 
             iterMax[i] = Best2cop(&pfront, &dist, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);

@@ -181,7 +181,8 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
 
 
 void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int t, int imax, int iter, int dst, ParetoFront_t** pf)
+                                    Dict_t* pf_cand, Dict_t* dist_v, __attribute__ ((unused)) Pfront_t* pfcandlist, __attribute__ ((unused)) int t, 
+                                    int imax, int iter, int dst, ParetoFront_t** pf)
 {
     // if (t * log(t) + t + (*pfront)[iter-1][dst].heapSize < imax / 10) {
     //     if (dst == 8) {

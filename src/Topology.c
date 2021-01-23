@@ -219,6 +219,7 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
             }
         }
         //currNode = depile(stack);
+        //printf("new curr node = %d\n", currNode);
         currNode = BinHeap_extract_min(&bp);
     }
     

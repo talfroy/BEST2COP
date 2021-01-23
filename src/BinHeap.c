@@ -4,14 +4,15 @@
 void BinHeap_init(BinHeap_t* bp, int size)
 {
     bp->heapSize = 0;
-    bp->keys = malloc(size * sizeof(Nodes_t));
+    bp->keys = malloc((size+1) * sizeof(Nodes_t));
     ASSERT_VOID(bp->keys);
-    bp->isPresent = malloc(size * sizeof(int));
+    memset(bp->keys, 0, (size + 1) * sizeof(Nodes_t));
+    bp->isPresent = malloc((1+size) * sizeof(int));
     ASSERT_VOID(bp->isPresent);
-    for (int i = 0 ; i < size ; i++) {
+    for (int i = 0 ; i < size + 1 ; i++) {
         bp->isPresent[i] = -1;
     }
-    bp->maxSize = size;
+    bp->maxSize = size + 1;
 }
 
 
@@ -50,14 +51,16 @@ void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
         return;
     }
 
+
+    if (bp->isPresent[node] == -2) {
+        return;
+    }
+    
     if (bp->isPresent[node] != -1) {
         BinHeap_decrease_key(bp, node, m1, m2);
         return;
     }
 
-    if (bp->isPresent[node] == -2) {
-        return;
-    }
 
     bp->heapSize++;
     int i = bp->heapSize - 1;
