@@ -123,6 +123,7 @@ int BinHeap_extract_min(BinHeap_t* bp)
 void BinHeap_free(BinHeap_t* bp)
 {
     free(bp->keys);
+    free(bp->isPresent);
 }
 
 
