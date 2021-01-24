@@ -111,4 +111,6 @@ long int my_pow(long int x, int y);
 
 Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[]);
 
+Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[], int exist);
+
 #endif

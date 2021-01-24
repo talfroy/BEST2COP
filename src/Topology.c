@@ -372,3 +372,33 @@ Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[])
 
     return topo;
 }
+
+
+Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[], int exist)
+{
+    Topology_t* topo = Topology_init(size);
+
+    for (int i = 0 ; i < size ; i++) {
+        for (int j = i + 1 ; j < size ; j++) {
+            if (i == j) {
+                continue;
+            }
+            if (RAND(0, size) > exist) {
+                continue;
+            }
+            my_m1 m1 = v_delay[RAND(0, 10000)];
+            my_m2 m2 = v_igp[RAND(0, 10000)];
+            // if (m1 < 0) {
+            //     printf("There is a problem in random part : %d\n", m1);
+            // }
+            //printf("add a new arc (%d -> %d)\n", i, j);
+            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
+            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
+        }
+
+    }
+
+    return topo;
+}

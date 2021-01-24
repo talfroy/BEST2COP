@@ -216,4 +216,6 @@ bool hasapath(Pfront_t** pfront, int dst);
 
 void SrGraph_check_m1(SrGraph_t*);
 
+bool SrGraph_is_connex(SrGraph_t* sr);
+
 #endif

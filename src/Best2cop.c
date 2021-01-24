@@ -103,21 +103,23 @@ int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src
 
         for (int i = 0 ; i < graph->nbNode ; i++) {
             if (nextextendable[i] != NULL) {
-                if (analyse == ANALYSE_DCLC) {
-                    tmp_igp = update_min_igp(minIgp[i], nextextendable[i]);
-                    if (tmp_igp < minIgp[i]) {
-                        (*iters)[i] = nbIter;
+                if (iters != NULL) {
+                    if (analyse == ANALYSE_DCLC) {
+                        tmp_igp = update_min_igp(minIgp[i], nextextendable[i]);
+                        if (tmp_igp < minIgp[i]) {
+                            (*iters)[i] = nbIter;
+                        }
+                        minIgp[i] = tmp_igp;
                     }
-                    minIgp[i] = tmp_igp;
-                }
 
-                if (analyse == ANALYSE_2COP) {
-                    (*iters)[i] = nbIter;
-                    // if (src == 208 && i == 8) {
-                    //     printf("for node %d ", i);
-                    //     Extendable_print(nextextendable[i]);
-                    //     printf("\n");
-                    // }
+                    if (analyse == ANALYSE_2COP) {
+                        (*iters)[i] = nbIter;
+                        // if (src == 208 && i == 8) {
+                        //     printf("for node %d ", i);
+                        //     Extendable_print(nextextendable[i]);
+                        //     printf("\n");
+                        // }
+                    }
                 }
                 extendable = Extendable_list_new(extendable, i, NULL);
                 extendable->ext = Extendable_copy(nextextendable[i]);
