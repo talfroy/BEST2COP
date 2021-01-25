@@ -13,6 +13,17 @@ struct ParetoFront_s {
     ParetoFront_t* next;
 };
 
+
+/**
+ * @brief allocate a new pareto front structure
+ * 
+ * @param prev          old list
+ * @param m1            delay of the new element
+ * @param m2            igp weight of the new element
+ * 
+ * @return return the new list
+ */
+
 ParetoFront_t* ParetoFront_new(ParetoFront_t* prev, my_m1 m1, my_m2 m2);
 
 void ParetoFront_free(ParetoFront_t* pf);

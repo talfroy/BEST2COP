@@ -15,30 +15,10 @@
 #define TOPOLOGY_TYPE           ISP
 
 //define which type of topology will be load
-#if TOPOLOGY_TYPE == DIABLO
-
-typedef long int my_m2;
-typedef long int my_m1;
-
-#endif
-
-
-#if TOPOLOGY_TYPE == ISP
 
 typedef int my_m2;
 typedef int my_m1;
 
-#endif
-
-
-#define ARRAY_HEAP              0
-#define PFRONT_HEAP             1
-
-//define which type of heap will be used
-#define HEAP_TYPE               ARRAY_HEAP
-
-#define DIABLO_POWERTEN         0
-#define DIABLO_65               1
 
 
 #define MAX_SR_GRAPH_SIZE       1500

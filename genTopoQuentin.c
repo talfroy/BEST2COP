@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
             file[j] = fopen(fileName[j], "w");
 
             INFO("Start compute or spread %d %d nodes sample %d\n", max_m1, i, j);
-            topo[j] = Topology_create_random_pascal(i, v_delay, v_igp, 10);
+            topo[j] = Topology_create_random_quentin(i, v_delay, v_igp, 10);
             Topology_print(topo[j], "testRandomTopo50_1000.isp");
             sr[j] = SrGraph_create_from_topology_best_m2(topo[j]);
             if (SrGraph_get_max_spread(sr[j]) != -1) {

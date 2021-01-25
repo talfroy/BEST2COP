@@ -40,14 +40,14 @@ int main() {
 
     omp_set_num_threads(omp_get_max_threads());
 
-    printf("PRE_SPREAD MEAN_2COP\n");
+    printf("PRE_SPREAD SRC DST NB_ITERS\n");
     
     for (int i = 0 ; i < 19 ; i++) {
         int spread = spreads[i];
         INFO("now with spread %d\n", spread);
         c_delay = get_c(1, spread, courbure);
         fill_tab(c_delay, v_delay, courbure, 1, spread);
-        for (int n = 0 ; n < 10 ; n++) {
+        for (int n = 0 ; n < 1 ; n++) {
             topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
             sr = SrGraph_create_from_topology_best_m2(topo);
 
@@ -60,12 +60,16 @@ int main() {
             }
 
             INFO("Topology %d with spread %d is loaded\n", n + 1, spread);
+            int** iters2cop = malloc(1000 * sizeof(int*));
+            for (int j = 0 ; j < 1000 ; j++) {
+                iters2cop[j] = malloc(1000 * sizeof(int));
+            }
 
             for (int j = 0 ; j < 100 ; j++) {
                 dist = NULL;
                 pfront = NULL;
 
-                iters[i][n][j] = Best2cop(&pfront, &dist, sr, j, 1000, INF, 1000, 1, NULL);
+                iters[i][n][j] = Best2cop(&pfront, &dist, sr, j, 1000, INF, 1000, ANALYSE_2COP, &iters2cop[j]);
                 iters[i][n][j]--;
 
                 for (int l = 0 ; l <= 100 ; l++) {
@@ -77,15 +81,24 @@ int main() {
                     free(dist[l]);
                 }
 
+                for (int m = 0 ; m < 1000 ; m++) {
+                    printf("%d %d %d %d\n", spread, j, m, iters2cop[j][m]);
+                }
                 free(pfront);
                 free(dist);
             }
 
             SrGraph_free(sr);
             Topology_free(topo);
+
+            for (int j = 0 ; j < 1000 ; j++) {
+                free(iters2cop[j]);
+            }
+            free(iters2cop);
         }
 
-        printf("%d %f\n", spread, get_mean(iters[i], 10, 100));
+
+        //printf("%d %f\n", spread, get_mean(iters[i], 10, 100));
         
     }
 

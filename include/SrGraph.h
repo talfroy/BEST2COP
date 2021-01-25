@@ -50,7 +50,7 @@ SrGraph_t* SrGraph_init(int nbNodes);
 
 /**
  * @brief create a full-mech graph corresponding to the 
- * given Topology
+ * given Topology using igp as the main metric
  * 
  * @param topo               Topology to transform onto a SR-graph
  * 
@@ -58,6 +58,17 @@ SrGraph_t* SrGraph_init(int nbNodes);
  */
 
 SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo);
+
+
+/**
+ * @brief create a full-mech graph corresponding to the 
+ * given Topology using delay as the main metric
+ * 
+ * @param topo               Topology to transform onto a SR-graph
+ * 
+ * @return return the corresponding SR graph (at least full-mech)
+ */
+
 
 SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo);
 
@@ -200,21 +211,65 @@ my_m1 SrGraph_get_max_spread(SrGraph_t* sr);
 
 SrGraph_t* SrGraph_create_random_topo(int nbNode, int maxSpread);
 
+
+/**
+ * @brief create a new graph representing the biggest connex component
+ * of a SR graph
+ * 
+ * @param sr                Segment Routing graph to check
+ * 
+ * @return return the biggest connex component of sr
+ */
+
 SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr);
 
-long int SrGraph_crash_test(SrGraph_t* graph, Dict_t** dist, my_m1 cstrM1, int nbPlLinks);
+
+/**
+ * @brief create a flex algo from a topology. The flex algo SR graph
+ * contains all the edges from the SR graph-best-m2 and from the 
+ * SR graph-best-m1 (+ adjacencies)
+ * 
+ * @param topo              topology to transform
+ * 
+ * @return return the flex-algo sr graph
+ */
 
 SrGraph_t* SrGraph_create_flex_algo(Topology_t* topo);
 
+
+/**
+ * @brief merge all the edges (and reduce to pareto front) from two 
+ * SR graphs
+ * 
+ * @param best_m1           first sr graph
+ * @param best_m2           second sr graph
+ * @param size              number of node in the sr graph
+ * 
+ * @return return th merged sr graph
+ */
+
 SrGraph_t* SrGraph_merge_sr_graph(SrGraph_t* best_m1, SrGraph_t* best_m2, int size);
+
+
+/**
+ * @brief add all the adjacency segments from a topology to an 
+ * sr graph
+ * 
+ * @param graph             SR graph
+ * @param topo              topology
+ * 
+ * @return return the new sr graph
+ */
 
 SrGraph_t* SrGraph_add_adjacencies(SrGraph_t* graph, Topology_t* topo);
 
 
-bool hasapath(Pfront_t** pfront, int dst);
-
-
 void SrGraph_check_m1(SrGraph_t*);
+
+
+/**
+ * @brief check if a sr graph is connex
+ */
 
 bool SrGraph_is_connex(SrGraph_t* sr);
 

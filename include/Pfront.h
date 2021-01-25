@@ -62,4 +62,18 @@ Pfront_t* Pfront_merge_sort(Pfront_t* pfront, Pfront_t* pfcand);
 
 void Pfront_free(Pfront_t* bh);
 
+
+/**
+ * @brief check if it exists a path in pfront[dst] before
+ * the MSDth iteration
+ * 
+ * @param pfront            stack to check
+ * @param dst               destination node
+ * 
+ * @return return true if it exists a path before the MSDth iteration,
+ * false if not
+ */
+
+bool hasapath(Pfront_t** pfront, int dst);
+
 #endif

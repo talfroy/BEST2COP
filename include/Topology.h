@@ -79,6 +79,7 @@ void Topology_free(Topology_t* topo);
  * 
  * This function is used to do the All Pairs Shortest Path
  * needed for the Segment Routing Graph transformation
+ * this function takes the igp weight as main metric
  * 
  * Here typycally, we just allocate an empty SR graph, and use
  * it arguments to call this function (succOutGraph, predOutGraph,
@@ -103,13 +104,69 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes);
 
 
+/**
+ * @brief implementation of the dijkstra algorithm
+ * 
+ * This function is used to do the All Pairs Shortest Path
+ * needed for the Segment Routing Graph transformation 
+ * this funtion takes the delay as the main metric
+ * 
+ * Here typycally, we just allocate an empty SR graph, and use
+ * it arguments to call this function (succOutGraph, predOutGraph,
+ * igpWeight and delays)
+ * 
+ * @param succOutGraph      pointer on the output graph successor array
+ * this parameter must be allocated but not filled
+ * @param predOutGraph      pointer on the output graph predecessor array
+ * this parameter must be allocated but not filled
+ * @param ingraph           input graph (typycally topo->succ)
+ * @param root              root node to start the algorithm
+ * @param m1dists           array which contains the delays from root
+ * to the other nodes
+ * this parameter must be allocated but not filled
+ * @param m2dists           array which contains the IGP weights from root
+ * to the other nodes
+ * this parameter must be allocated but not filled
+ * @param nbNodes           number of nodes in the Topology
+ **/
+
 void dikjstra_best_m1(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes);
 
 
 long int my_pow(long int x, int y);
 
+
+/**
+ * @brief create a full-mesh topology with weights following
+ * a zipf distribution
+ * 
+ * @param size              number of nodes in the topology
+ * @param v_delay           array containing the delays values following
+ * the zipf distribution
+ * @param v_igp             array containing the igp weights values following
+ * the zipf distribution
+ * 
+ * @return return the random topology
+ */
+
 Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[]);
+
+
+/**
+ * @brief create a topology weighted following a zipf distribution
+ * Each pair of node (i ; j) with j > i has a probability
+ * of exist/size to have a bidirectional link
+ * 
+ * @param size              number of nodes in the topology
+ * @param v_delay           array containing the delays values following
+ * the zipf distribution
+ * @param v_igp             array containing the igp weights values following
+ * the zipf distribution
+ * @param exist             existence coefficient
+ * 
+ * @return return the random topology
+ */
 
 Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[], int exist);
 

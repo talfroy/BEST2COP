@@ -60,10 +60,38 @@ void Extendable_free(Extendable_t* ext);
 
 void Extendable_print(Extendable_t* ext);
 
+/**
+ * @brief check if all the element of an array of ext are NULL
+ * 
+ * @param ext               array to test
+ * @param nbNode            array size
+ * 
+ * @return return true if the array is empty, false if not
+ */
 
 bool Extendable_is_empty(Extendable_t** ext, int nbNode);
 
+
+/**
+ * @brief copy ext into an other extendable list
+ * 
+ * @param ext               list to copy
+ * 
+ * @return return the copied list
+ */
+
 Extendable_t* Extendable_copy(Extendable_t* ext);
+
+
+/**
+ * @brief create a new element for a list of Extendable_list
+ * 
+ * @param next              old list
+ * @param node              destination node of the paths
+ * @param ext               all the path toward node
+ * 
+ * @return return the new list
+ */
 
 Extendable_list_t* Extendable_list_new(Extendable_list_t* next, int node, Extendable_t* ext);
 
