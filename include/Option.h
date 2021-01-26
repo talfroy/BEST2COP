@@ -29,7 +29,7 @@ struct Options {
     bool flex;              /**< enable flex algo (disble by default) */
 };
 
-struct Options opt;
+extern struct Options opt;
 
 
 /**

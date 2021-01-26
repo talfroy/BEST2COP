@@ -1,5 +1,7 @@
 #include "../include/Option.h"
 
+struct Options opt;
+
 int Option_command_parser (int argc, char** argv) {
     int optValue = 0;
     const char *optString = "f:a:o:b:1:2:tslui";

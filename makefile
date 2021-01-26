@@ -5,7 +5,7 @@ OBJ  = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 PG ?= -pg
 FLAGS := -Wall -Wextra -Werror -O3  -fopenmp
 #$(PG)
-CC ?= gcc
+CC := gcc-10
 
 LIBS := -lm -fopenmp
 
