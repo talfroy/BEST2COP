@@ -87,17 +87,17 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
                     &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
     }
 
-    // for (int i = 0 ; i < topo->nbNode ; i++) {
-    //     for (Llist_t* tmp = topo->succ[i] ; tmp != NULL ; tmp = tmp->next) {
-    //         my_m1 m1 = tmp->infos.m1;
-    //         my_m2 m2 = tmp->infos.m2;
-    //         int dst = tmp->infos.edgeDst;
-    //         if (m1 < graph->m1dists[i][dst]) {
-    //             graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
-    //             graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
-    //         }
-    //     }
-    // }
+    for (int i = 0 ; i < topo->nbNode ; i++) {
+        for (Llist_t* tmp = topo->succ[i] ; tmp != NULL ; tmp = tmp->next) {
+            my_m1 m1 = tmp->infos.m1;
+            my_m2 m2 = tmp->infos.m2;
+            int dst = tmp->infos.edgeDst;
+            if (m1 < graph->m1dists[i][dst]) {
+                graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
+                graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
+            }
+        }
+    }
 
 
     return graph;

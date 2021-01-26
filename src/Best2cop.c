@@ -165,6 +165,10 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                 my_m1 d1v = path->infos.m1 + edge->m1;
                 my_m2 d2v = path->infos.m2 + edge->m2;
 
+                if (d2v < 0) {
+                    ERROR("There overflow\n");
+                }
+
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v);
                     if (pf_cand->paths[d1v] == INF) {
@@ -194,6 +198,8 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pf
     // } else {
     //     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
     // }
+
+    //printf("%d\n", t);
     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
 }
 
