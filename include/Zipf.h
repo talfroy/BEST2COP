@@ -3,7 +3,7 @@
 
 #include "base.h"
 
-int return_rank(float c, float courbure, float min, float max);
+int return_rank(double c, double courbure, double min, double max);
 
 
 /**
@@ -16,7 +16,7 @@ int return_rank(float c, float courbure, float min, float max);
  * @return return the c value
  */
 
-float get_c(float min, float max, float courbure);
+double get_c(double min, double max, double courbure);
 
 
 /**
@@ -32,6 +32,6 @@ float get_c(float min, float max, float courbure);
  * @param max           maximal value of the distribution        
  */
 
-void fill_tab(float c, int tab[], float courbure, float min, float max);
+void fill_tab(double c, int tab[], double courbure, double min, double max);
 
 #endif

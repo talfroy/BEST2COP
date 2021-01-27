@@ -80,7 +80,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
         return NULL;
     }
 
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i = 0 ; i < topo->nbNode ; i++) {
         //printf("Computing dijkstra for node %d\n", i);
         dikjstra_best_m2(&graph->succ, &graph->pred, topo->succ, i,

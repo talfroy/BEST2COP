@@ -386,8 +386,8 @@ Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[],
             if (RAND(0, size) > exist) {
                 continue;
             }
-            my_m1 m1 = v_delay[RAND(0, 10000)];
-            my_m2 m2 = v_igp[RAND(0, 10000)];
+            my_m1 m1 = v_delay[RAND(0, 100000)];
+            my_m2 m2 = v_igp[RAND(0, 100000)];
             // if (m1 < 0) {
             //     printf("There is a problem in random part : %d\n", m1);
             // }

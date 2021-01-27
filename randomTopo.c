@@ -30,7 +30,7 @@ int main (int argc, char**argv)
     SrGraph_t* sr[NB_FILE];
     struct timeval start, stop;
     ParetoFront_t*** dist = NULL;
-    BinHeap_t** pfront = NULL;
+    Pfront_t** pfront = NULL;
     long int* times;
     long int means[NB_FILE];
     int nbIter;
@@ -78,7 +78,7 @@ int main (int argc, char**argv)
                 
                 for (int l = 0 ; l <= SEG_MAX ; l++) {
                     for (int k = 0 ; k < i ; k++) {
-                        BinHeap_free(&pfront[l][k]);
+                        Pfront_free(&pfront[l][k]);
                         ParetoFront_free(dist[l][k]);
                     }
                     free(pfront[l]);

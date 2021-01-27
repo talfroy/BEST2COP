@@ -122,8 +122,10 @@ clean:
 	@rm -rf unitFlex.o
 	@rm -rf unitBinHeap
 	@rm -rf BinHeap.o
-	@rm -rf generate_random.o
+	@rm -rf genRandom.o
 	@rm -rf genRandom
+	@rm -rf randomTopo.o
+	@rm -rf randomTopo
 	@echo ${info} "Main program clean succesfully done"
 
 

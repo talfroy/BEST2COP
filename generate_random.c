@@ -5,26 +5,26 @@
 #include "include/Best2cop.h"
 
 
-#define MAX_IGP     INF/50
+#define MAX_IGP     100000000
 
 //void Create_random_sr(int i,  int v_delay[], int v_igp[], char filename[]);
 
 
-float get_mean(int tab[10][100], int size, int size2);
+double get_mean(int tab[10][100], int size, int size2);
 
 int main() {
 
     srand(time(NULL));
-    // float courbure = log(10.0) / log(6.0);
-    // float c_delay;
-    // INFO("END with delay\n");
-    // float c_igp = get_c(1, MAX_IGP, courbure);
+    double courbure = log(10.0) / log(9.0);
+    double c_delay;
+    INFO("END with delay\n");
+    double c_igp = get_c(1, MAX_IGP, courbure);
     int spreads[19] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};
 
-    // int v_igp[10000];
-    // int v_delay[10000];
+    int v_igp[100000];
+    int v_delay[100000];
     INFO("Start Tab initialization\n");
-    // fill_tab(c_igp, v_igp, courbure, 1, MAX_IGP);
+    fill_tab(c_igp, v_igp, courbure, 1, MAX_IGP);
     int iters[19][10][100];
     SrGraph_t* sr;
     Topology_t* topo;
@@ -45,19 +45,19 @@ int main() {
     for (int i = 0 ; i < 19 ; i+= 2) {
         int spread = spreads[i];
         INFO("now with spread %d\n", spread);
-        // c_delay = get_c(1, spread, courbure);
-        // fill_tab(c_delay, v_delay, courbure, 1, spread);
+        c_delay = get_c(1, spread, courbure);
+        fill_tab(c_delay, v_delay, courbure, 1, spread);
         for (int n = 0 ; n < 10 ; n++) {
             //topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
-            topo = Topology_create_random_non_align(1000, 10, spread, MAX_IGP);
-            sr = SrGraph_create_from_topology_best_m2(topo);
+            topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
+            sr = SrGraph_create_flex_algo(topo);
 
             while (!SrGraph_is_connex(sr)) {
                 INFO("There is a replay\n");
                 Topology_free(topo);
-                topo = Topology_create_random_non_align(1000, 10, spread, MAX_IGP);
+                topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
                 SrGraph_free(sr);
-                sr = SrGraph_create_from_topology_best_m2(topo);
+                sr = SrGraph_create_flex_algo(topo);
             }
 
             INFO("Topology %d with spread %d is loaded\n", n + 1, spread);
@@ -104,6 +104,7 @@ int main() {
 
 
         printf("%d %f\n", spread, get_mean(iters[i], 10, 100));
+        RESULTS("%d -> %f\n", spread, get_mean(iters[i], 10, 100));
         
     }
 
@@ -112,14 +113,14 @@ int main() {
 }
 
 
-float get_mean(int tab[10][100], int size, int size2)
+double get_mean(int tab[10][100], int size, int size2)
 {
-    float mean = 0;
+    double mean = 0;
     for (int i = 0 ; i < size ; i++) {
         for (int j = 0 ; j < size2 ; j++) {
             mean += tab[i][j];
         }
     }
 
-    return mean / ((float)size * (float)size2);
+    return mean / ((double)size * (double)size2);
 }
