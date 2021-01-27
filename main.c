@@ -59,7 +59,7 @@ int main(int argc, char** argv)
             sr = SrGraph_create_from_topology_best_m2(topo);
         }
         gettimeofday(&stop, NULL);
-        //SrGraph_print_in_file(sr, stdout);
+        SrGraph_print_in_file(sr, stdout);
 
 
 
@@ -144,7 +144,7 @@ int main(int argc, char** argv)
             dist = NULL;
             pfront = NULL;
 
-            printf("Iter %d\n", i);
+            //printf("Iter %d\n", i);
             gettimeofday(&start, NULL);
 
             iterMax[i] = Best2cop(&pfront, &dist, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
@@ -206,7 +206,6 @@ int main(int argc, char** argv)
         gettimeofday(&start, NULL);
 
         int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
-        // int iter = 0;
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 

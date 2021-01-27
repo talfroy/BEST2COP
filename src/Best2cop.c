@@ -103,21 +103,23 @@ int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src
 
         for (int i = 0 ; i < graph->nbNode ; i++) {
             if (nextextendable[i] != NULL) {
-                if (analyse == ANALYSE_DCLC) {
-                    tmp_igp = update_min_igp(minIgp[i], nextextendable[i]);
-                    if (tmp_igp < minIgp[i]) {
-                        (*iters)[i] = nbIter;
+                if (iters != NULL) {
+                    if (analyse == ANALYSE_DCLC) {
+                        tmp_igp = update_min_igp(minIgp[i], nextextendable[i]);
+                        if (tmp_igp < minIgp[i]) {
+                            (*iters)[i] = nbIter;
+                        }
+                        minIgp[i] = tmp_igp;
                     }
-                    minIgp[i] = tmp_igp;
-                }
 
-                if (analyse == ANALYSE_2COP) {
-                    (*iters)[i] = nbIter;
-                    // if (src == 208 && i == 8) {
-                    //     printf("for node %d ", i);
-                    //     Extendable_print(nextextendable[i]);
-                    //     printf("\n");
-                    // }
+                    if (analyse == ANALYSE_2COP) {
+                        (*iters)[i] = nbIter;
+                        // if (src == 208 && i == 8) {
+                        //     printf("for node %d ", i);
+                        //     Extendable_print(nextextendable[i]);
+                        //     printf("\n");
+                        // }
+                    }
                 }
                 extendable = Extendable_list_new(extendable, i, NULL);
                 extendable->ext = Extendable_copy(nextextendable[i]);
@@ -163,6 +165,10 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                 my_m1 d1v = path->infos.m1 + edge->m1;
                 my_m2 d2v = path->infos.m2 + edge->m2;
 
+                if (d2v < 0) {
+                    ERROR("There overflow\n");
+                }
+
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v);
                     if (pf_cand->paths[d1v] == INF) {
@@ -181,7 +187,8 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
 
 
 void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int t, int imax, int iter, int dst, ParetoFront_t** pf)
+                                    Dict_t* pf_cand, Dict_t* dist_v, __attribute__ ((unused)) Pfront_t* pfcandlist, __attribute__ ((unused)) int t, 
+                                    int imax, int iter, int dst, ParetoFront_t** pf)
 {
     // if (t * log(t) + t + (*pfront)[iter-1][dst].heapSize < imax / 10) {
     //     if (dst == 8) {
@@ -191,6 +198,8 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pf
     // } else {
     //     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
     // }
+
+    //printf("%d\n", t);
     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
 }
 

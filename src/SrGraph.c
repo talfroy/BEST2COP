@@ -80,7 +80,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
         return NULL;
     }
 
-  //  #pragma omp parallel for
+    //#pragma omp parallel for
     for (int i = 0 ; i < topo->nbNode ; i++) {
         //printf("Computing dijkstra for node %d\n", i);
         dikjstra_best_m2(&graph->succ, &graph->pred, topo->succ, i,
@@ -375,51 +375,6 @@ SrGraph_t* SrGraph_create_crash_test(int nbNode, int nbPlinks)
 }
 
 
-
-
-SrGraph_t* SrGraph_create_diablo(int nbNode, int nbPlinks, char mode)
-{
-    SrGraph_t* graph = SrGraph_init(nbNode);
-
-    if (graph == NULL) {
-        ERROR("Segment Routing Graph can't be initialized\n");
-    }
-
-    my_m1 m1;
-    my_m2 m2;
-    my_m1* spread_weight = malloc(nbPlinks * sizeof(my_m1));
-    ASSERT(spread_weight, NULL);
-
-    for (int i = 1 ; i <= nbPlinks ; i++) {
-        spread_weight[i - 1] = i * 65536 / nbPlinks;
-    }
-
-    for (int i = 0 ; i < nbNode ; i++) {
-        for (int j = i ; j < nbNode ; j++) {
-            if (i >= j) {
-                continue;
-            }
-            for (int k = 0 ; k < nbPlinks ; k++) {
-                if (mode == DIABLO_POWERTEN) {
-                    m1 = my_pow(10, k);
-                    m2 = my_pow((i - j), 2) * my_pow(10, nbPlinks - k - 1);
-                    graph->succ[i][j] = Edge_add(graph->succ[i][j], m1, m2);
-                    graph->pred[j][i] = Edge_add(graph->pred[j][i], m1, m2);
-                }
-
-                if (mode == DIABLO_65) {
-                    m1 = spread_weight[k];
-                    m2 = my_pow((i - j), 2) * spread_weight[nbPlinks - k - 1];
-                    graph->succ[i][j] = Edge_add(graph->succ[i][j], m1, m2);
-                    graph->pred[j][i] = Edge_add(graph->pred[j][i], m1, m2);
-                }
-            }
-        }
-    }
-    free(spread_weight);
-    return graph;
-}
-
 int rand_c_d(int a, int b)
 {
     return rand()%(b - a) + a;
@@ -482,6 +437,7 @@ my_m1 SrGraph_get_max_spread(SrGraph_t* sr)
     int nbEdge = 0;
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {
+            //printf("debut (%d ; %d)\n", i, j);
             for (Edge_t* tmp = sr->pred[i][j] ; tmp != NULL ; tmp = tmp->next) {
                 // if (tmp->m1 == INF) {
                 //     return -1;
@@ -495,6 +451,7 @@ my_m1 SrGraph_get_max_spread(SrGraph_t* sr)
                 }
                 nbEdge++;
             }
+            //printf("fin (%d ; %d)\n", i, j);
         }
     }
 
@@ -506,6 +463,24 @@ my_m1 SrGraph_get_max_spread(SrGraph_t* sr)
     RESULTS("NB edges with 0 : %d\n", nbzero);
     return max;
 }
+
+
+bool SrGraph_is_connex(SrGraph_t* sr)
+{
+    for (int i = 0 ; i < sr->nbNode ; i++) {
+        for (int j = 0 ; j < sr->nbNode ; j++) {
+            //printf("debut (%d ; %d)\n", i, j);
+            for (Edge_t* tmp = sr->pred[i][j] ; tmp != NULL ; tmp = tmp->next) {
+                if (tmp->m1 == INF) {
+                    return false;
+                }
+            }
+            //printf("fin (%d ; %d)\n", i, j);
+        }
+    }
+    return true;
+}
+
 
 
 /*void SrGraph_prune(SrGraph_t* graph, int src, my_m1 cstrIgp, my_m2 cstrDelay)

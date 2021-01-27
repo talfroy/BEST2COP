@@ -2,10 +2,10 @@ SRCDIR=src
 OBJDIR= obj
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ  = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-PG ?= -pg
-FLAGS := -Wall -Wextra -O3  -fopenmp -g
+PG := -pg
+FLAGS := -Wall -Wextra -Werror -O3  -fopenmp
 #$(PG)
-CC ?= gcc
+CC := gcc
 
 LIBS := -lm -fopenmp
 
@@ -29,6 +29,8 @@ REALISTIC_SPRINT=sprint-modif-zipf.isp
 
 all : clean objects best2cop
 
+
+
 scriptCstr : $(OBJ) scriptCstr.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Constraint script succesfully compiled"
@@ -43,11 +45,11 @@ worstSprint : $(OBJ) worstSprint.o
 worstSprint.o: worstSprint.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
-genRandom : $(OBJ) generate_random.o
+genRandom : $(OBJ) genRandom.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst sprint succesfully compiled"
 
-generate_random.o: generate_random.c
+genRandom.o: genTopoNonAlign.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
 unitFlex : $(OBJ) unitFlex.o
@@ -120,8 +122,10 @@ clean:
 	@rm -rf unitFlex.o
 	@rm -rf unitBinHeap
 	@rm -rf BinHeap.o
-	@rm -rf generate_random.o
+	@rm -rf genRandom.o
 	@rm -rf genRandom
+	@rm -rf randomTopo.o
+	@rm -rf randomTopo
 	@echo ${info} "Main program clean succesfully done"
 
 

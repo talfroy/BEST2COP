@@ -219,6 +219,7 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
             }
         }
         //currNode = depile(stack);
+        //printf("new curr node = %d\n", currNode);
         currNode = BinHeap_extract_min(&bp);
     }
     
@@ -361,6 +362,96 @@ Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[])
             //     printf("There is a problem in random part : %d\n", m1);
             // }
             //printf("add a new arc (%d -> %d)\n", i, j);
+            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
+            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
+        }
+
+    }
+
+    return topo;
+}
+
+
+Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[], int exist)
+{
+    Topology_t* topo = Topology_init(size);
+
+    for (int i = 0 ; i < size ; i++) {
+        for (int j = i + 1 ; j < size ; j++) {
+            if (i == j) {
+                continue;
+            }
+            if (RAND(0, size) > exist) {
+                continue;
+            }
+            my_m1 m1 = v_delay[RAND(0, 100000)];
+            my_m2 m2 = v_igp[RAND(0, 100000)];
+            // if (m1 < 0) {
+            //     printf("There is a problem in random part : %d\n", m1);
+            // }
+            //printf("add a new arc (%d -> %d)\n", i, j);
+            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
+            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
+        }
+
+    }
+
+    return topo;
+}
+
+
+
+Topology_t* Topology_create_random_uniform(int size, int exist, my_m1 max_delay, my_m2 max_igp)
+{
+    Topology_t* topo = Topology_init(size);
+
+    for (int i = 0 ; i < size ; i++) {
+        for (int j = i + 1 ; j < size ; j++) {
+            if (i == j) {
+                continue;
+            }
+            if (RAND(0, size) > exist) {
+                continue;
+            }
+            my_m1 m1 = RAND(1, max_delay);
+            my_m2 m2 = RAND(1, max_igp);
+            //     printf("There is a problem in random part : %d\n", m1);
+            // }
+            //printf("add a new arc (%d -> %d)\n", i, j);
+            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
+            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
+            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
+        }
+
+    }
+
+    return topo;
+}
+
+
+Topology_t* Topology_create_random_non_align(int size, int exist, my_m1 max_delay, my_m2 max_igp)
+{
+    Topology_t* topo = Topology_init(size);
+    int diff = max_igp / max_delay;
+
+    for (int i = 0 ; i < size ; i++) {
+        for (int j = i + 1 ; j < size ; j++) {
+            if (i == j) {
+                continue;
+            }
+            if (RAND(0, size) > exist) {
+                continue;
+            }
+            my_m1 m1 = RAND(1, max_delay);
+            my_m2 m2 = max_igp / m1 +  RAND(0, diff);
+            //     printf("There is a problem in random part : %d\n", m1);
+            // }
+            //INFO("add a new arc (%d -> %d) : (%d ; %d)\n", i, j, m1 ,m2);
             topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
             topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
             topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);

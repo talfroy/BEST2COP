@@ -24,9 +24,9 @@ struct Options {
     int src;                /**< source node */
     char allNodes;          /**< define if we need to mesure on all nodes */
     char interface;         /**< activate the interactive mode */
-    char nbThreads;
-    char randomTopo;
-    bool flex;
+    char nbThreads;         /**< set the number of threads to use (max_thread by default) */
+    char randomTopo;            
+    bool flex;              /**< enable flex algo (disble by default) */
 };
 
 struct Options opt;
