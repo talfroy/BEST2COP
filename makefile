@@ -21,7 +21,7 @@ GBLX=glibx-connex
 FRANCOIS=sprint-modif-zipf.isp
 WORST_SPRINT=sprint-modif-zipf.isp
 #sprint-modif70.isp
-REALISTIC_SPRINT=sprint-modif-zipf.isp
+REALISTIC_SPRINT=geoSprint
 #sprint-modif70.isp
 #sprint-real.isp
 
@@ -49,7 +49,7 @@ genRandom : $(OBJ) genRandom.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst sprint succesfully compiled"
 
-genRandom.o: genTopoNonAlign.c
+genRandom.o: generate_random.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
 unitFlex : $(OBJ) unitFlex.o
@@ -263,10 +263,10 @@ nbsegdirs:
 
 NBSEG: nbsegdirs best2cop
 	@echo ${eval} "Start eval for NBSEG"
-	@for i in 1 2 5 10 50 100 ; do \
+	@for i in 5 10 50 100 ; do \
 		echo -e ${eval} "Start eval for $$i"; \
-		./best2cop --file topos/${GBLX} --topo --labels --cstr1 $$i --all-nodes --full --output NBSEG/res_glbx$$i.txt; \
-		./best2cop --file topos/${REALISTIC_SPRINT} --topo --labels --cstr1 $$i --all-nodes --full --output NBSEG/res_sprint$$i.txt; \
+		./best2cop --file sr_topo21.isp --sr --id --cstr1 $$(($$i * 10)) --accu 0 --all-nodes --DCLC --output NBSEG/res_rand_dclc$$i.txt; \
+		./best2cop --file ${REALISTIC_SPRINT} --topo --labels --cstr1 $$i --all-nodes --DCLC --output NBSEG/res_sprint_dclc$$i.txt; \
 	done;
 	@echo ${eval} "Eval for NBSEG completed"
 

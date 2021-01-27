@@ -16,17 +16,14 @@ ls = ["-","--", ":","-.", " "]
 mks = ["o", "D","P", "^", "X"]
 
 def extract_data():
-    with open("results.txt", 'w+') as f:
+    with open("result.txt", 'w+') as f:
         f.write("TOPO TIME\n")
-        for resfile in ["REAL_ISP-medium_res.txt","WORST_ISP-big_res.txt"]:
+        for resfile in ["../RLT/results.txt"]:
     	    with open(resfile) as f2:
                 for line in f2.readlines():
                     if "TIME" in line: continue
                     time = line.strip().split()[3]
-                    if resfile == "REAL_ISP-medium_res.txt":
-                        name = "Medium-ISP"
-                    else:
-                        name = "Large-ISP"
+                    name = "Large-ISP"
                     f.write("{} {}\n".format(name, float(time)/1000))
                          
 
@@ -34,7 +31,7 @@ def main():
     extract_data()
     sns.set_style("whitegrid")
     palette = sns.color_palette("colorblind", n_colors=3)
-    data = pd.read_csv("results.txt", sep=" ")
+    data = pd.read_csv("result.txt", sep=" ")
     
     fig, ax = plt.subplots()
     #ax.set(yscale="log")

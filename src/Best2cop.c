@@ -166,7 +166,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                 my_m2 d2v = path->infos.m2 + edge->m2;
 
                 if (d2v < 0) {
-                    ERROR("There overflow\n");
+                    printf("There overflow : %d %d\n", path->infos.m2, edge->m2);
                 }
 
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {

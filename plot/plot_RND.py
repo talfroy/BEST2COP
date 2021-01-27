@@ -9,12 +9,12 @@ ls = ["-","--", ":","-.", " "]
 mks = ["o", "D","P", "^", "X"]
 
 def extract_data():
-    fold = "resultsSpread"
+    fold = "../RND/resultsSpread"
     resfold = "resultsTime"
     topofiles = "timeTopo"
     with open("results.txt", 'w+') as f:
         f.write("SPREAD SIZE TIME\n")
-        for spread in ["100","500","1000"]:
+        for spread in ["1000"]:
     		#folder = fold + spread"/"
             for toposize in [str(x) for x in range(100, 1001, 100)]:
     			#folder += resfold+toposize+"/"
@@ -29,7 +29,7 @@ def extract_data():
 def main():
     extract_data()
     sns.set_style("whitegrid")
-    palette = sns.color_palette("colorblind", n_colors=3)
+    palette = sns.color_palette("colorblind")
     data = pd.read_csv("results.txt", sep=" ")
     
     #fig, ax = plt.subplots()
@@ -51,14 +51,15 @@ def main():
             line.set_mec(col)
 
     # Also fix the legend
-    for legpatch in ax.get_legend().get_patches():
-        col = legpatch.get_facecolor()
-        legpatch.set_edgecolor(col)
-        legpatch.set_linewidth(2)
-        legpatch.set_facecolor('None')
+    # for legpatch in ax.get_legend().get_patches():
+    #     col = legpatch.get_facecolor()
+    #     legpatch.set_edgecolor(col)
+    #     legpatch.set_linewidth(2)
+    #     legpatch.set_facecolor('None')
         
-    plt.legend(title="S")
+    #plt.legend(title="S")
     ax.set(ylabel='Time (ms)', xlabel="# Nodes")
+    ax.get_legend().remove()
     #plt.legend(title="T")
     #plt.show()
     plt.savefig('RND.pdf', dpi=300)

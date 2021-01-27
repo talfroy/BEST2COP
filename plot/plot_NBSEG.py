@@ -9,8 +9,8 @@ import numpy as np
 def extract_data():
     with open("results.txt", 'w+') as f:
         f.write("TOPO C2 NB_ITER IS_FEASIBLE\n")
-        for c2index in [1,2,5,10,50,100]:
-            for resfile in ["res_ISP-big{}.txt".format(c2index)]:#,"gblx_res.txt"]:
+        for c2index in [5,10,50,100]:
+            for resfile in ["../NBSEG/res_sprint_2cop{}.txt".format(c2index)]:#,"gblx_res.txt"]:
     	        with open(resfile) as f2:
                     for line in f2.readlines():
                         if "C2" in line: continue

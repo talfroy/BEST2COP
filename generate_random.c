@@ -42,22 +42,22 @@ int main() {
 
     //printf("PRE_SPREAD SRC DST NB_ITERS\n");
     
-    for (int i = 0 ; i < 19 ; i+= 2) {
+    for (int i = 18 ; i < 19 ; i+= 2) {
         int spread = spreads[i];
         INFO("now with spread %d\n", spread);
         c_delay = get_c(1, spread, courbure);
         fill_tab(c_delay, v_delay, courbure, 1, spread);
-        for (int n = 0 ; n < 10 ; n++) {
+        for (int n = 0 ; n < 1 ; n++) {
             //topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
             topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
-            sr = SrGraph_create_flex_algo(topo);
+            sr = SrGraph_create_from_topology_best_m2(topo);
 
             while (!SrGraph_is_connex(sr)) {
                 INFO("There is a replay\n");
                 Topology_free(topo);
                 topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
                 SrGraph_free(sr);
-                sr = SrGraph_create_flex_algo(topo);
+                sr = SrGraph_create_from_topology_best_m2(topo);
             }
 
             INFO("Topology %d with spread %d is loaded\n", n + 1, spread);
@@ -90,8 +90,8 @@ int main() {
                 free(dist);
             }
 
-            //SrGraph_print_in_file(sr, stdout);
-            //Topology_print(topo, "test_topo_rand_non_alignes.isp");
+            SrGraph_print_in_file(sr, stdout);
+            Topology_print(topo, "test_topo_rand_zipf.isp");
 
             SrGraph_free(sr);
             Topology_free(topo);
@@ -103,7 +103,7 @@ int main() {
         }
 
 
-        printf("%d %f\n", spread, get_mean(iters[i], 10, 100));
+        //printf("%d %f\n", spread, get_mean(iters[i], 10, 100));
         RESULTS("%d -> %f\n", spread, get_mean(iters[i], 10, 100));
         
     }

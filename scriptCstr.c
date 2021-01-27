@@ -14,7 +14,7 @@ struct Options opt;
 
 int main(int argc, char** argv)
 {
-    int c2s[28] = {10, 20, 50, 100, 500, 1000};
+    int c2s[28] = {50, 100, 500, 1000};
 
     if (argc != 3) {
         return 0;
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 
     FILE* output = fopen(argv[2], "w");
     Topology_t* topo = Topology_load_from_file(argv[1], 1, 0);
-    SrGraph_t* sr = SrGraph_create_from_topology(topo);
+    SrGraph_t* sr = SrGraph_create_from_topology_best_m2(topo);
     my_m1 maxSpred = SrGraph_get_max_spread(sr);
     my_m1 dictSize = 0;
     struct timeval start, stop;

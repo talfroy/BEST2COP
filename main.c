@@ -59,7 +59,6 @@ int main(int argc, char** argv)
             sr = SrGraph_create_from_topology_best_m2(topo);
         }
         gettimeofday(&stop, NULL);
-        SrGraph_print_in_file(sr, stdout);
 
 
 
