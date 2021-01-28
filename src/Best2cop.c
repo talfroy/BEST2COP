@@ -111,8 +111,9 @@ int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src
                         tmp_igp = nextextendable[i]->infos.m2;
                         if (tmp_igp < minIgp[i]) {
                             (*iters)[i] = nbIter;
+                            minIgp[i] = tmp_igp;
                         }
-                        minIgp[i] = tmp_igp;
+                        
                     }
 
                     if (analyse == ANALYSE_2COP) {
