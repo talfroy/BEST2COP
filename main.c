@@ -152,6 +152,7 @@ int main(int argc, char** argv)
 
             //printf("Fin Iter %d\n", i);
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+            //RESULTS("Iter max : %d\n", iterMax[i]);
 
             //printf("\r");
 
