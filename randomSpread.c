@@ -10,55 +10,30 @@
 #include "include/Best2cop.h"
 
 #define NB_NODE         1000
+#define MAX_IGP     100000000
 
 
-int main(int argc, char** argv)
+int main()
 {
-    if (argc != 2) {
-        return 1;
-    }
 
-    SrGraph_t* sr = NULL;
-    ParetoFront_t*** dist = NULL;
-    BinHeap_t** pfront = NULL;
-    struct timeval start, stop;
-    FILE* output = fopen(argv[1], "w");
-    fprintf(output, "C2 TIME\n");
+    double courbure = log(10.0) / log(9.0);
+    double c_delay;
+    INFO("END with delay\n");
+    double c_igp = get_c(1, MAX_IGP, courbure);
 
-    for (int i = 100 ; i <= 1000 ; i += 100)
-    {
-        sr = SrGraph_create_random_topo(NB_NODE, i);
-        INFO("SR Graph with spread %d has been successfully loaded\n", i);
+    int v_igp[100000];
+    int v_delay[100000];
+    INFO("Start Tab initialization\n");
+    fill_tab(c_igp, v_igp, courbure, 1, MAX_IGP);
 
-        for (int j = 0 ; j < NB_NODE / 10 ; j++) {
-            dist = NULL;
-            pfront = NULL;
+    int spread = 1000;
+    c_delay = get_c(1, spread, courbure);
+    fill_tab(c_delay, v_delay, courbure, 1, spread);
 
-            gettimeofday(&start, NULL);
+    Topology_t* topo = Topology_create_random_quentin(NB_NODE, v_delay, v_igp, 10);
 
-            Best2cop(&pfront, &dist, sr, j, 1000, INF, 1000, 0, NULL);
-
-            gettimeofday(&stop, NULL);
-
-            for (int l = 0 ; l <= SEG_MAX ; l++) {
-                for (int k = 0 ; k < NB_NODE ; k++) {
-                    BinHeap_free(&pfront[l][k]);
-                    ParetoFront_free(dist[l][k]);
-                }
-                free(pfront[l]);
-                free(dist[l]);
-            }
-
-            free(pfront);
-            free(dist);
-
-            fprintf(output, "%d %ld\n", i, (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
-        }
-
-        SrGraph_free(sr);
-    }
-
-    fclose(output);
+    Topology_print(topo, "Test_topo_flex_rnd.isp");
+    Topology_free(topo);
     return 0;
 }
 

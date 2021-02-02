@@ -126,6 +126,8 @@ clean:
 	@rm -rf genRandom
 	@rm -rf randomTopo.o
 	@rm -rf randomTopo
+	@rm -rf randomSpread.o
+	@rm -rf randomSpread
 	@echo ${info} "Main program clean succesfully done"
 
 

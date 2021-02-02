@@ -144,5 +144,6 @@ void BinHeap_decrease_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
     while (index != 0 && bp->keys[parent(index)].m2 > bp->keys[index].m2) {
         swap(&bp->keys[parent(index)], &bp->keys[index]);
         swap_int(&bp->isPresent[bp->keys[parent(index)].nodeId], &bp->isPresent[bp->keys[index].nodeId]);
+        index = parent(index);
     }
 }
