@@ -8,3 +8,11 @@ glibx-connex
 *.isp
 RLT/*
 NBSEG/*
+generate_random.c
+genTopoNonAlign.c
+randomSpread.c
+randomTopo.c
+scriptCstr.c
+test_align.c
+worstRandom.c
+worstSprint.c
