@@ -27,7 +27,6 @@ jobs:
       # Runs a single command using the runners shell
       - name: Check if program compile
         run: |
-          cd ../../
           make
           make clean
 
