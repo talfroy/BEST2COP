@@ -28,8 +28,7 @@ jobs:
       - name: Check if program compile
         run: |
           cd /home/runner
-          ls -al work/
-          ls -al factory/
+          ls -al work/BEST2COP/
 
       # Runs a set of commands using the runners shell
 
