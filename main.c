@@ -12,11 +12,11 @@
 //struct Options opt;
 
 
-void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible);
+void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible, struct Options opt);
 
 void print_all_iter(FILE* output, int* tab, int size);
 
-void Main_get_all_infos();
+void Main_get_all_infos(struct Options* opt);
 
 void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, Pfront_t** heap, int iter);
 
@@ -24,7 +24,9 @@ void Main_display_all_paths(FILE* output, ParetoFront_t*** dist, int nbNodes, in
 
 int main(int argc, char** argv)
 {
-    if (Option_command_parser(argc, argv) == -1) {
+
+    struct Options opt;
+    if (Option_command_parser(argc, argv, &opt) == -1) {
         usage(argv[0]);
         return 1;
     }
@@ -41,7 +43,7 @@ int main(int argc, char** argv)
     struct timeval start, stop;
 
     if (opt.interface) {
-        Main_get_all_infos();
+        Main_get_all_infos(&opt);
     }
 
     if (opt.loadingMode == LOAD_TOPO) {
@@ -191,7 +193,7 @@ int main(int argc, char** argv)
             free(dist);
         }
 
-        max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible);
+        max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible, opt);
         for (int i = 0 ; i < sr->nbNode ; i++) {
             free(iters[i]);
             free(isFeasible[i]);
@@ -285,7 +287,7 @@ void Main_display_all_paths(FILE* output, ParetoFront_t*** dist, int nbNodes, in
 
 
 
-void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible)
+void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible, struct Options opt)
 {
     if (full) {
         fprintf(output, "NODE_ID DEST C2 NB_ITER IS_FEASIBLE\n");
@@ -302,11 +304,11 @@ void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full,
     }
 }
 
-void Main_get_all_infos()
+void Main_get_all_infos(struct Options* opt)
 {
     printf("Enter your file name : \n");
-    opt.filename = malloc(128);
-    int scan = scanf("%s", opt.filename);
+    opt->filename = malloc(128);
+    int scan = scanf("%s", opt->filename);
     if (scan == EOF) {
         return;
     }
@@ -317,29 +319,29 @@ void Main_get_all_infos()
     if (scan == EOF) {
         return;
     }
-    opt.loadingMode = get-1;
+    opt->loadingMode = get-1;
 
     printf("Are the node in the file identified by Labels (1) or IDs (2) ?\n");
     scan = scanf("%d", &get);
     if (scan == EOF) {
         return;
     }
-    opt.labelsOrId = get - 1;
+    opt->labelsOrId = get - 1;
 
     printf("Do you want to compute on only one node (1) or all (2) ?\n");
     scan = scanf("%d", &get);
     if (scan == EOF) {
         return;
     }
-    opt.allNodes = get - 1;
+    opt->allNodes = get - 1;
 
-    if (!opt.allNodes) {
+    if (!opt->allNodes) {
         printf("Please enter the id of the source node\n");
         scan = scanf("%d", &get);
         if (scan == EOF) {
             return;
         }
-        opt.src = get;
+        opt->src = get;
     }
 
 }
