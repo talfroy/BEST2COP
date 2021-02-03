@@ -1,6 +1,8 @@
 obj/*.o
 topo/*
 RND/*
+RND
+obj
 geoSprint
 sprint-2007.ntf
 glibx-connex
