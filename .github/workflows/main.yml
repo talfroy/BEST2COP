@@ -28,7 +28,8 @@ jobs:
       - name: Check if program compile
         run: |
           cd /home/runner
-          ls
+          ls -al work/
+          ls -al factory/
 
       # Runs a set of commands using the runners shell
 
