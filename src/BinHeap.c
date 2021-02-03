@@ -47,7 +47,7 @@ void swap_int(int* x, int* y)
 void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
 {
     if (bp->heapSize >= bp->maxSize) {
-        ERROR("Cannot insert key : no more space");
+        ERROR("Cannot insert key : no more space\n");
         return;
     }
 

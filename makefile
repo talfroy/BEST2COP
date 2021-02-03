@@ -49,7 +49,7 @@ genRandom : $(OBJ) genRandom.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst sprint succesfully compiled"
 
-genRandom.o: generate_random.c
+genRandom.o: genTopoNonAlign.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
 unitFlex : $(OBJ) unitFlex.o
@@ -208,57 +208,6 @@ rltclean:
 	@rm -rf best2cop
 	@rm -rf main.o
 
-# figure6dirs:
-# 	@mkdir -p figure6
-
-# figure6: figure6dirs worstSprint
-# 	@echo ${eval} "Start eval for Figure 6"
-# 	@./worstSprint
-# 	@echo ${eval} "Eval for Figure 6 completed"
-
-# figure6clean:
-# 	@rm -rf figure6
-# 	@rm -rf worstSprint
-# 	@rm -rf worstSprint.o
-
-# figure7dirs:
-# 	@mkdir -p figure7
-
-# figure7: figure7dirs randomSpread
-# 	@echo ${eval} "Start eval for Figure 7"
-# 	@./randomSpread figure7/results.txt
-# 	@echo ${eval} "Eval for Figure 7 completed"
-
-# figure7clean:
-# 	@rm -rf figure7
-# 	@rm -rf randomSpread.o
-# 	@rm -rf randomSpread
-
-# figure8dirs:
-# 	@mkdir -p figure8
-
-# figure8: figure8dirs scriptCstr
-# 	@echo ${eval} "Start eval for Figure 8"
-# 	@./scriptCstr topos/sprint-modif70.isp figure8/res_cstr.txt
-# 	@echo ${eval} "Eval for Figure 8 completed"
-
-# figure8clean:
-# 	@rm -rf figure8
-# 	@rm -rf scriptCstr.o
-# 	@rm -rf scriptCstr
-
-# figure9dirs:
-# 	@mkdir -p figure9
-
-# figure9: figure9dirs worstRandom
-# 	@echo ${eval} "Start eval for Figure 9"
-# 	@./worstRandom figure4/resultsSpread500/worstTopo1000.isp figure9/res.txt
-# 	@echo ${eval} "Eval for Figure 9 completed"
-
-# figure9clean:
-# 	@rm -rf figure9
-# 	@rm -rf worstRandom.o
-# 	@rm -rf worstRandom
 
 nbsegdirs:
 	@mkdir -p NBSEG

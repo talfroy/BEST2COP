@@ -20,6 +20,8 @@ void Main_get_all_infos();
 
 void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, Pfront_t** heap, int iter);
 
+void Main_display_all_paths(FILE* output, ParetoFront_t*** dist, int nbNodes, int iter);
+
 int main(int argc, char** argv)
 {
     if (Option_command_parser(argc, argv) == -1) {
@@ -211,10 +213,13 @@ int main(int argc, char** argv)
 
         if (opt.analyse) {
             fprintf(output, "Execution stop after %d iterations\n", iter);
+        } else {
+            RESULTS("Execution takes %ld us\n", time);
         }
-        fprintf(output, "Execution takes %ld us\n", time);
+        
 
         //Main_display_results(output, dist, sr->nbNode, pfront, iter);
+        //Main_display_all_paths(output, dist, sr->nbNode, iter);
         if (opt.analyse) {
             maxIter = 10 * SEG_MAX;
         } else {
@@ -235,6 +240,8 @@ int main(int argc, char** argv)
                 fprintf(output, "%d %d %d\n", opt.src, i, itersSolo[i]);
             }
         }
+
+
 
         free(pfront);
         free(dist);
@@ -259,6 +266,20 @@ void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, __at
             }
         }
 
+    }
+}
+
+void Main_display_all_paths(FILE* output, ParetoFront_t*** dist, int nbNodes, int iter)
+{
+    for (int i = 0 ; i < nbNodes ; i++) {
+        for (int j = iter-1 ; j > 0 ; j--) {
+            if (dist[j][i] != NULL) {
+                for (ParetoFront_t* tmp = dist[j][i] ; tmp != NULL ; tmp = tmp->next) {
+                    fprintf(output, "%d %d %d\n", i, tmp->m1, tmp->m2);
+                }
+                break;
+            }
+        }
     }
 }
 
