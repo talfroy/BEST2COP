@@ -27,7 +27,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Check if program compile
         run: |
-          cd /home/runner/work/BEST2COP/BEST2COP
+          cd /home
           ls
 
       # Runs a set of commands using the runners shell
