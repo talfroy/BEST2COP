@@ -1,0 +1,24 @@
+name: iOS and make
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: iOS+make - Build and test
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install build tool
+        run:  brew install make
+      - name: Test compil on macOS
+        run: make
+      - name: Clean
+        run: make clean
+
