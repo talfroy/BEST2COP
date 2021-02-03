@@ -29,7 +29,6 @@ struct Options {
     bool flex;              /**< enable flex algo (disble by default) */
 };
 
-extern struct Options opt;
 
 
 /**
@@ -41,7 +40,7 @@ extern struct Options opt;
  * @return              return 1 if all the Options are available, -1 if not
  **/
 
-int Option_command_parser(int argc, char** argv);
+int Option_command_parser(int argc, char** argv, struct Options* opt);
 
 
 /**

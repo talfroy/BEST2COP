@@ -32,8 +32,10 @@ void Extendable_print(Extendable_t* ext)
         return;
     }
 
-    printf(" (%d ; %d) ", ext->infos.m1, ext->infos.m2);
-    Extendable_print(ext->next);
+    for (Extendable_t* tmp = ext ; tmp != NULL ; tmp = tmp->next) {
+        printf(" (%d ; %d) ", tmp->infos.m1, tmp->infos.m2);
+    }
+        printf("\n");
 }
 
 

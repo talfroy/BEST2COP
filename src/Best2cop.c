@@ -102,14 +102,18 @@ int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src
         extendable = NULL;
 
         for (int i = 0 ; i < graph->nbNode ; i++) {
+            //printf("iter : %d -> node %d\n", nbIter, i);
             if (nextextendable[i] != NULL) {
                 if (iters != NULL) {
                     if (analyse == ANALYSE_DCLC) {
-                        tmp_igp = update_min_igp(minIgp[i], nextextendable[i]);
+                        //Extendable_print(nextextendable[i]);
+                        //
+                        tmp_igp = nextextendable[i]->infos.m2;
                         if (tmp_igp < minIgp[i]) {
                             (*iters)[i] = nbIter;
+                            minIgp[i] = tmp_igp;
                         }
-                        minIgp[i] = tmp_igp;
+                        
                     }
 
                     if (analyse == ANALYSE_2COP) {
@@ -126,6 +130,7 @@ int Best2cop(Pfront_t*** pfront, ParetoFront_t**** pf, SrGraph_t* graph, int src
                 Extendable_free(nextextendable[i]);
             }
         }
+        //printf("nb iters = %d\n", nbIter);
 
         nbIter++;
     }
@@ -194,6 +199,8 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pf
     // } else {
     //     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
     // }
+
+    //printf("%d\n", t);
     Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
 }
 
@@ -228,8 +235,9 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_
 void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, int imax, ParetoFront_t** pf)
 {
+    UNUSED(imax);
     my_m2 last_d2 = INF;
-    for (my_m1 i = 0 ; i <= imax ; i++) {
+    for (my_m1 i = 0 ; i < dist_v->size ; i++) {
         if (dist_v->paths[i] < last_d2) {
             last_d2 = dist_v->paths[i];
             Pfront_insert_key(&(*pfront)[iter][dst], i);

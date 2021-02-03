@@ -12,17 +12,21 @@
 //struct Options opt;
 
 
-void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible);
+void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible, struct Options opt);
 
 void print_all_iter(FILE* output, int* tab, int size);
 
-void Main_get_all_infos();
+void Main_get_all_infos(struct Options* opt);
 
 void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, Pfront_t** heap, int iter);
 
+void Main_display_all_paths(FILE* output, ParetoFront_t*** dist, int nbNodes, int iter);
+
 int main(int argc, char** argv)
 {
-    if (Option_command_parser(argc, argv) == -1) {
+
+    struct Options opt;
+    if (Option_command_parser(argc, argv, &opt) == -1) {
         usage(argv[0]);
         return 1;
     }
@@ -39,7 +43,7 @@ int main(int argc, char** argv)
     struct timeval start, stop;
 
     if (opt.interface) {
-        Main_get_all_infos();
+        Main_get_all_infos(&opt);
     }
 
     if (opt.loadingMode == LOAD_TOPO) {
@@ -59,7 +63,6 @@ int main(int argc, char** argv)
             sr = SrGraph_create_from_topology_best_m2(topo);
         }
         gettimeofday(&stop, NULL);
-        //SrGraph_print_in_file(sr, stdout);
 
 
 
@@ -153,6 +156,7 @@ int main(int argc, char** argv)
 
             //printf("Fin Iter %d\n", i);
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+            //RESULTS("Iter max : %d\n", iterMax[i]);
 
             //printf("\r");
 
@@ -189,7 +193,7 @@ int main(int argc, char** argv)
             free(dist);
         }
 
-        max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible);
+        max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible, opt);
         for (int i = 0 ; i < sr->nbNode ; i++) {
             free(iters[i]);
             free(isFeasible[i]);
@@ -205,17 +209,19 @@ int main(int argc, char** argv)
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
-        //int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
-        int iter = 0;
+        int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
         if (opt.analyse) {
             fprintf(output, "Execution stop after %d iterations\n", iter);
+        } else {
+            RESULTS("Execution takes %ld us\n", time);
         }
-        fprintf(output, "Execution takes %ld us\n", time);
+        
 
         //Main_display_results(output, dist, sr->nbNode, pfront, iter);
+        //Main_display_all_paths(output, dist, sr->nbNode, iter);
         if (opt.analyse) {
             maxIter = 10 * SEG_MAX;
         } else {
@@ -236,6 +242,8 @@ int main(int argc, char** argv)
                 fprintf(output, "%d %d %d\n", opt.src, i, itersSolo[i]);
             }
         }
+
+
 
         free(pfront);
         free(dist);
@@ -263,9 +271,23 @@ void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, __at
     }
 }
 
+void Main_display_all_paths(FILE* output, ParetoFront_t*** dist, int nbNodes, int iter)
+{
+    for (int i = 0 ; i < nbNodes ; i++) {
+        for (int j = iter-1 ; j > 0 ; j--) {
+            if (dist[j][i] != NULL) {
+                for (ParetoFront_t* tmp = dist[j][i] ; tmp != NULL ; tmp = tmp->next) {
+                    fprintf(output, "%d %d %d\n", i, tmp->m1, tmp->m2);
+                }
+                break;
+            }
+        }
+    }
+}
 
 
-void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible)
+
+void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full, int** isFeasible, struct Options opt)
 {
     if (full) {
         fprintf(output, "NODE_ID DEST C2 NB_ITER IS_FEASIBLE\n");
@@ -282,11 +304,11 @@ void max_of_tab(FILE* output, long int* tab, int** tabIter, int size, char full,
     }
 }
 
-void Main_get_all_infos()
+void Main_get_all_infos(struct Options* opt)
 {
     printf("Enter your file name : \n");
-    opt.filename = malloc(128);
-    int scan = scanf("%s", opt.filename);
+    opt->filename = malloc(128);
+    int scan = scanf("%s", opt->filename);
     if (scan == EOF) {
         return;
     }
@@ -297,29 +319,29 @@ void Main_get_all_infos()
     if (scan == EOF) {
         return;
     }
-    opt.loadingMode = get-1;
+    opt->loadingMode = get-1;
 
     printf("Are the node in the file identified by Labels (1) or IDs (2) ?\n");
     scan = scanf("%d", &get);
     if (scan == EOF) {
         return;
     }
-    opt.labelsOrId = get - 1;
+    opt->labelsOrId = get - 1;
 
     printf("Do you want to compute on only one node (1) or all (2) ?\n");
     scan = scanf("%d", &get);
     if (scan == EOF) {
         return;
     }
-    opt.allNodes = get - 1;
+    opt->allNodes = get - 1;
 
-    if (!opt.allNodes) {
+    if (!opt->allNodes) {
         printf("Please enter the id of the source node\n");
         scan = scanf("%d", &get);
         if (scan == EOF) {
             return;
         }
-        opt.src = get;
+        opt->src = get;
     }
 
 }

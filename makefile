@@ -2,7 +2,7 @@ SRCDIR=src
 OBJDIR= obj
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ  = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-PG ?= -pg
+PG := -pg
 FLAGS := -Wall -Wextra -Werror -O3  -fopenmp
 #$(PG)
 CC := gcc-10
@@ -21,13 +21,15 @@ GBLX=glibx-connex
 FRANCOIS=sprint-modif-zipf.isp
 WORST_SPRINT=sprint-modif-zipf.isp
 #sprint-modif70.isp
-REALISTIC_SPRINT=sprint-modif-zipf.isp
+REALISTIC_SPRINT=geoSprint
 #sprint-modif70.isp
 #sprint-real.isp
 
 
 
 all : clean objects best2cop
+
+
 
 scriptCstr : $(OBJ) scriptCstr.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
@@ -43,11 +45,11 @@ worstSprint : $(OBJ) worstSprint.o
 worstSprint.o: worstSprint.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
-genRandom : $(OBJ) generate_random.o
+genRandom : $(OBJ) genRandom.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst sprint succesfully compiled"
 
-generate_random.o: generate_random.c
+genRandom.o: genTopoNonAlign.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
 unitFlex : $(OBJ) unitFlex.o
@@ -120,8 +122,12 @@ clean:
 	@rm -rf unitFlex.o
 	@rm -rf unitBinHeap
 	@rm -rf BinHeap.o
-	@rm -rf generate_random.o
+	@rm -rf genRandom.o
 	@rm -rf genRandom
+	@rm -rf randomTopo.o
+	@rm -rf randomTopo
+	@rm -rf randomSpread.o
+	@rm -rf randomSpread
 	@echo ${info} "Main program clean succesfully done"
 
 
@@ -202,67 +208,16 @@ rltclean:
 	@rm -rf best2cop
 	@rm -rf main.o
 
-# figure6dirs:
-# 	@mkdir -p figure6
-
-# figure6: figure6dirs worstSprint
-# 	@echo ${eval} "Start eval for Figure 6"
-# 	@./worstSprint
-# 	@echo ${eval} "Eval for Figure 6 completed"
-
-# figure6clean:
-# 	@rm -rf figure6
-# 	@rm -rf worstSprint
-# 	@rm -rf worstSprint.o
-
-# figure7dirs:
-# 	@mkdir -p figure7
-
-# figure7: figure7dirs randomSpread
-# 	@echo ${eval} "Start eval for Figure 7"
-# 	@./randomSpread figure7/results.txt
-# 	@echo ${eval} "Eval for Figure 7 completed"
-
-# figure7clean:
-# 	@rm -rf figure7
-# 	@rm -rf randomSpread.o
-# 	@rm -rf randomSpread
-
-# figure8dirs:
-# 	@mkdir -p figure8
-
-# figure8: figure8dirs scriptCstr
-# 	@echo ${eval} "Start eval for Figure 8"
-# 	@./scriptCstr topos/sprint-modif70.isp figure8/res_cstr.txt
-# 	@echo ${eval} "Eval for Figure 8 completed"
-
-# figure8clean:
-# 	@rm -rf figure8
-# 	@rm -rf scriptCstr.o
-# 	@rm -rf scriptCstr
-
-# figure9dirs:
-# 	@mkdir -p figure9
-
-# figure9: figure9dirs worstRandom
-# 	@echo ${eval} "Start eval for Figure 9"
-# 	@./worstRandom figure4/resultsSpread500/worstTopo1000.isp figure9/res.txt
-# 	@echo ${eval} "Eval for Figure 9 completed"
-
-# figure9clean:
-# 	@rm -rf figure9
-# 	@rm -rf worstRandom.o
-# 	@rm -rf worstRandom
 
 nbsegdirs:
 	@mkdir -p NBSEG
 
 NBSEG: nbsegdirs best2cop
 	@echo ${eval} "Start eval for NBSEG"
-	@for i in 1 2 5 10 50 100 ; do \
+	@for i in 5 10 50 100 ; do \
 		echo -e ${eval} "Start eval for $$i"; \
-		./best2cop --file topos/${GBLX} --topo --labels --cstr1 $$i --all-nodes --full --output NBSEG/res_glbx$$i.txt; \
-		./best2cop --file topos/${REALISTIC_SPRINT} --topo --labels --cstr1 $$i --all-nodes --full --output NBSEG/res_sprint$$i.txt; \
+		./best2cop --file sr_topo21.isp --sr --id --cstr1 $$(($$i * 10)) --accu 0 --all-nodes --DCLC --output NBSEG/res_rand_dclc$$i.txt; \
+		./best2cop --file ${REALISTIC_SPRINT} --topo --labels --cstr1 $$i --all-nodes --DCLC --output NBSEG/res_sprint_dclc$$i.txt; \
 	done;
 	@echo ${eval} "Eval for NBSEG completed"
 

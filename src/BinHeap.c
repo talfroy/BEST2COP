@@ -47,7 +47,7 @@ void swap_int(int* x, int* y)
 void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
 {
     if (bp->heapSize >= bp->maxSize) {
-        ERROR("Cannot insert key : no more space");
+        ERROR("Cannot insert key : no more space\n");
         return;
     }
 
@@ -68,7 +68,6 @@ void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
     bp->keys[i].m1 = m1;
     bp->keys[i].m2 = m2;
     bp->isPresent[node] = i;
-
     while (i != 0 && bp->keys[parent(i)].m2 > bp->keys[i].m2)
     {
         //printf("Swap act\n");
@@ -122,8 +121,8 @@ int BinHeap_extract_min(BinHeap_t* bp)
 
 void BinHeap_free(BinHeap_t* bp)
 {
+	free(bp->isPresent);
     free(bp->keys);
-    free(bp->isPresent);
 }
 
 
@@ -145,5 +144,6 @@ void BinHeap_decrease_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2)
     while (index != 0 && bp->keys[parent(index)].m2 > bp->keys[index].m2) {
         swap(&bp->keys[parent(index)], &bp->keys[index]);
         swap_int(&bp->isPresent[bp->keys[parent(index)].nodeId], &bp->isPresent[bp->keys[index].nodeId]);
+        index = parent(index);
     }
 }

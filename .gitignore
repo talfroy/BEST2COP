@@ -5,3 +5,14 @@ geoSprint
 sprint-2007.ntf
 glibx-connex
 *.txt
+*.isp
+RLT/*
+NBSEG/*
+generate_random.c
+genTopoNonAlign.c
+randomSpread.c
+randomTopo.c
+scriptCstr.c
+test_align.c
+worstRandom.c
+worstSprint.c
