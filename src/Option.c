@@ -14,7 +14,7 @@ int Option_command_parser (int argc, char** argv, struct Options* opt) {
         {"DCLC",    no_argument,            NULL,       'w'},
         {"accu",    required_argument,      NULL,       'a'},
         {"output",  required_argument,      NULL,       'o'},
-        {"bi-dir",  required_argument,      NULL,       'b'},
+        {"bi-dir",  no_argument,      NULL,       'b'},
         {"cstr1",   required_argument,      NULL,       '1'},
         {"cstr2",   required_argument,      NULL,       '2'},
         {"src",     required_argument,      NULL,       'c'},
