@@ -95,5 +95,16 @@ typedef char bool;
 
 #define UNUSED(x) (void)(x)
 
+#define PBSTR "############################################################"
+#define PBWIDTH 60
+
+extern void print_progress(int percentage)
+{
+    int lpad = percentage * PBWIDTH / 100;
+    int rpad = PBWIDTH - lpad;
+    printf("\r%3d%% [%.*s%.*s]", percentage, lpad, PBSTR, rpad, "");
+    fflush(stdout);
+}
+
 
 #endif
