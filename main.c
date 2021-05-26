@@ -25,8 +25,7 @@ void Main_display_all_paths(FILE* output, ParetoFront_t*** dist, int nbNodes, in
 int main(int argc, char** argv)
 {
 
-    struct Options opt;
-    if (Option_command_parser(argc, argv, &opt) == -1) {
+    if (Option_command_parser(argc, argv) == -1) {
         usage(argv[0]);
         return 1;
     }

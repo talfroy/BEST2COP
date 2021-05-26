@@ -273,4 +273,10 @@ void SrGraph_check_m1(SrGraph_t*);
 
 bool SrGraph_is_connex(SrGraph_t* sr);
 
+
+#define PBSTR "############################################################"
+#define PBWIDTH 60
+
+extern void my_print_progress(int percentage);
+
 #endif

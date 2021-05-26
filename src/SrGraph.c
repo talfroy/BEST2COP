@@ -1,4 +1,15 @@
 #include "../include/SrGraph.h"
+#include "../include/Option.h"
+
+
+void my_print_progress(int percentage)
+{
+    int lpad = percentage * PBWIDTH / 100;
+    int rpad = PBWIDTH - lpad;
+    printf("\r%3d%% [%.*s%*s]", percentage, lpad, PBSTR, rpad, "");
+    fflush(stdout);
+}
+
 
 
 SrGraph_t* SrGraph_init(int nbNodes)
@@ -81,10 +92,22 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
     }
 
     //#pragma omp parallel for
+    int last_per = 0;
     for (int i = 0 ; i < topo->nbNode ; i++) {
+        
         //printf("Computing dijkstra for node %d\n", i);
         dikjstra_best_m2(&graph->succ, &graph->pred, topo->succ, i,
                     &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
+
+        if (opt.pretty) {
+            if (((i + 1) * 100 / topo->nbNode) > last_per) {
+                my_print_progress((i + 1) * 100 / topo->nbNode);
+                last_per = (i + 1) * 100 / topo->nbNode;
+                if (last_per == 100) {
+                    printf("\n");
+                }
+            }
+        }
     }
 
     for (int i = 0 ; i < topo->nbNode ; i++) {

@@ -27,7 +27,7 @@ REALISTIC_SPRINT=geoSprint
 
 
 
-all : clean objects best2cop
+all : objects best2cop
 
 
 

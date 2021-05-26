@@ -27,9 +27,10 @@ struct Options {
     char nbThreads;         /**< set the number of threads to use (max_thread by default) */
     char randomTopo;            
     bool flex;              /**< enable flex algo (disble by default) */
+    bool pretty;
 };
 
-
+extern struct Options opt;
 
 /**
  * @brief fill the corrects Options. Use ./bellmanFork --help
@@ -40,7 +41,7 @@ struct Options {
  * @return              return 1 if all the Options are available, -1 if not
  **/
 
-int Option_command_parser(int argc, char** argv, struct Options* opt);
+int Option_command_parser(int argc, char** argv);
 
 
 /**
