@@ -199,6 +199,7 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
             // if ((neighbor->infos.m1 + (*m1dists)[currNode]) > 10000 || (neighbor->infos.m1 + (*m1dists)[currNode]) < 0) {
             //     printf("node %d -> %d + %d\n", currNode, neighbor->infos.m1, (*m1dists)[currNode]);
             // }
+            //printf("Path weight %d\n", neighbor->infos.m1);
             if ((pathM2 = neighbor->infos.m2 + (*m2dists)[currNode]) == (*m2dists)[neighbor->infos.edgeDst]) {
                 if ((pathM1 = neighbor->infos.m1 + (*m1dists)[currNode]) == (*m1dists)[neighbor->infos.edgeDst]) {
                     parents[neighbor->infos.edgeDst][++parents[neighbor->infos.edgeDst][0]] = currNode;

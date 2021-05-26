@@ -112,6 +112,7 @@ int main(int argc, char** argv)
 
     my_m1 maxSpread = SrGraph_get_max_spread(sr);
 
+
     if (maxSpread == -1) {
         INFO("Segment Routing graph has been transform into one connexe component\n");
         sr = SrGraph_get_biggest_connexe_coponent(sr);
