@@ -593,91 +593,91 @@ bool SrGraph_is_connex(SrGraph_t* sr)
 
 
 
-long int SrGraph_crash_test(SrGraph_t* graph, Dict_t** dist, my_m1 cstrM1, int nbPlLinks)
-{
-    long int nb_iter = 0;
-    (*dist) = malloc(graph->nbNode * sizeof(Dict_t));
-    ASSERT((*dist), 0);
-    Extendable_t** extendable_path = malloc(graph->nbNode * sizeof(Extendable_t*));
-    ASSERT(extendable_path, 0);
-    my_m1* delays = malloc(graph->nbNode * sizeof(my_m1));
-    memset(delays, 0, graph->nbNode * sizeof(my_m1));
-    my_m2* igp = malloc(graph->nbNode * sizeof(my_m2));
-    memset(igp, 0, graph->nbNode * sizeof(my_m2));
+// long int SrGraph_crash_test(SrGraph_t* graph, Dict_t** dist, my_m1 cstrM1, int nbPlLinks)
+// {
+//     long int nb_iter = 0;
+//     (*dist) = malloc(graph->nbNode * sizeof(Dict_t));
+//     ASSERT((*dist), 0);
+//     Extendable_t** extendable_path = malloc(graph->nbNode * sizeof(Extendable_t*));
+//     ASSERT(extendable_path, 0);
+//     my_m1* delays = malloc(graph->nbNode * sizeof(my_m1));
+//     memset(delays, 0, graph->nbNode * sizeof(my_m1));
+//     my_m2* igp = malloc(graph->nbNode * sizeof(my_m2));
+//     memset(igp, 0, graph->nbNode * sizeof(my_m2));
 
-    for (int j = 0 ; j < graph->nbNode ; j++) {
-        Dict_init(&((*dist)[j]), cstrM1);
-        extendable_path[j] = NULL;
-    }
-    //The only known dist is dist to src
-    Dict_add(&((*dist)[0]), 0, 0);
+//     for (int j = 0 ; j < graph->nbNode ; j++) {
+//         Dict_init(&((*dist)[j]), cstrM1);
+//         extendable_path[j] = NULL;
+//     }
+//     //The only known dist is dist to src
+//     Dict_add(&((*dist)[0]), 0, 0);
 
-    /*src has himself as predecessor*/
-    extendable_path[0] = Extendable_new(0, 0.0, NULL);
-    /*max iter is the min between SEG_MAX and the number of node*/
-    int max_iter = MIN(SEG_MAX, graph->nbNode);
+//     /*src has himself as predecessor*/
+//     extendable_path[0] = Extendable_new(0, 0.0, NULL);
+//     /*max iter is the min between SEG_MAX and the number of node*/
+//     int max_iter = MIN(SEG_MAX, graph->nbNode);
 
-    for (int i = 1 ; i <= max_iter ; i++) {
-        //printf("ITER : %d -> %ld\n", i, nb_iter);
+//     for (int i = 1 ; i <= max_iter ; i++) {
+//         //printf("ITER : %d -> %ld\n", i, nb_iter);
 
-        long int real_iter = 0;
-        if (i < 3) {
-            real_iter = MIN(my_pow(graph->nbNode, i-1) * my_pow(nbPlLinks, i), cstrM1);
-        } else {
-            real_iter = cstrM1;
-        }
+//         long int real_iter = 0;
+//         if (i < 3) {
+//             real_iter = MIN(my_pow(graph->nbNode, i-1) * my_pow(nbPlLinks, i), cstrM1);
+//         } else {
+//             real_iter = cstrM1;
+//         }
 
-        /*for all edges in th graph*/
-        /*#pragma omp parallel
-        {
-            #pragma omp for*/
-            for (int edgeDst = 0 ; edgeDst < graph->nbNode ; edgeDst++) {
-                /*if (edgeDst == 0) {
-                    continue;
-                }*/
+//         /*for all edges in th graph*/
+//         /*#pragma omp parallel
+//         {
+//             #pragma omp for*/
+//             for (int edgeDst = 0 ; edgeDst < graph->nbNode ; edgeDst++) {
+//                 /*if (edgeDst == 0) {
+//                     continue;
+//                 }*/
 
-                for (int edgeSrc = 0 ; edgeSrc < graph->nbNode ; edgeSrc++) {
-                    for (Extendable_t* sm_s_eSrc = extendable_path[edgeSrc] ; sm_s_eSrc != NULL ; sm_s_eSrc = sm_s_eSrc->next) {
-                        for (Edge_t* edge = graph->pred[edgeDst][edgeSrc] ; edge != NULL ; edge = edge->next) {
-                            delays[edgeDst] = sm_s_eSrc->infos.m1 + edge->m1;
-                            igp[edgeDst] = sm_s_eSrc->infos.m2 + edge->m2;
-                            //printf("après soucis\n");
-                            /*if the path violate the constraints exit the iteration*/
-                                /*update the distances*/
-                            Dict_add(&((*dist)[edgeDst]), delays[edgeDst], igp[edgeDst]);
-                        }
-                    }
-                }
-            }
+//                 for (int edgeSrc = 0 ; edgeSrc < graph->nbNode ; edgeSrc++) {
+//                     for (Extendable_t* sm_s_eSrc = extendable_path[edgeSrc] ; sm_s_eSrc != NULL ; sm_s_eSrc = sm_s_eSrc->next) {
+//                         for (Edge_t* edge = graph->pred[edgeDst][edgeSrc] ; edge != NULL ; edge = edge->next) {
+//                             delays[edgeDst] = sm_s_eSrc->infos.m1 + edge->m1;
+//                             igp[edgeDst] = sm_s_eSrc->infos.m2 + edge->m2;
+//                             //printf("après soucis\n");
+//                             /*if the path violate the constraints exit the iteration*/
+//                                 /*update the distances*/
+//                             Dict_add(&((*dist)[edgeDst]), delays[edgeDst], igp[edgeDst]);
+//                         }
+//                     }
+//                 }
+//             }
 
-            //#pragma omp barrier
-
-
-            //#pragma omp for
-            for (int edgeDst = 0 ; edgeDst < graph->nbNode ; edgeDst++) {
-                Dict_reduce_to_pareto_crash_test(&((*dist)[edgeDst]), i);
-                Extendable_free(extendable_path[edgeDst]);
-                extendable_path[edgeDst] = NULL;
-                for (long int k = 0 ; k < real_iter ; k++) {
-                    extendable_path[edgeDst] = Extendable_new(1, 1, extendable_path[edgeDst]);
-                }
-            }
-
-        //}
+//             //#pragma omp barrier
 
 
-        /* copy the new extendable paths to the olds for next iteration*/
+//             //#pragma omp for
+//             for (int edgeDst = 0 ; edgeDst < graph->nbNode ; edgeDst++) {
+//                 Dict_reduce_to_pareto_crash_test(&((*dist)[edgeDst]), i);
+//                 Extendable_free(extendable_path[edgeDst]);
+//                 extendable_path[edgeDst] = NULL;
+//                 for (long int k = 0 ; k < real_iter ; k++) {
+//                     extendable_path[edgeDst] = Extendable_new(1, 1, extendable_path[edgeDst]);
+//                 }
+//             }
 
-    }
-    for (int i = 0 ; i < graph->nbNode ; i++) {
-        Extendable_free(extendable_path[i]);
-        extendable_path[i] = NULL;
-    }
-    free(extendable_path);
-    free(igp);
-    free(delays);
-    return nb_iter;
-}
+//         //}
+
+
+//         /* copy the new extendable paths to the olds for next iteration*/
+
+//     }
+//     for (int i = 0 ; i < graph->nbNode ; i++) {
+//         Extendable_free(extendable_path[i]);
+//         extendable_path[i] = NULL;
+//     }
+//     free(extendable_path);
+//     free(igp);
+//     free(delays);
+//     return nb_iter;
+// }
 
 
 

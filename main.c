@@ -18,7 +18,7 @@ void print_all_iter(FILE* output, int* tab, int size);
 
 void Main_get_all_infos(struct Options* opt);
 
-void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, Pfront_t** heap, int iter);
+void Main_display_results(FILE* output, Dict_t** dist, int nbNodes, Pfront_t** heap, int iter);
 
 void Main_display_all_paths(FILE* output, ParetoFront_t*** dist, int nbNodes, int iter);
 
@@ -119,7 +119,7 @@ int main(int argc, char** argv)
     }
 
 
-
+    //SrGraph_print_in_file(sr, stdout);
     maxSpread *= SEG_MAX;
     opt.cstr1 *= my_pow(10, opt.accuracy);
     my_m1 max_dict_size = MIN(maxSpread, opt.cstr1);
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
         "You can also modifie the DICT_LIMIT value in include/params.h at line 44 if you are confident\n");
     }
 
-    ParetoFront_t*** dist = NULL;
+    Dict_t** pf = NULL;
     Pfront_t** pfront = NULL;
     int maxIter = 0;
 
@@ -144,13 +144,13 @@ int main(int argc, char** argv)
             times[i] = 0;
             iters[i] = malloc(sr->nbNode * sizeof(int));
             isFeasible[i] = malloc(sr->nbNode * sizeof(int));
-            dist = NULL;
+            pf = NULL;
             pfront = NULL;
 
             //printf("Iter %d\n", i);
             gettimeofday(&start, NULL);
 
-            iterMax[i] = Best2cop(&pfront, &dist, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
+            iterMax[i] = Best2cop(&pfront, &pf, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
 
             gettimeofday(&stop, NULL);
 
@@ -180,17 +180,18 @@ int main(int argc, char** argv)
 
             }
 
+
             for (int j = 0 ; j <= maxIter ; j++) {
                 for (int k = 0 ; k < sr->nbNode ; k++) {
                     Pfront_free(&pfront[j][k]);
-                    ParetoFront_free(dist[j][k]);
+                    Dict_free(&pf[j][k]);
                 }
                 free(pfront[j]);
-                free(dist[j]);
+                free(pf[j]);
             }
 
             free(pfront);
-            free(dist);
+            free(pf);
         }
 
         max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible, opt);
@@ -203,13 +204,13 @@ int main(int argc, char** argv)
         free(times);
         free(iters);
     } else {
-        dist = NULL;
+        pf = NULL;
         pfront = NULL;
         int* itersSolo = malloc(sr->nbNode * sizeof(int));
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
-        int iter = Best2cop(&pfront, &dist, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
+        int iter = Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
@@ -220,7 +221,7 @@ int main(int argc, char** argv)
         }
         
 
-        //Main_display_results(output, dist, sr->nbNode, pfront, iter);
+        //Main_display_results(output, pf, sr->nbNode, pfront, iter);
         //Main_display_all_paths(output, dist, sr->nbNode, iter);
         if (opt.analyse) {
             maxIter = 10 * SEG_MAX;
@@ -228,13 +229,17 @@ int main(int argc, char** argv)
             maxIter = SEG_MAX + 1;
         }
 
+        struct segment_list*** sl = Dict_retreive_paths(pf, sr, iter, opt.src);
+        print_segment_list(sl, iter, sr->nbNode);
+
+
         for (int j = 0 ; j < maxIter ; j++) {
             for (int k = 0 ; k < sr->nbNode ; k++) {
                 Pfront_free(&pfront[j][k]);
-                ParetoFront_free(dist[j][k]);
+                Dict_free(&pf[j][k]);
             }
             free(pfront[j]);
-            free(dist[j]);
+            free(pf[j]);
         }
 
         if (opt.analyse) {
@@ -246,7 +251,7 @@ int main(int argc, char** argv)
 
 
         free(pfront);
-        free(dist);
+        free(pf);
         free(itersSolo);
     }
     if (opt.interface) {
@@ -259,12 +264,18 @@ int main(int argc, char** argv)
 }
 
 
-void Main_display_results(FILE* output, ParetoFront_t*** dist, int nbNodes, __attribute__((unused)) Pfront_t** heap, int iter)
+void Main_display_results(FILE* output, Dict_t** dist, int nbNodes, __attribute__((unused)) Pfront_t** heap, int iter)
 {
     for (int i = 0 ; i < nbNodes ; i++) {
         for (int k = 0 ; k < iter ; k++) {
-            for (ParetoFront_t* tmp = dist[k][i] ; tmp != NULL ; tmp = tmp->next) {
-                fprintf(output, "%d %d %d %d\n", i, tmp->m1, tmp->m2, k);
+            // for (ParetoFront_t* tmp = dist[k][i] ; tmp != NULL ; tmp = tmp->next) {
+            //     fprintf(output, "%d %d %d %d\n", i, tmp->m1, tmp->m2, k);
+            // }
+
+            for (int j = 0 ; j < dist[k][i].size ; j++) {
+                if (dist[k][i].paths[j] != INF) {
+                    fprintf(output, "%d %d %d %d\n", i, j, dist[k][i].paths[j], k);
+                }
             }
         }
 

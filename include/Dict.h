@@ -30,6 +30,12 @@ struct Sol_s {
 typedef struct Dict_s Dict_t;
 
 
+struct segment_list {
+    short seg[10];
+    char seg_type[10];
+    int size;
+};
+
 /**
  * @brief this structure represent a Dictionnary in which
  * all the paths will be stored
@@ -41,6 +47,7 @@ typedef struct Dict_s Dict_t;
 
 struct Dict_s {
     my_m2* paths;             /**< all the existing paths */
+    short* preds;
     int size;               /**< max size of the Dictionnary */
 };
 
@@ -95,7 +102,7 @@ void DictPath_add(DictPath* dic, my_m1 key, Llist_t* path);
  * this path
  */
 
-void Dict_add(Dict_t* dic, my_m1 key, my_m2 value);
+void Dict_add(Dict_t* dic, my_m1 key, my_m2 value, short pred);
 
 
 /**
@@ -158,5 +165,7 @@ void Dict_reduce_to_pareto_crash_test(Dict_t* dist, int nb_seg);
 
 
 void Dict_free(Dict_t* dic);
+
+
 
 #endif

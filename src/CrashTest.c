@@ -11,7 +11,7 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
         Dict_init(dist + i, cstrM1 + 1);
     }
 
-    Dict_add(dist + src, 0, 0);
+    Dict_add(dist + src, 0, 0, 0);
 
     Pfront_t** pfront = malloc((SEG_MAX + 1) * sizeof(Pfront_t*));
     ASSERT(pfront, -1);
@@ -107,14 +107,14 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 void CrashTest_extend_path(SrGraph_t* graph, Extendable_list_t* extendable, Dict_t* dist_v, Dict_t* pf_cand, Pfront_t* pfcandlist, int dst)
 {
     for (Extendable_list_t* d_list = extendable ; d_list != NULL ; d_list = d_list->next) {
-        int edgeSrc = d_list->node;
+        short edgeSrc = d_list->node;
         for (Extendable_t* path = d_list->ext ; path != NULL ; path = path->next) {
             for (Edge_t* edge = graph->pred[dst][edgeSrc] ; edge != NULL ; edge = edge->next) {
                 my_m1 d1v = path->infos.m1 + edge->m1;
                 my_m2 d2v = path->infos.m2 + edge->m2;
 
-                Dict_add(dist_v, d1v, d2v);
-                Dict_add(pf_cand, d1v, d2v);
+                Dict_add(dist_v, d1v, d2v, edgeSrc);
+                Dict_add(pf_cand, d1v, d2v, edgeSrc);
                 Pfront_insert_key(pfcandlist, d1v);
             }
         }
