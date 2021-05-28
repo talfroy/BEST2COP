@@ -22,17 +22,17 @@ SrGraph_t* SrGraph_init(int nbNodes)
     graph->pred = malloc(nbNodes * sizeof(Edge_t**));
     ASSERT(graph->pred, NULL);
 
-    graph->succ = malloc(nbNodes * sizeof(Edge_t**));
-    ASSERT(graph->succ, NULL);
+    // graph->succ = malloc(nbNodes * sizeof(Edge_t**));
+    // ASSERT(graph->succ, NULL);
 
     for (int i = 0 ; i < nbNodes ; i++) {
-        graph->succ[i] = malloc(nbNodes * sizeof(Edge_t*));
-        ASSERT(graph->succ[i], NULL);
+        // graph->succ[i] = malloc(nbNodes * sizeof(Edge_t*));
+        // ASSERT(graph->succ[i], NULL);
 
         graph->pred[i] = malloc(nbNodes * sizeof(Edge_t*));
         ASSERT(graph->pred[i], NULL);
         for (int j = 0 ; j < nbNodes ; j++) {
-            graph->succ[i][j] = NULL;
+            // graph->succ[i][j] = NULL;
             graph->pred[i][j] = NULL;
         }
     }
@@ -64,17 +64,17 @@ void SrGraph_free(SrGraph_t* graph)
 
         for (int j = 0 ; j < graph->nbNode ; j++) {
             Edge_free(graph->pred[i][j]);
-            Edge_free(graph->succ[i][j]);
+            //Edge_free(graph->succ[i][j]);
         }
 
         free(graph->pred[i]);
-        free(graph->succ[i]);
+        //free(graph->succ[i]);
     }
 
     free(graph->m2dists);
     free(graph->m1dists);
     free(graph->pred);
-    free(graph->succ);
+    //free(graph->succ);
 
     free(graph);
 }
@@ -96,7 +96,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
     for (int i = 0 ; i < topo->nbNode ; i++) {
         
         //printf("Computing dijkstra for node %d\n", i);
-        dikjstra_best_m2(&graph->succ, &graph->pred, topo->succ, i,
+        dikjstra_best_m2(&graph->pred, topo->succ, i,
                     &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
 
         if (opt.pretty) {
@@ -116,7 +116,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
             my_m2 m2 = tmp->infos.m2;
             int dst = tmp->infos.edgeDst;
             if (m1 < graph->m1dists[i][dst]) {
-                graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
+                //graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
                 graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
             }
         }
@@ -132,7 +132,7 @@ void SrGraph_check_m1(SrGraph_t*sr)
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {
             nbEdge = 0;
-            for (Edge_t* tmp = sr->succ[i][j] ; tmp != NULL ; tmp = tmp->next) {
+            for (Edge_t* tmp = sr->pred[i][j] ; tmp != NULL ; tmp = tmp->next) {
                 nbEdge++;
                 if (nbEdge > 1) {
                     printf("Aie coup dur pour guillaume\n");
@@ -157,7 +157,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo)
 
     #pragma omp parallel for
     for (int i = 0 ; i < topo->nbNode ; i++) {
-        dikjstra_best_m1(&graph->succ, &graph->pred, topo->succ, i,
+        dikjstra_best_m1(&graph->pred, topo->succ, i,
                     &(graph->m1dists[i]), &(graph->m2dists[i]), topo->nbNode);
     }
 
@@ -167,7 +167,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo)
             my_m2 m2 = tmp->infos.m2;
             int dst = tmp->infos.edgeDst;
             if (m1 < graph->m1dists[i][dst]) {
-                graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
+                //graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
                 graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
             }
         }
@@ -187,7 +187,7 @@ SrGraph_t* SrGraph_merge_sr_graph(SrGraph_t* best_m1, SrGraph_t* best_m2, int si
             if (src == dst) {
                 continue;
             }
-            flex->succ[src][dst] = Edge_merge_flex(best_m1->succ[src][dst], best_m2->succ[src][dst]);
+            //flex->succ[src][dst] = Edge_merge_flex(best_m1->succ[src][dst], best_m2->succ[src][dst]);
             flex->pred[dst][src] = Edge_merge_flex(best_m1->pred[dst][src], best_m2->pred[dst][src]);
         }
     }
@@ -215,21 +215,21 @@ SrGraph_t* SrGraph_create_flex_algo(Topology_t* topo)
 SrGraph_t* SrGraph_add_adjacencies(SrGraph_t* graph, Topology_t* topo)
 {
     for (int i = 0 ; i < graph->nbNode ; i++) {
-        for (Llist_t* edge = topo->succ[i] ; edge != NULL ; edge = edge->next) {
+        for (Llist_t* edge = topo->pred[i] ; edge != NULL ; edge = edge->next) {
             my_m1 m1 = edge->infos.m1;
             my_m2 m2 = edge->infos.m2;
             int dst = edge->infos.edgeDst;
 
-            if (graph->succ[i][dst] != NULL) {
+            if (graph->pred[i][dst] != NULL) {
 
-                if (graph->succ[i][dst]->next == NULL) {
-                    if (m1 < graph->succ[i][dst]->m1) {
-                        graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
+                if (graph->pred[i][dst]->next == NULL) {
+                    if (m1 < graph->pred[i][dst]->m1) {
+                        graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
                     }
                 } else {
 
-                    if (m1 < graph->succ[i][dst]->m1 && m2 < graph->succ[i][dst]->next->m2) {
-                        graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
+                    if (m1 < graph->pred[i][dst]->m1 && m2 < graph->pred[i][dst]->next->m2) {
+                        graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
                     }
                 }
             }
@@ -270,12 +270,12 @@ SrGraph_t* SrGraph_load_with_id(char* filename, int nbNodes, int accuracy, char 
     {
         if (sscanf(line, "%d %d %lf %d\n", &src, &dst, &m1, &m2)) {
             m1 *= my_pow(10, accuracy);
-            sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2);
+            //sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2);
             sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2);
             sr->nbNode = MAX(sr->nbNode, src + 1);
             sr->nbNode = MAX(sr->nbNode, dst + 1);
             if (bi_dir) {
-                sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2);
+                //sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2);
                 sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2);
             }
         } else {
@@ -352,10 +352,10 @@ SrGraph_t* SrGraph_load_with_label(char* filename, int accuracy, char bi_dir)
             dst = LabelTable_get_id(&labels, dstLabel);
 
             m1 *= my_pow(10, accuracy);
-            sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2);
+            //sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2);
             sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2);
             if (bi_dir) {
-                sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2);
+                //sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2);
                 sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2);
             }
         } else {
@@ -389,7 +389,7 @@ SrGraph_t* SrGraph_create_crash_test(int nbNode, int nbPlinks)
             my_m1 m1 = 1;
             my_m2 m2 = 1;
             for (int k = 0 ; k < nbPlinks ; k++) {
-                graph->succ[i][j] = Edge_new(graph->succ[i][j], m1, m2);
+                //graph->succ[i][j] = Edge_new(graph->succ[i][j], m1, m2);
                 graph->pred[j][i] = Edge_new(graph->pred[j][i], m1, m2);
             }
         }
@@ -422,7 +422,7 @@ SrGraph_t* SrGraph_create_random_topo(int nbNode, int maxSpread)
             for (int k = 0 ; k < 2 ; k++) {
                 my_m1 m1 = rand_c_d(1, maxSpread);
                 my_m2 m2 = rand_c_d(1, INT_MAX / 10 - 1);
-                sr->succ[i][j] = Edge_new(sr->succ[i][j], m1, m2);
+                //sr->succ[i][j] = Edge_new(sr->succ[i][j], m1, m2);
                 sr->pred[j][i] = Edge_new(sr->pred[j][i], m1, m2);
             }
         }
@@ -440,7 +440,7 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output)
             if (i == j) {
                 continue;
             }
-            for (Edge_t* edge = sr->succ[i][j] ; edge != NULL ; edge = edge->next) {
+            for (Edge_t* edge = sr->pred[i][j] ; edge != NULL ; edge = edge->next) {
                 fprintf(output, "%d %d %d %d\n", i, j, edge->m1, edge->m2);
             }
             // fprintf(output, "%d -> %d : ", i, j);
@@ -756,7 +756,7 @@ SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr)
 
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {
-            for (Edge_t* edge = sr->succ[i][j] ; edge != NULL ; edge = edge->next) {
+            for (Edge_t* edge = sr->pred[i][j] ; edge != NULL ; edge = edge->next) {
                 if (edge->id == 1 && edge->m1 != INF) {
                     nbNeighbors[i]++;
                 }
@@ -786,7 +786,7 @@ SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr)
 
     for (int i = 0 ; i < nbNodes ; i++) {
         for (int j = 0 ; j < nbNodes ; j++) {
-            newSr->succ[i][j] = Edge_copy(sr->succ[nodes[i]][nodes[j]]);
+            //newSr->succ[i][j] = Edge_copy(sr->succ[nodes[i]][nodes[j]]);
             newSr->pred[i][j] = Edge_copy(sr->pred[nodes[i]][nodes[j]]);
         }
     }
