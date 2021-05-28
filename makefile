@@ -2,12 +2,23 @@ SRCDIR=src
 OBJDIR= obj
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ  = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
-PG := -pg
-FLAGS := -Wall -Wextra -Werror -O3  -fopenmp
-#$(PG)
-CC := gcc-10
 
+PG ?= 
+# -pg 
+# -p -g on mac
+
+CC ?= gcc-10
+
+## for clang
+#LIBS := -lm -lomp # -fopenmp
+#FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp $(PG)
+
+## for gcc
 LIBS := -lm -fopenmp
+FLAGS := -Wall -Wextra -Werror -O3 -fopenmp $(PG)
+
+
+
 
 vertclair=\033[1;32m
 neutre=\033[0;m
@@ -35,57 +46,33 @@ scriptCstr : $(OBJ) scriptCstr.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Constraint script succesfully compiled"
 
-scriptCstr.o: scriptCstr.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
-
 worstSprint : $(OBJ) worstSprint.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst sprint succesfully compiled"
-
-worstSprint.o: worstSprint.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
 genRandom : $(OBJ) genRandom.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst sprint succesfully compiled"
 
-genRandom.o: genTopoNonAlign.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
-
 unitFlex : $(OBJ) unitFlex.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Test unit flex succesfully compiled"
-
-unitFlex.o: test_unit_flex.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
 unitBinHeap : $(OBJ) BinHeap.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Test unit bin heap succesfully compiled"
 
-BinHeap.o: test_unit_binheap.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
-
 worstRandom : $(OBJ) worstRandom.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst random succesfully compiled"
-
-worstRandom.o: worstRandom.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
 randomTopo : $(OBJ) randomTopo.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "randomTopo succesfully compiled"
 
-randomTopo.o: randomTopo.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
-
 randomSpread : $(OBJ) randomSpread.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "randomSpread succesfully compiled"
-
-randomSpread.o: randomSpread.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
 
 crashTest : clean objects eval
 
@@ -93,18 +80,15 @@ eval : $(OBJ) eval.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Crash test succesfully compiled"
 
-eval.o: eval.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
-
 best2cop : $(OBJ) main.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Best2cop succesfully compiled"
 
-main.o: main.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^ $(LIBS)
+%.o: %.c
+	$(CC) $(FLAGS) -Iinclude -o $@ -c $^
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^  $(LIBS)
+	$(CC) $(FLAGS) -Iinclude -o $@ -c $^
 
 
 objects:

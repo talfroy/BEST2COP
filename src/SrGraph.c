@@ -450,6 +450,73 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output)
 }
 
 
+
+void SrGraph_save_bin(SrGraph_t* sr, char* filename)
+{
+    FILE *out = fopen(filename, "wb");
+    if(out == NULL){
+        ERROR("Unable to open the Binary file <%s>\n", filename);
+    }
+    printf("%d nodes\n", sr->nbNode);
+    fwrite(&(sr->nbNode), sizeof(sr->nbNode), 1, out);
+    for (int i = 0 ; i < sr->nbNode ; i++) {
+        for (int j = 0 ; j < sr->nbNode ; j++) {
+            if (i == j) {
+                continue;
+            }
+            for (Edge_t* edge = sr->pred[i][j] ; edge != NULL ; edge = edge->next) {
+                fwrite(edge, sizeof(edge->m1)+sizeof(edge->m2), 1, out);
+            }
+            Edge_t emptyEdge = {.m1=0, .m2=0};
+            fwrite(&emptyEdge, sizeof(emptyEdge.m1)+sizeof(emptyEdge.m2), 1, out);
+        }
+    }
+}
+
+
+
+SrGraph_t* SrGraph_load_bin(char* filename)
+{
+    FILE *in = fopen(filename, "rb");
+    if(in == NULL){
+        ERROR("Unable to open the Binary file <%s>\n", filename);
+        return NULL;
+    }
+    int nbNode = 0;
+    if(fread(&(nbNode), sizeof(nbNode), 1, in) == 0)
+    {
+        ERROR("Unable to read nbNode\n");
+    }
+    printf("%d nodes\n", nbNode);
+
+    SrGraph_t* sr = SrGraph_init(nbNode);
+    if(sr == NULL) return NULL;
+
+    for (int i = 0 ; i < sr->nbNode ; i++) {
+        for (int j = 0 ; j < sr->nbNode ; j++) {
+            if (i == j) {
+                continue;
+            }
+            Edge_t edge = {.id=1, .m1=0, .m2=0};
+
+            if(fread(&edge, sizeof(edge.m1)+sizeof(edge.m2), 1, in) == 0)
+            {
+                ERROR("Unable to read edge %d %d\n",i,j);
+            }
+            while(edge.m1 != 0 || edge.m2 != 0)
+            {
+                //printf("%d %d %d %d\n", i, j, edge.m1, edge.m2);
+                sr->pred[i][j] = Edge_add(sr->pred[i][j], edge.m1, edge.m2);
+                if(fread(&edge, sizeof(edge.m1)+sizeof(edge.m2), 1, in) == 0)
+                {
+                    ERROR("Unable to read edge %d %d\n",i,j);
+                }
+            }
+        }
+    }
+    return sr;
+}
+
 my_m1 SrGraph_get_max_spread(SrGraph_t* sr)
 {
     my_m1 max = 0;

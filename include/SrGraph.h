@@ -113,6 +113,21 @@ void SrGraph_print(SrGraph_t* graph, LabelTable_t* hash);
 
 void SrGraph_print_in_file(SrGraph_t* sr, FILE* output);
 
+/**
+ * @brief Save the SR Graph in the given file in binary
+ * 
+ * @param sr                SR Graph structure
+ * @param filename          output filename
+ */
+
+void SrGraph_save_bin(SrGraph_t* sr, char* filename);
+
+/**
+ * @brief Load the SR Graph from the given file in binary
+ * 
+ * @param filename          input filename
+ */
+SrGraph_t* SrGraph_load_bin(char* filename);
 
 /**
  * @brief remove all the Edge which violate at least one constraint

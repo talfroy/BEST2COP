@@ -16,7 +16,7 @@ int Option_command_parser (int argc, char** argv) {
         {"DCLC",    no_argument,            NULL,       'w'},
         {"accu",    required_argument,      NULL,       'a'},
         {"output",  required_argument,      NULL,       'o'},
-        {"bi-dir",  no_argument,      NULL,       'b'},
+        {"bi-dir",  no_argument,            NULL,       'b'},
         {"cstr1",   required_argument,      NULL,       '1'},
         {"cstr2",   required_argument,      NULL,       '2'},
         {"src",     required_argument,      NULL,       'c'},
@@ -26,10 +26,13 @@ int Option_command_parser (int argc, char** argv) {
         {"threads", required_argument,      NULL,       'j'},
         {"flex",    no_argument,            NULL,       'r'},
         {"pretty",    no_argument,            NULL,       'p'},
+        {"sr-bin" ,   no_argument,            NULL,         'L'},
+        {"save-sr-bin",    required_argument, NULL,       'S'},
         {0,0,0,0}
     };
 
     opt.output = NULL;
+    opt.saveSrGraphBin = NULL;
     opt.biDir = UNI_DIRECTIANNAL;
     opt.filename = NULL;
     opt.cstr1 = 100;
@@ -86,6 +89,10 @@ int Option_command_parser (int argc, char** argv) {
                 //we are going to load directly a SR Graph
                 opt.loadingMode = LOAD_SR;
                 break;
+            
+            case 'L' :
+                opt.loadingMode = LOAD_SR_BIN;
+                break;
 
             case 'f' :
                 //set the input file name
@@ -120,6 +127,11 @@ int Option_command_parser (int argc, char** argv) {
             case 'o' :
                 //set the output file name
                 opt.output = optarg;
+                break;
+
+            case 'S' :
+                //set the output file name
+                opt.saveSrGraphBin = optarg;
                 break;
 
             case 'a' :

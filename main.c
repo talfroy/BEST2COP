@@ -93,6 +93,13 @@ int main(int argc, char** argv)
 
             INFO("Segment Routing Graph succesfully loaded\n");
         }
+    } else if (opt.loadingMode == LOAD_SR_BIN) { 
+        sr = SrGraph_load_bin(opt.filename);
+        if (sr == NULL) {
+            ERROR("The Segment Routing Graph can't be loaded\n");
+            return EXIT_FAILURE;
+        }
+        INFO("Segment Routing Graph succesfully loaded\n");
     } else {
         ERROR("Please choose an available loading mode\n");
     }
@@ -107,6 +114,11 @@ int main(int argc, char** argv)
                 ERROR("Output file does not exists\n");
             }
         }
+    }
+
+    if(opt.saveSrGraphBin != NULL)
+    {
+        SrGraph_save_bin(sr, opt.saveSrGraphBin);
     }
 
     my_m1 maxSpread = SrGraph_get_max_spread(sr);
@@ -228,7 +240,7 @@ int main(int argc, char** argv)
         } else {
             maxIter = SEG_MAX + 1;
         }
-
+        return 0;
         struct segment_list*** sl = Dict_retreive_paths(pf, sr, iter, opt.src);
         print_segment_list(sl, iter, sr->nbNode);
 

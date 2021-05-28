@@ -18,6 +18,7 @@ struct Options {
     my_m2 cstr2;            /**< constraint on second component (IGP weight) */
     char* filename;         /**< file to load */
     char* output;           /**< output file */
+    char* saveSrGraphBin;   /**< file output for the SR graph in binary */
     int accuracy;           /**< delay trueness (1 means that accuracy is about 0.1ms) */
     char biDir;             /**< define if the links are uni-directionals or bi */
     char analyse;              /**< use to put SEG_MAX to INF*/
