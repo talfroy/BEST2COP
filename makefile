@@ -112,6 +112,12 @@ clean:
 	@rm -rf randomTopo
 	@rm -rf randomSpread.o
 	@rm -rf randomSpread
+	@rm -rf scriptCstr.o
+	@rm -rf scriptCstr
+	@rm -rf worstRandom.o
+	@rm -rf worstRandom
+	@rm -rf worstSprint.o
+	@rm -rf worstSprint
 	@echo ${info} "Main program clean succesfully done"
 
 

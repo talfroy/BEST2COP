@@ -29,7 +29,7 @@ int main() {
     SrGraph_t* sr;
     Topology_t* topo;
 
-    ParetoFront_t*** dist = NULL;
+    Dict_t** dist = NULL;
     Pfront_t** pfront = NULL;
     struct timeval start, stop;
 
@@ -79,7 +79,7 @@ int main() {
                 for (int l = 0 ; l <= 10 ; l++) {
                     for (int k = 0 ; k < sr->nbNode ; k++) {
                         Pfront_free(&pfront[l][k]);
-                        ParetoFront_free(dist[l][k]);
+                        Dict_free(&dist[l][k]);
                     }
                     free(pfront[l]);
                     free(dist[l]);
