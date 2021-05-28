@@ -26,8 +26,8 @@ int main(int argc, char** argv)
     my_m1 maxSpred = SrGraph_get_max_spread(sr);
     my_m1 dictSize = 0;
     struct timeval start, stop;
-    ParetoFront_t*** dist = NULL;
-    BinHeap_t** pfront = NULL;
+    Dict_t** dist = NULL;
+    Pfront_t** pfront = NULL;
 
     int** iters = malloc(sr->nbNode * sizeof(int*));
 
@@ -50,13 +50,13 @@ int main(int argc, char** argv)
             gettimeofday(&stop, NULL);
 
             for (int k = 0 ; k < sr->nbNode ; k++) {
-                fprintf(output, "%d %d %d %d\n", j, k, iters[j][k], c2s[i], (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+                fprintf(output, "%d %d %d %d %ld\n", j, k, iters[j][k], c2s[i], (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
             }
 
             for (int l = 0 ; l <= 5*SEG_MAX ; l++) {
                 for (int k = 0 ; k < sr->nbNode ; k++) {
-                    BinHeap_free(&pfront[l][k]);
-                    ParetoFront_free(dist[l][k]);
+                    Pfront_free(&pfront[l][k]);
+                    Dict_free(&dist[l][k]);
                 }
                 free(pfront[l]);
                 free(dist[l]);

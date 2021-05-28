@@ -29,7 +29,7 @@ int main (int argc, char**argv)
     int maxSpread = atoi(argv[1]);
     SrGraph_t* sr[NB_FILE];
     struct timeval start, stop;
-    ParetoFront_t*** dist = NULL;
+    Dict_t** dist = NULL;
     Pfront_t** pfront = NULL;
     long int* times;
     long int means[NB_FILE];
@@ -79,7 +79,7 @@ int main (int argc, char**argv)
                 for (int l = 0 ; l <= SEG_MAX ; l++) {
                     for (int k = 0 ; k < i ; k++) {
                         Pfront_free(&pfront[l][k]);
-                        ParetoFront_free(dist[l][k]);
+                        Dict_free(&dist[l][k]);
                     }
                     free(pfront[l]);
                     free(dist[l]);

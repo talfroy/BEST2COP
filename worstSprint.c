@@ -16,8 +16,8 @@ int main()
     long int means[12];
     SrGraph_t* sr = NULL;
     Topology_t* topo = NULL;
-    ParetoFront_t*** dist = NULL;
-    BinHeap_t** pfront = NULL;
+    Dict_t** dist = NULL;
+    Pfront_t** pfront = NULL;
     struct timeval start, stop;
     char filename[128];
     long int mean = 0;
@@ -32,7 +32,7 @@ int main()
         sprintf(filename, "topos/sprint-modif%d.isp", spread[i]);
         topo = Topology_load_from_file(filename, 1, 0);
         printf("file %s loaded\n", filename);
-        sr = SrGraph_create_from_topology(topo);
+        sr = SrGraph_create_from_topology_best_m2(topo);
         if (sr != NULL) {
             printf("Sr loaded with %d nodes\n", sr->nbNode);
         }
@@ -56,8 +56,8 @@ int main()
 
             for (int w = 0 ; w <= SEG_MAX ; w++) {
                 for (int z = 0 ; z < sr->nbNode; z++) {
-                    BinHeap_free(&pfront[w][z]);
-                    ParetoFront_free(dist[w][z]);
+                    Pfront_free(&pfront[w][z]);
+                    Dict_free(&dist[w][z]);
                 }
                 free(pfront[w]);
                 free(dist[w]);
