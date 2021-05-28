@@ -467,7 +467,7 @@ void SrGraph_save_bin(SrGraph_t* sr, char* filename)
             for (Edge_t* edge = sr->pred[i][j] ; edge != NULL ; edge = edge->next) {
                 fwrite(edge, sizeof(edge->m1)+sizeof(edge->m2), 1, out);
             }
-            Edge_t emptyEdge = {.m1=0, .m2=0};
+            Edge_t emptyEdge = {.m1=-1, .m2=-1};
             fwrite(&emptyEdge, sizeof(emptyEdge.m1)+sizeof(emptyEdge.m2), 1, out);
         }
     }
@@ -503,7 +503,7 @@ SrGraph_t* SrGraph_load_bin(char* filename)
             {
                 ERROR("Unable to read edge %d %d\n",i,j);
             }
-            while(edge.m1 != 0 || edge.m2 != 0)
+            while(edge.m1 != -1 || edge.m2 != -1)
             {
                 //printf("%d %d %d %d\n", i, j, edge.m1, edge.m2);
                 sr->pred[i][j] = Edge_add(sr->pred[i][j], edge.m1, edge.m2);
