@@ -45,15 +45,15 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     ASSERT(nextextendable, -1);
 
     for (int i = 0 ; i < graph->nbNode ; i++) {
-        extendable[i] = Extendable_create();
+        extendable[i] = Extendable_create(2);
     }
     for (int i = 0 ; i < graph->nbNode ; i++) {
-        nextextendable[i] = Extendable_create();
+        nextextendable[i] = Extendable_create(2);
     }
 
 
     Extendable_list_t* extendable_list = NULL;
-    extendable_list = Extendable_list_create();
+    extendable_list = Extendable_list_create(graph->nbNode);
     ASSERT(extendable_list, -1);
     
     Extendable_append(extendable[src],0,0);
@@ -192,8 +192,10 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable_list, Dict_t* p
         foreach_extendable(path, &(d_list->ext)) {
             foreach_edge(edge, graph->pred[dst][edgeSrc])
             {
-                my_m1 d1v = path->m1 + edge->m1;
-                my_m2 d2v = path->m2 + edge->m2;
+                my_m1 d1v = path->m1;
+                      d1v += edge->m1;
+                my_m2 d2v = path->m2;
+                      d2v += edge->m2;
 
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v, edgeSrc);

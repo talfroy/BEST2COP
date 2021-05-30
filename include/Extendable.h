@@ -66,7 +66,7 @@ struct Extendable_list_s {
  * @return return the new list
  */
 
-Extendable_t* Extendable_create(void);
+Extendable_t* Extendable_create(int defaultSize);
 
 void Extendable_append(Extendable_t* ext, my_m1 m1, my_m2 m2);
 
@@ -105,7 +105,7 @@ bool Extendable_is_empty(Extendable_t** ext, int nbNode);
  * @return return the new list
  */
 
-Extendable_list_t* Extendable_list_create(void);
+Extendable_list_t* Extendable_list_create(int defaultSize);
 
 void Extendable_list_append(Extendable_list_t* extl, int node, const Extendable_t ext);
 

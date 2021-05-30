@@ -1,15 +1,14 @@
 #include "../include/Extendable.h"
 
 
-#define INITIAL_SIZE 10
 
 
-Extendable_t* Extendable_create(void){
+Extendable_t* Extendable_create(int defaultSize){
     Extendable_t *ext = malloc(sizeof(Extendable_t));
     ASSERT(ext, NULL);
     ext->count = 0;
-    ext->available = INITIAL_SIZE;
-    ext->infos = calloc(INITIAL_SIZE, sizeof(Path));
+    ext->available = defaultSize;
+    ext->infos = calloc(defaultSize, sizeof(Path));
     ASSERT(ext->infos, NULL);
     return ext;
 }
@@ -18,7 +17,7 @@ void Extendable_append(Extendable_t* ext, my_m1 m1, my_m2 m2)
 {
     if(ext->count == ext->available)
     {
-        size_t new_size = (ext->available + 10)*1.7;
+        size_t new_size = ext->available*1.7 + 1;
         Path* new_array = realloc(
             ext->infos, 
             new_size * sizeof(Path)
@@ -75,16 +74,16 @@ bool Extendable_is_empty(Extendable_t** ext, int nbNode)
 
 
 
-Extendable_list_t* Extendable_list_create(void)
+Extendable_list_t* Extendable_list_create(int defaultSize)
 {
 
     Extendable_list_t *l = malloc(sizeof(Extendable_list_t));
     ASSERT(l, NULL);
 
     l->count = 0;
-    l->available = INITIAL_SIZE;
+    l->available = defaultSize;
 
-    l->node_ext = calloc(INITIAL_SIZE, sizeof(Extendable_list_element_t));
+    l->node_ext = calloc(defaultSize, sizeof(Extendable_list_element_t));
     if(l->node_ext == NULL)
     {
         free(l);
@@ -96,7 +95,7 @@ Extendable_list_t* Extendable_list_create(void)
 void Extendable_list_append(Extendable_list_t* l, int node, const Extendable_t ext) {
     if(l->count == l->available)
     {
-        size_t new_size = (l->available + 10)*1.7;
+        size_t new_size = l->available*1.7 + 1;
         Extendable_list_element_t* new_array = realloc(
             l->node_ext, 
             new_size * sizeof(Extendable_list_element_t)
