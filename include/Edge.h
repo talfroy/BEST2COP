@@ -15,6 +15,9 @@ struct Edge_s {
 };
 
 
+#define foreach_edge(edge, edge_array) \
+    for(Edge_t *edge = edge_array ; edge != NULL ; edge = edge->next)
+
 /**
  * @brief allocate and fill a new edge structure
  * 

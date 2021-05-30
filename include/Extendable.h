@@ -24,17 +24,35 @@ typedef struct Extendable_s Extendable_t;
  */
 
 struct Extendable_s {
-    Path infos;
-    Extendable_t* next;
+    Path* infos;
+    size_t available;
+    size_t count;
 };
 
+
+#define foreach_extendable(p, extendable_array) \
+    for(const Path *p = &((extendable_array)->infos[0]); \
+        p - (extendable_array)->infos < (long)(extendable_array)->count ; \
+        p++)
+
+
+#define foreach_extendable_list(l, extendable_list_array) \
+    for(const Extendable_list_element_t *l = &((extendable_list_array)->node_ext[0]); \
+        l - (extendable_list_array)->node_ext < (long)(extendable_list_array)->count ; \
+        l++)
+
+typedef struct {
+    short        node;
+    Extendable_t ext;
+} Extendable_list_element_t;
 
 typedef struct Extendable_list_s Extendable_list_t;
 
 struct Extendable_list_s {
-    short node;
-    Extendable_t* ext;
-    Extendable_list_t* next;
+    Extendable_list_element_t * node_ext;
+    
+    size_t available;
+    size_t count;
 };
 
 
@@ -48,7 +66,11 @@ struct Extendable_list_s {
  * @return return the new list
  */
 
-Extendable_t* Extendable_new(my_m1 m1, my_m2 m2, Extendable_t* next);
+Extendable_t* Extendable_create(void);
+
+void Extendable_append(Extendable_t* ext, my_m1 m1, my_m2 m2);
+
+void Extendable_clear(Extendable_t* ext);
 
 
 void Extendable_free(Extendable_t* ext);
@@ -72,16 +94,6 @@ void Extendable_print(Extendable_t* ext);
 bool Extendable_is_empty(Extendable_t** ext, int nbNode);
 
 
-/**
- * @brief copy ext into an other extendable list
- * 
- * @param ext               list to copy
- * 
- * @return return the copied list
- */
-
-Extendable_t* Extendable_copy(Extendable_t* ext);
-
 
 /**
  * @brief create a new element for a list of Extendable_list
@@ -93,8 +105,16 @@ Extendable_t* Extendable_copy(Extendable_t* ext);
  * @return return the new list
  */
 
-Extendable_list_t* Extendable_list_new(Extendable_list_t* next, int node, Extendable_t* ext);
+Extendable_list_t* Extendable_list_create(void);
 
-void Extendable_list_free(Extendable_list_t* next);
+void Extendable_list_append(Extendable_list_t* extl, int node, const Extendable_t ext);
+
+int Extendable_list_is_empty(const Extendable_list_t* extl);
+
+void Extendable_list_clear(Extendable_list_t* extl);
+
+
+
+void Extendable_list_free(Extendable_list_t* extl);
 
 #endif

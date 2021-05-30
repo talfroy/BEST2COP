@@ -1,5 +1,6 @@
 #include "../include/CrashTest.h"
 
+#ifdef BUILD_CRASHTEST
 
 long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread)
 {
@@ -140,3 +141,5 @@ void CrashTest_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** p
         }
     }
 }
+
+#endif
