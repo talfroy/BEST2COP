@@ -502,6 +502,7 @@ SrGraph_t* SrGraph_load_bin(char* filename)
             if(fread(&edge, sizeof(edge.m1)+sizeof(edge.m2), 1, in) == 0)
             {
                 ERROR("Unable to read edge %d %d\n",i,j);
+                exit(1);
             }
             while(edge.m1 != -1 || edge.m2 != -1)
             {
@@ -510,6 +511,7 @@ SrGraph_t* SrGraph_load_bin(char* filename)
                 if(fread(&edge, sizeof(edge.m1)+sizeof(edge.m2), 1, in) == 0)
                 {
                     ERROR("Unable to read edge %d %d\n",i,j);
+                    exit(1);
                 }
             }
         }
