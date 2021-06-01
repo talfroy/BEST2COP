@@ -100,7 +100,7 @@ void Topology_free(Topology_t* topo);
  * @param nbNodes           number of nodes in the Topology
  **/
 
-void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph, 
+void dikjstra_best_m2(Edge_tab_t*** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes);
 
 
@@ -130,7 +130,7 @@ void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph,
  * @param nbNodes           number of nodes in the Topology
  **/
 
-void dikjstra_best_m1(Edge_t**** predOutGraph, Llist_t** ingraph, 
+void dikjstra_best_m1(Edge_tab_t*** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes);
 
 

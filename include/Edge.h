@@ -11,7 +11,14 @@ struct Edge_s {
     my_m1 m1;
     my_m2 m2;
     char id;
-    Edge_t* next;
+};
+
+typedef struct Edge_tab_s Edge_tab_t;
+
+struct Edge_tab_s {
+    Edge_t* list;
+    int size;
+    int available;
 };
 
 
@@ -25,7 +32,10 @@ struct Edge_s {
  * @return return the new list
  */
 
-Edge_t* Edge_new(Edge_t* prev, my_m1 m1, my_m2 m2);
+void Edge_new(Edge_tab_t* prev, my_m1 m1, my_m2 m2);
+
+
+void Edge_tab_init(Edge_tab_t* tab);
 
 
 /**
@@ -55,7 +65,7 @@ Edge_t* Edge_new_force_id(Edge_t* prev, my_m1 m1, my_m2 m2, char id);
  * @return return the new list
  */
 
-Edge_t* Edge_add(Edge_t* prev, my_m1 m1, my_m2 m2);
+void Edge_add(Edge_tab_t* prev, my_m1 m1, my_m2 m2);
 
 
 /**
@@ -81,8 +91,15 @@ void Edge_free(Edge_t* edge);
  * @return return the merged list
  */
 
-Edge_t* Edge_merge_flex(Edge_t* best_m1, Edge_t* best_m2);
+void Edge_merge_flex(Edge_tab_t* tab, Edge_t* best_m2);
 
-void Edge_print_list(Edge_t* list, FILE* output);
+void Edge_print_list(Edge_tab_t* list, FILE* output);
+
+
+void Edge_tab_delete(Edge_tab_t* tab);
+
+
+#define for_each_edge(prefix, edge, edge_tab)   \
+    for (int prefix ## _iter = 0 ; prefix ## _iter < edge_tab.size && (edge = edge_tab.list[prefix ## _iter], 1) ; prefix ## _iter++)
 
 #endif

@@ -109,9 +109,10 @@ void CrashTest_extend_path(SrGraph_t* graph, Extendable_list_t* extendable, Dict
     for (Extendable_list_t* d_list = extendable ; d_list != NULL ; d_list = d_list->next) {
         short edgeSrc = d_list->node;
         for (Extendable_t* path = d_list->ext ; path != NULL ; path = path->next) {
-            for (Edge_t* edge = graph->pred[dst][edgeSrc] ; edge != NULL ; edge = edge->next) {
-                my_m1 d1v = path->infos.m1 + edge->m1;
-                my_m2 d2v = path->infos.m2 + edge->m2;
+            Edge_t edge;
+            for_each_edge(k, edge, graph->pred[dst][edgeSrc]) {
+                my_m1 d1v = path->infos.m1 + edge.m1;
+                my_m2 d2v = path->infos.m2 + edge.m2;
 
                 Dict_add(dist_v, d1v, d2v, edgeSrc);
                 Dict_add(pf_cand, d1v, d2v, edgeSrc);

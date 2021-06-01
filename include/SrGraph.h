@@ -22,7 +22,7 @@ typedef struct SrGraph_s SrGraph_t;
 struct SrGraph_s {
     my_m1** m1dists;        /**< This member represent the delays between the nodes */
     my_m2** m2dists;        /**< This member represent the IGP weight between the nodes */
-    Edge_t*** pred;           /**< List of the predecessors */
+    Edge_tab_t** pred;           /**< List of the predecessors */
     //Edge_t*** succ;           /**< List of the successors */
     int nbNode;             /**< exact number of node */
 };

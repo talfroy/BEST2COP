@@ -169,9 +169,10 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
     for (Extendable_list_t* d_list = extendable ; d_list != NULL ; d_list = d_list->next) {
         short edgeSrc = d_list->node;
         for (Extendable_t* path = d_list->ext ; path != NULL ; path = path->next) {
-            for (Edge_t* edge = graph->pred[dst][edgeSrc] ; edge != NULL ; edge = edge->next) {
-                my_m1 d1v = path->infos.m1 + edge->m1;
-                my_m2 d2v = path->infos.m2 + edge->m2;
+            Edge_t edge;
+            for_each_edge(k, edge, graph->pred[dst][edgeSrc]) {
+                my_m1 d1v = path->infos.m1 + edge.m1;
+                my_m2 d2v = path->infos.m2 + edge.m2;
 
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v, edgeSrc);
@@ -305,9 +306,10 @@ struct segment_list*** Dict_retreive_paths(Dict_t** d, SrGraph_t* sr, int maxite
                     p_pred = d[curr_iter][pred].preds[n_d1];
                     curr_iter--;
 
-                    for (Edge_t* l = sr->pred[pred][p_pred] ; l ; l = l->next) {
-                        p_n_d1 = n_d1 - l->m1;
-                        p_n_d2 = n_d2 - l->m2;
+                    Edge_t l;
+                    for_each_edge(k, l, sr->pred[pred][p_pred]) {
+                        p_n_d1 = n_d1 - l.m1;
+                        p_n_d2 = n_d2 - l.m2;
 
                         if (d[curr_iter][p_pred].paths[p_n_d1] != p_n_d2) {
                             continue;

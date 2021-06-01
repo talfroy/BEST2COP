@@ -1,109 +1,69 @@
 #include "../include/Edge.h"
 
 
-Edge_t* Edge_new(Edge_t* prev, my_m1 m1, my_m2 m2)
+void Edge_new(Edge_tab_t* prev, my_m1 m1, my_m2 m2)
 {
-    Edge_t* new_e = malloc(sizeof(Edge_t));
-
-    new_e->m1 = m1;
-    new_e->m2 = m2;
-    new_e->next = prev;
-
-    if (prev == NULL) {
-        new_e->id = 1;
-    } else {
-        new_e->id = prev->id + 1;
+    if (!prev->available - prev->size) {
+        prev->list = realloc(prev->list, prev->available * 2 * sizeof(Edge_t));
+        prev->available *= 2;
     }
 
-    return new_e;
+    prev->list[prev->size].m1 = m1;
+    prev->list[prev->size].m2 = m2;
+    prev->size++;
+    prev->list[prev->size].id = prev->size;
 }
 
 
-Edge_t* Edge_new_force_id(Edge_t* prev, my_m1 m1, my_m2 m2, char id)
+void Edge_tab_init(Edge_tab_t* tab)
 {
-    Edge_t* new_e = malloc(sizeof(Edge_t));
-
-    new_e->m1 = m1;
-    new_e->m2 = m2;
-    new_e->next = prev;
-    new_e->id = id;
-
-    return new_e;
+    tab->list = calloc(1, sizeof(Edge_t));
+    tab->size = 0;
+    tab->available = 1;
 }
 
 
-Edge_t* Edge_add(Edge_t* prev, my_m1 m1, my_m2 m2)
+
+void Edge_add(Edge_tab_t* prev, my_m1 m1, my_m2 m2)
 {
-    if (prev == NULL) {
-        return Edge_new(NULL, m1, m2);
+    Edge_new(prev, m1, m2);
+}
+
+void Edge_tab_delete(Edge_tab_t* tab)
+{
+    free(tab->list);
+}
+
+void Edge_print_list(Edge_tab_t* list, FILE* output)
+{
+    Edge_t edge;
+    for (int i = 0 ; i < list->size && (edge = list->list[i], 1) ; i++) {
+        fprintf(output, " %d %d ", edge.m1, edge.m2);
     }
-
-    if (prev->m1 == m1 && prev->m2 == m2) {
-        return prev;
-    }
-
-    if (prev->next == NULL) {
-        prev->next = Edge_new_force_id(NULL, m1, m2, prev->id + 1);
-        return prev;
-    }
-
-
-    prev->next = Edge_add(prev->next, m1, m2);
-    return prev;
+    fprintf(output, "\n");
 }
 
 
-void Edge_free(Edge_t* edge)
-{
-    if (edge == NULL) {
-        return;
-    }
-
-    Edge_free(edge->next);
-    free(edge);
-}
-
-
-Edge_t* Edge_copy(Edge_t* old)
-{
-    if (old == NULL) {
-        return NULL;
-    }
-
-    Edge_t* last = Edge_copy(old->next);
-    return Edge_new(last, old->m1, old->m2);
-}
-
-
-void Edge_print_list(Edge_t* list, FILE* output)
-{
-    for (Edge_t* tmp = list ; tmp != NULL ; tmp = tmp->next) {
-        fprintf(output, " (%d ; %d) ", tmp->m1, tmp->m2);
-    }
-    printf("\n");
-}
-
-
-Edge_t* Edge_merge_flex(Edge_t* best_m1, Edge_t* best_m2)
+void Edge_merge_flex(Edge_tab_t* tab, Edge_t* best_m2)
 {
     Edge_t* flex = NULL;
 
-    flex = Edge_new(NULL, best_m1->m1, best_m1->m2);
+    Edge_new(tab, best_m2->m1, best_m2->m2);
     if (flex->m1 > best_m2->m1) {
         if (flex->m2 >= best_m2->m2) {
-            Edge_free(flex);
+            //Edge_free(flex);
             flex = NULL;
         }
-        return Edge_new(flex, best_m2->m1, best_m2->m2);
+        return;
     } else if (flex->m1 < best_m2->m1) {
         if (flex->m2 > best_m2->m2) {
-            return Edge_new(flex, best_m2->m1, best_m2->m2);
+            return ;
         }
     } else {
         if (flex->m2 > best_m2->m2) {
-            Edge_free(flex);
-            flex = Edge_new(NULL, best_m2->m1, best_m2->m2);
+            //Edge_free(flex);
+            Edge_new(tab, best_m2->m1, best_m2->m2);
         }
     }
-    return flex;
+    return;
 }

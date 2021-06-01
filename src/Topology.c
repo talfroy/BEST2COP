@@ -163,7 +163,7 @@ void Topology_free(Topology_t* topo)
 }
 
 
-void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph, 
+void dikjstra_best_m2(Edge_tab_t*** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes)
 {
     BinHeap_t bp;
@@ -230,7 +230,7 @@ void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph,
     for (int i = 0 ; i < nbNodes ; i++) {
         if (i != root) {
             //(*succOutGraph)[root][i] = Edge_add((*succOutGraph)[root][i], (*m1dists)[i], (*m2dists)[i]);
-            (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
+            Edge_add(&(*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
         }
     }
 
@@ -247,7 +247,7 @@ void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph,
 
 
 
-void dikjstra_best_m1(Edge_t**** predOutGraph, Llist_t** ingraph, 
+void dikjstra_best_m1(Edge_tab_t*** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes)
 {
     myStack* stack = initStack(nbNodes);
@@ -325,7 +325,7 @@ void dikjstra_best_m1(Edge_t**** predOutGraph, Llist_t** ingraph,
     for (int i = 0 ; i < nbNodes ; i++) {
         if (i != root) {
             //(*succOutGraph)[root][i] = Edge_add((*succOutGraph)[root][i], (*m1dists)[i], (*m2dists)[i]);
-            (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
+            Edge_add(&(*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
         }
     }
 
