@@ -159,14 +159,11 @@ int main(int argc, char** argv)
             pf = NULL;
             pfront = NULL;
 
-            //printf("Iter %d\n", i);
             gettimeofday(&start, NULL);
 
             iterMax[i] = Best2cop(&pfront, &pf, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
 
             gettimeofday(&stop, NULL);
-
-            //printf("Fin Iter %d\n", i);
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
             //RESULTS("Iter max : %d\n", iterMax[i]);
 
