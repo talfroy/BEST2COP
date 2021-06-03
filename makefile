@@ -5,18 +5,19 @@ OBJ  = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
 PG ?= 
 # -pg 
-# -p -g on mac
 
 CC ?= gcc-10
 
-## for clang
-#LIBS := -lm -lomp # -fopenmp
-#FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp $(PG)
 
+ifeq ("$(CC)","clang")
+## for clang
+LIBS := -lm -lomp # -fopenmp
+FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp $(PG)
+else
 ## for gcc
 LIBS := -lm -fopenmp
 FLAGS := -Wall -Wextra -Werror -O3 -fopenmp $(PG)
-
+endif
 
 
 
@@ -80,12 +81,24 @@ eval : $(OBJ) eval.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Crash test succesfully compiled"
 
-best2cop : $(OBJ) main.o
+best2cop : $(OBJ)  main.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Best2cop succesfully compiled"
 
+ifeq ("$(CC)","clang")
+best2cop_instrument : $(OBJ) main.o
+	clang -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -g -Iinclude -o obj/Best2cop.o -c src/Best2cop.m
+	clang $(FLAGS) -o best2cop -fobjc-arc -fmodules -mmacosx-version-min=11.0 $^ $(LIBS)
+else
+best2cop_instrument :
+	@echo "You must you clang (run 'PG=-g CC=clang make best2cop_instrument')"
+endif
+
+
 %.o: %.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^
+	
+	
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
 	$(CC) $(FLAGS) -Iinclude -o $@ -c $^

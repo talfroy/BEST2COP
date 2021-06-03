@@ -1,10 +1,12 @@
 #include "../include/Best2cop.h"
 
-
-
 int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
             my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters)
 {
+#ifdef MACOS_INSTRUMENT_PROFILE
+    s_logHandlePointsOfInterest = os_log_create("fr.unistra.best2cop", OS_LOG_CATEGORY_POINTS_OF_INTEREST);
+    unsigned long long signpostId = os_signpost_id_generate(s_logHandlePointsOfInterest);
+#endif
     //Start of init
     int maxIter = SEG_MAX;
     my_m2* minIgp = malloc(graph->nbNode * sizeof(my_m2));
@@ -84,10 +86,12 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         (*iters)[src] = 0;
     }
 
-    
     while (!Extendable_list_is_empty(extendable_list) && nbIter <= maxIter) {
-            
-        #pragma omp parallel for
+#ifdef MACOS_INSTRUMENT_PROFILE
+        os_signpost_event_emit(s_logHandlePointsOfInterest, signpostId, "new iteration");
+#endif
+
+        #pragma omp parallel for schedule(dynamic, 8)
         for (int dst = 0 ; dst < graph->nbNode ; dst++) {
 
             if (dst == src) {
@@ -111,6 +115,9 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
             Dict_free(&pf_cand);
             Pfront_free(&pfcandlist);
         }
+#ifdef MACOS_INSTRUMENT_PROFILE
+        os_signpost_event_emit(s_logHandlePointsOfInterest, signpostId, "end of parallele section");
+#endif
 
         Extendable_list_clear(extendable_list);
 
@@ -152,7 +159,9 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
 
         nbIter++;
     }
-
+#ifdef MACOS_INSTRUMENT_PROFILE
+        os_signpost_event_emit(s_logHandlePointsOfInterest, signpostId, "end of last iteration");
+#endif
     
 
     Extendable_list_free(extendable_list);
