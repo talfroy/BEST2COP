@@ -7,7 +7,7 @@ PG ?=
 # -pg 
 # -p -g on mac
 
-CC ?= gcc-10
+CC := gcc-10
 
 ## for clang
 #LIBS := -lm -lomp # -fopenmp
@@ -15,7 +15,7 @@ CC ?= gcc-10
 
 ## for gcc
 LIBS := -lm -fopenmp
-FLAGS := -Wall -Wextra -Werror -O3 -fopenmp $(PG)
+FLAGS := -Wall -Wextra -Werror -O3 -fopenmp
 
 
 
