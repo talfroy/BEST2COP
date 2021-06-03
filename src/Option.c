@@ -82,26 +82,30 @@ int Option_command_parser (int argc, char** argv) {
 
             case 't' :
                 //we are going to load a topology
+                if (opt.loadingMode != -1) {
+                    WARNING("You are going to overide file loading mode with option --topo\n");
+                }
                 opt.loadingMode = LOAD_TOPO;
                 break;
 
             case 's' :
                 //we are going to load directly a SR Graph
+                if (opt.loadingMode != -1) {
+                    WARNING("You are going to overide file loading mode with option --sr\n");
+                }
                 opt.loadingMode = LOAD_SR;
                 break;
             
             case 'L' :
+                if (opt.loadingMode != -1) {
+                    WARNING("You are going to overide file loading mode with option --sr-bin\n");
+                }
                 opt.loadingMode = LOAD_SR_BIN;
                 break;
 
             case 'f' :
                 //set the input file name
                 opt.filename = optarg;
-                break;
-
-            case 'l' :
-                //the nodes in the file are identified by labels
-                opt.labelsOrId = LOAD_LABELS;
                 break;
 
             case '1' :
@@ -119,8 +123,19 @@ int Option_command_parser (int argc, char** argv) {
                 opt.cstr2 = atoi(optarg);
                 break;
 
+            case 'l' :
+                //the nodes in the file are identified by labels
+                if (opt.labelsOrId != -1) {
+                    WARNING("You are going to overide the node loading mode with option --labels\n");
+                }
+                opt.labelsOrId = LOAD_LABELS;
+                break;
+
             case 'i' :
                 //the nodes in the file are identified by IDs
+                if (opt.labelsOrId != -1) {
+                    WARNING("You are going to overide the node loading mode with option --id\n");
+                }
                 opt.labelsOrId = LOAD_IDS;
                 break;
 
@@ -144,10 +159,16 @@ int Option_command_parser (int argc, char** argv) {
                 break;
 
             case 'u' :
+                if (opt.analyse != -1) {
+                    WARNING("You are going to overide the analyse type with option --2COP\n");
+                }
                 opt.analyse = ANALYSE_2COP;
                 break;
 
             case 'w' :
+                if (opt.analyse != -1) {
+                    WARNING("You are going to overide the analyse type with option --DCLC\n");
+                }
                 opt.analyse = ANALYSE_DCLC;
                 break;
 
@@ -163,11 +184,38 @@ int Option_command_parser (int argc, char** argv) {
     }
 
     if (!opt.allNodes && opt.src == -1) {
+        ERROR("Please provide option --src [node] or --all-nodes\n");
         return -1;
     }
 
-    if ((opt.filename == NULL || opt.labelsOrId == -1 || opt.loadingMode == -1) && !opt.randomTopo) {
+    if (opt.filename == NULL) {
+        ERROR("Please provide option --file with the topo file\n");
         return -1;
+    }
+
+    if (opt.labelsOrId == -1 || opt.loadingMode == -1)
+    switch(opt.loadingMode)
+    {
+        case LOAD_TOPO:
+            if (opt.loadingMode == -1) {
+                ERROR("You tried to load a topology file, please specify if nodes are labels or ids\n");
+                return -1;
+            }
+            break;
+
+        case LOAD_SR:
+            if (opt.loadingMode == -1) {
+                ERROR("You tried to load a SR graph file, please specify if nodes are labels or ids\n");
+                return -1;
+            }
+            break;
+
+        case LOAD_SR_BIN:
+            break;
+
+        default:
+            ERROR("Please profide the loading method in command line\n");
+            return -1;
     }
 
     return 0;
