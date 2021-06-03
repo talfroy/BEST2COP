@@ -193,7 +193,6 @@ int Option_command_parser (int argc, char** argv) {
         return -1;
     }
 
-    if (opt.labelsOrId == -1 || opt.loadingMode == -1)
     switch(opt.loadingMode)
     {
         case LOAD_TOPO:
