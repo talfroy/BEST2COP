@@ -102,7 +102,7 @@ my_m2 update_min_igp(my_m2 old, Extendable_t* nextext);
 
 
 
-
+void segment_list_free(struct segment_list*** sl, int maxiter, int nbNodes);
 
 extern struct segment_list*** Dict_retreive_paths(Dict_t** dist, SrGraph_t* sr, int maxiter, short src);
 

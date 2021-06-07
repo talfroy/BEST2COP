@@ -250,6 +250,15 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
     }
 }
 
+void segment_list_free(struct segment_list*** sl, int maxiter, int nbNodes){
+    for (int j = 0 ; j <= maxiter ; j++) {
+        for (int i = 0 ; i < nbNodes ; i++) {
+            free(sl[j][i]);
+        }
+        free(sl[j]);
+    }
+    free(sl);
+}
 
 struct segment_list*** Dict_retreive_paths(Dict_t** d, SrGraph_t* sr, int maxiter, short src)
 {
@@ -262,8 +271,8 @@ struct segment_list*** Dict_retreive_paths(Dict_t** d, SrGraph_t* sr, int maxite
     }
     short pred;
     struct segment_list* stack[10];
-    int  stacksize;
-    int curr_iter;
+    int  stacksize = -1;
+    int curr_iter = -1;
     my_m1 n_d1;
     my_m2 n_d2;
 

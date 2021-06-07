@@ -237,7 +237,7 @@ int main(int argc, char** argv)
         } else {
             maxIter = SEG_MAX + 1;
         }
-        return 0;
+        //return 0;
         struct segment_list*** sl = Dict_retreive_paths(pf, sr, iter, opt.src);
         print_segment_list(sl, iter, sr->nbNode);
 
@@ -258,7 +258,7 @@ int main(int argc, char** argv)
         }
 
 
-
+        segment_list_free(sl, iter, sr->nbNode);
         free(pfront);
         free(pf);
         free(itersSolo);
