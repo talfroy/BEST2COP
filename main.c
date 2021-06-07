@@ -8,6 +8,7 @@
 #include "include/Dict.h"
 #include "include/Option.h"
 #include "include/Best2cop.h"
+#include "include/Compact.h"
 
 //struct Options opt;
 
@@ -230,7 +231,7 @@ int main(int argc, char** argv)
         }
         
 
-        //Main_display_results(output, pf, sr->nbNode, pfront, iter);
+        Main_display_results(output, pf, sr->nbNode, pfront, iter);
         //Main_display_all_paths(output, dist, sr->nbNode, iter);
         if (opt.analyse) {
             maxIter = 10 * SEG_MAX;
@@ -239,9 +240,12 @@ int main(int argc, char** argv)
         }
         //return 0;
         struct segment_list*** sl = Dict_retreive_paths(pf, sr, iter, opt.src);
-        print_segment_list(sl, iter, sr->nbNode);
-
-
+        //print_segment_list(sl, iter, sr->nbNode);
+        // return 0;
+        int* nb_paths = get_nb_paths_per_dest(pf, sr->nbNode, iter);
+        path** compact_pf = compact_to_array(pf, nb_paths, iter, sr->nbNode, sl);
+        print_compact_array(compact_pf);
+        
         for (int j = 0 ; j < maxIter ; j++) {
             for (int k = 0 ; k < sr->nbNode ; k++) {
                 Pfront_free(&pfront[j][k]);
