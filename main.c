@@ -221,6 +221,7 @@ int main(int argc, char** argv)
         gettimeofday(&start, NULL);
 
         int iter = Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
+        
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
@@ -242,9 +243,12 @@ int main(int argc, char** argv)
         struct segment_list*** sl = Dict_retreive_paths(pf, sr, iter, opt.src);
         //print_segment_list(sl, iter, sr->nbNode);
         // return 0;
-        int* nb_paths = get_nb_paths_per_dest(pf, sr->nbNode, iter);
-        path** compact_pf = compact_to_array(pf, nb_paths, iter, sr->nbNode, sl);
-        print_compact_array(compact_pf);
+        //int* nb_paths = get_nb_paths_per_dest(pf, sr->nbNode, iter);
+
+        compact_front compact_pf = compact_to_array_2D(pfront, pf, iter, sr->nbNode, sl);
+        print_compact_array_2D(compact_pf);
+
+
         
         for (int j = 0 ; j < maxIter ; j++) {
             for (int k = 0 ; k < sr->nbNode ; k++) {

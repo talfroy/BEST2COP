@@ -3,7 +3,7 @@ OBJDIR= obj
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ  = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
-PG ?= 
+PG ?= -g
 # -pg 
 # -p -g on mac
 
