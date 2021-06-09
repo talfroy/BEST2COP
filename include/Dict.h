@@ -58,6 +58,19 @@ struct DictPath_s {
     Llist_t* paths[MAX_SIZE];
 };
 
+struct Dict_seg_list_s {
+    my_m2* paths;
+    struct segment_list* seg_list;
+    int size;
+};
+
+typedef struct Dict_seg_list_s Dict_seglist_t;
+
+
+void Dict_seglist_init(Dict_seglist_t* dic, int size);
+
+void Dict_seglist_add(Dict_seglist_t* dic, my_m1 key, my_m2 value, struct segment_list seglist);
+
 
 /**
  * @brief create a new empty Dictionary
@@ -165,6 +178,8 @@ void Dict_reduce_to_pareto_crash_test(Dict_t* dist, int nb_seg);
 
 
 void Dict_free(Dict_t* dic);
+
+extern void Dict_seglist_free(Dict_seglist_t* dic);
 
 
 

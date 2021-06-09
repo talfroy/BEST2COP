@@ -25,8 +25,9 @@ Topology_t* Topology_init(int nbNode)
 
 Topology_t* Topology_load_from_file(const char* filename, int precision, char biDir)
 {
-    LabelTable_t labels;
-    LabelTable_init(&labels);
+    LabelTable_t* labels;
+    labels = calloc(1, sizeof(LabelTable_t));
+    LabelTable_init(labels);
 
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
@@ -45,22 +46,23 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
     while (fgets(line, 1024,  file))
     {
         if (sscanf(line, "%s %s %lf %d\n", &srcLabel[0], &destLabel[0], &m1, &m2) == 4) {
-            src = LabelTable_add_node(&labels, srcLabel);
-            dst = LabelTable_add_node(&labels, destLabel);
-            nbNode = MAX(nbNode, labels.nextNodeId);
+            src = LabelTable_add_node(labels, srcLabel);
+            dst = LabelTable_add_node(labels, destLabel);
+            nbNode = MAX(nbNode, labels->nextNodeId);
         } else if (sscanf(line, "%s %s %d\n", &srcLabel[0], &destLabel[0], &m2) == 3) {
-            src = LabelTable_add_node(&labels, srcLabel);
-            dst = LabelTable_add_node(&labels, destLabel);
-            nbNode = MAX(nbNode, labels.nextNodeId);
+            src = LabelTable_add_node(labels, srcLabel);
+            dst = LabelTable_add_node(labels, destLabel);
+            nbNode = MAX(nbNode, labels->nextNodeId);
         } else {
             ERROR("Can't load line %d : your file might not have the good format : \n\t[source_node]  [destination_node]  [delay]  [IGP_weight]\n", nbLine);
             return NULL;
         }
         nbLine++;
     }
-    LabelTable_sort(&labels);
+    LabelTable_sort(labels);
 
     Topology_t* topo = Topology_init(nbNode);
+    topo->labels = labels;
 
     if (topo == NULL) {
         ERROR("Topology can't be initialized\n");
@@ -79,8 +81,8 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
     while (fgets(line, 1024,  file))
     {
          if (sscanf(line, "%s %s %lf %d\n", &srcLabel[0], &destLabel[0], &m1, &m2) == 4) {
-            src = LabelTable_get_id(&labels, srcLabel);
-            dst = LabelTable_get_id(&labels, destLabel);
+            src = LabelTable_get_id(labels, srcLabel);
+            dst = LabelTable_get_id(labels, destLabel);
             m1 *= my_pow(10, precision);
             
             topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
@@ -90,8 +92,8 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
                 topo->pred[src] = Llist_new(topo->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
             }
         } else if (sscanf(line, "%s %s %d\n", &srcLabel[0], &destLabel[0], &m2) == 3) {
-            src = LabelTable_get_id(&labels, srcLabel);
-            dst = LabelTable_get_id(&labels, destLabel);
+            src = LabelTable_get_id(labels, srcLabel);
+            dst = LabelTable_get_id(labels, destLabel);
             topo->succ[src] = Llist_new(topo->succ[src], 0, m2, dst, ADJACENCY_SEGMENT);
             topo->pred[dst] = Llist_new(topo->pred[dst], 0, m2, src, ADJACENCY_SEGMENT);
             if (biDir) {
@@ -106,7 +108,6 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
     }
 
     fclose(file);
-    LabelTable_free(&labels);
     return topo;
 }
 
@@ -158,6 +159,8 @@ void Topology_free(Topology_t* topo)
 
     free(topo->succ);
     free(topo->pred);
+    LabelTable_free(topo->labels);
+    free(topo->labels);
 
     free(topo);
 }

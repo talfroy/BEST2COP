@@ -72,3 +72,32 @@ void Dict_free(Dict_t* dic)
 }
 
 
+void Dict_seglist_free(Dict_seglist_t* dic)
+{
+    free(dic->paths);
+    free(dic->seg_list);
+}
+
+
+void Dict_seglist_init(Dict_seglist_t* dic, int size)
+{
+    dic->paths = malloc(size * sizeof(int));
+    ASSERT(dic->paths, );
+
+    dic->seg_list = malloc(size * sizeof(struct segment_list));
+    ASSERT(dic->seg_list, );
+    
+    for (int i = 0 ; i < size ; i++) {
+        dic->paths[i] = INF;
+    }
+    dic->size = size;
+}
+
+
+void Dict_seglist_add(Dict_seglist_t* dic, my_m1 key, my_m2 value, struct segment_list seglist)
+{
+    if (key < dic->size) {
+        dic->paths[key] = value;
+        dic->seg_list[key] = seglist;
+    }
+}

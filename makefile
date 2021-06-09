@@ -41,6 +41,9 @@ REALISTIC_SPRINT=geoSprint
 all : objects best2cop
 
 
+testCart : $(OBJ) test_prod_cart.o
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "testCart succesfully compiled"
 
 scriptCstr : $(OBJ) scriptCstr.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
@@ -118,6 +121,8 @@ clean:
 	@rm -rf worstRandom
 	@rm -rf worstSprint.o
 	@rm -rf worstSprint
+	@rm -rf test_prod_cart.o
+	@rm -rf testCart
 	@echo ${info} "Main program clean succesfully done"
 
 

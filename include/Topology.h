@@ -22,6 +22,7 @@ struct Topology_s {
     int nbNode;             /**< number of node in a Topology */
     Llist_t** pred;           /**< list of all the predessessor for each node */
     Llist_t** succ;           /**< list of all the successor for each node */
+    LabelTable_t* labels;
 };
 
 

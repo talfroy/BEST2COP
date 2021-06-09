@@ -232,7 +232,7 @@ int main(int argc, char** argv)
         }
         
 
-        Main_display_results(output, pf, sr->nbNode, pfront, iter);
+        //Main_display_results(output, pf, sr->nbNode, pfront, iter);
         //Main_display_all_paths(output, dist, sr->nbNode, iter);
         if (opt.analyse) {
             maxIter = 10 * SEG_MAX;
@@ -245,8 +245,8 @@ int main(int argc, char** argv)
         // return 0;
         //int* nb_paths = get_nb_paths_per_dest(pf, sr->nbNode, iter);
 
-        compact_front compact_pf = compact_to_array_2D(pfront, pf, iter, sr->nbNode, sl);
-        print_compact_array_2D(compact_pf);
+        //compact_front compact_pf = compact_to_array_2D(pfront, pf, iter, sr->nbNode, sl);
+        //print_compact_array_2D(compact_pf);
 
 
         

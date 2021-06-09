@@ -269,12 +269,13 @@ struct segment_list*** Dict_retreive_paths(Dict_t** d, SrGraph_t* sr, int maxite
             sl[j][i] = calloc(1000, sizeof(struct segment_list));
         }
     }
-    short pred;
+    short pred = 0;
     struct segment_list* stack[10];
+    memset(stack, 0, 10 * sizeof(struct segment_list*));
     int  stacksize = -1;
     int curr_iter = -1;
-    my_m1 n_d1;
-    my_m2 n_d2;
+    my_m1 n_d1 = 0;
+    my_m2 n_d2 = 0;
 
     /* for each segment list length */
     for (short iter = maxiter ; iter > 0 ; iter--) {
