@@ -30,6 +30,7 @@ typedef int my_m1;
 #define LOAD_TOPO               0
 #define LOAD_SR                 1
 #define LOAD_SR_BIN             2
+#define LOAD_TOPO_AREAS         3
 
 #define LOAD_LABELS             0
 #define LOAD_IDS                1

@@ -50,6 +50,9 @@ Topology_t* Topology_init(int nbNode);
 Topology_t* Topology_load_from_file(const char* filename, int precision, char bi_dir);
 
 
+extern Topology_t** Topology_load_multiple_areas(const char* filename, int precision, char bi_dir, int nb_areas);
+
+
 /**
  * @brief return the metrics of a given link
  * 

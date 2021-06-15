@@ -38,7 +38,9 @@ int main(int argc, char** argv)
     }
 
     Topology_t* topo = NULL;
+    Topology_t** areas = NULL;
     SrGraph_t* sr = NULL;
+    SrGraph_t** sr_areas = NULL;
     FILE* output = stdout;
     struct timeval start, stop;
 
@@ -101,6 +103,22 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
         INFO("Segment Routing Graph succesfully loaded\n");
+    } else if (opt.loadingMode == LOAD_TOPO_AREAS) {
+        areas = Topology_load_multiple_areas(opt.filename, opt.accuracy, opt.biDir, opt.nb_areas);
+
+        if (topo == NULL) {
+            ERROR("Topology can't be load\n");
+            return EXIT_FAILURE;
+        }
+
+        INFO("Areas succesfully loaded\n");
+
+        sr_areas = calloc(opt.nb_areas, sizeof(SrGraph_t*));
+        for (int i = 0 ; i < opt.nb_areas ; i++) {
+            sr_areas[i] = SrGraph_create_from_topology_best_m2(areas[i]);
+        }
+
+        INFO("Areas SrGraph succesfully loaded\n");
     } else {
         ERROR("Please choose an available loading mode\n");
     }
@@ -213,7 +231,7 @@ int main(int argc, char** argv)
         free(isFeasible);
         free(times);
         free(iters);
-    } else {
+    } else if (opt.src != -1) {
         pf = NULL;
         pfront = NULL;
         int* itersSolo = malloc(sr->nbNode * sizeof(int));
@@ -270,7 +288,12 @@ int main(int argc, char** argv)
         free(pfront);
         free(pf);
         free(itersSolo);
+    } else if (opt.nb_areas > 0) {
+
+    } else {
+        ERROR("Choose an available loading mode\n");
     }
+
     if (opt.interface) {
         free(opt.filename);
     }

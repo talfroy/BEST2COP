@@ -112,6 +112,95 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
 }
 
 
+
+Topology_t** Topology_load_multiple_areas(const char* filename, int precision, char bi_dir, int nb_areas)
+{
+    Topology_t **areas = calloc(nb_areas, sizeof(Topology_t*));
+    LabelTable_t** labels;
+    labels = calloc(nb_areas, sizeof(LabelTable_t*));
+
+    for (int i = 0 ; i < nb_areas ; i++) {
+        LabelTable_init(labels[i]);
+    }
+
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        ERROR("Can't find file %s in the current directory\n", filename);
+        return NULL;
+    }
+
+    int src, dst;
+    my_m2 m2;
+    char destLabel[128], srcLabel[128];
+    char line[1024];
+    double m1;
+    int nbLine = 1;
+    int area;
+
+
+    while (fgets(line, 1024,  file))
+    {
+        if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5) {
+            if (area >= nb_areas) {
+                ERROR("At line %d, area exceed the maximum value\n", nbLine);
+                continue;
+            }
+            src = LabelTable_add_node(labels[area], srcLabel);
+            dst = LabelTable_add_node(labels[area], destLabel);
+        } else if (sscanf(line, "%s %s %d\n", &srcLabel[0], &destLabel[0], &m2) == 3) {
+            src = LabelTable_add_node(labels[area], srcLabel);
+            dst = LabelTable_add_node(labels[area], destLabel);
+        } else {
+            ERROR("Can't load line %d : your file might not have the good format : \n\t[source_node]  [destination_node]  [delay]  [IGP_weight] [area]\n", nbLine);
+            return NULL;
+        }
+        nbLine++;
+    }
+
+    if (areas == NULL) {
+        ERROR("Topology can't be initialized\n");
+        return NULL;
+    }
+
+    for (int i = 0 ; i < nb_areas ; i++) {
+        areas[i] = Topology_init(labels[i]->nextNodeId);
+        areas[i]->labels = labels[i];
+    }
+
+    fclose(file);
+    file = fopen(filename, "r");
+    
+    if (file == NULL) {
+        ERROR("Can't find file %s in the current directory\n", filename);
+        return NULL;
+    }
+    nbLine = 1;
+
+    while (fgets(line, 1024,  file))
+    {
+         if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5) {
+            src = LabelTable_get_id(labels[area], srcLabel);
+            dst = LabelTable_get_id(labels[area], destLabel);
+            m1 *= my_pow(10, precision);
+            
+            areas[area]->succ[src] = Llist_new(areas[area]->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
+            areas[area]->pred[dst] = Llist_new(areas[area]->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
+            if (bi_dir) {
+                areas[area]->succ[dst] = Llist_new(areas[area]->succ[dst], m1, m2, src, ADJACENCY_SEGMENT);
+                areas[area]->pred[src] = Llist_new(areas[area]->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
+            }
+        } else {
+            ERROR("Can't load line %d : your file might not have the good format : \n\t[source_node]  [destination_node]  [delay]  [IGP_weight]\n", nbLine);
+            return NULL;
+        }
+        nbLine++;
+    }
+
+    fclose(file);
+    return areas;
+}
+
+
 long int my_pow(long int x, int y)
 {
     if (y == 0) {

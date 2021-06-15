@@ -28,6 +28,7 @@ int Option_command_parser (int argc, char** argv) {
         {"pretty",    no_argument,            NULL,       'p'},
         {"sr-bin" ,   no_argument,            NULL,         'L'},
         {"save-sr-bin",    required_argument, NULL,       'S'},
+        {"areas",    required_argument, NULL,       'A'},
         {0,0,0,0}
     };
 
@@ -48,11 +49,16 @@ int Option_command_parser (int argc, char** argv) {
     opt.randomTopo = 0;
     opt.flex = false;
     opt.pretty = false;
+    opt.nb_areas = 0;
 
 
     while ((optValue = getopt_long(argc, argv, optString, long_options, NULL)) != -1) {
         switch(optValue)
         {
+            case 'A' :
+                opt.nb_areas = atoi(optarg);
+                break;
+                
             case 'j' :
                 opt.nbThreads = atoi(optarg);
                 break;

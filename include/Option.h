@@ -29,6 +29,7 @@ struct Options {
     char randomTopo;            
     bool flex;              /**< enable flex algo (disble by default) */
     bool pretty;
+    short nb_areas;
 };
 
 extern struct Options opt;
