@@ -143,7 +143,7 @@ Topology_t** Topology_load_multiple_areas(const char* filename, int precision, c
     {
         if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5) {
             if (area >= nb_areas) {
-                ERROR("At line %d, area exceed the maximum value\n", nbLine);
+                ERROR("At line %d, area exceed the maximum value (%d)\n", nbLine, area);
                 continue;
             }
             src = LabelTable_add_node(labels[area], srcLabel);
@@ -567,7 +567,7 @@ int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id)
 
     char label[1024];
     memset(label, 0, 1024);
-    sprintf(label, "ABR%d%d.%d", area1, area2, id);
+    sprintf(label, "ABR%d.%d.%d", area1, area2, id);
 
     for (int i = 0 ; i < topo->labels->nextNodeId ; i++) {
         if (strstr(topo->labels->node[i].name, label) != NULL) {

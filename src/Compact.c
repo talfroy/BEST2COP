@@ -284,7 +284,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, int c1, int ABR)
 						}
 						int cost3 = pf1->paths[ABR][s1_index][d1_index].cost + pf2->paths[out_node][s2_index][d2_index].cost;
 						int delay3 = delay1 + delay2;
-						printf("To %d: %d, %d, %d\n", out_node, sl3.size, delay3, cost3);
+						//printf("To %d: %d, %d, %d\n", out_node, sl3.size, delay3, cost3);
 						Dict_seglist_add(&pf3[sl3.size][out_node], delay3, cost3, sl3);
 					}
 				}

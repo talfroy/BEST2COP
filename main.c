@@ -365,9 +365,9 @@ int main(int argc, char **argv)
 
         for (int i = 0; i < opt.nb_areas - 1; i++)
         {
-            for (int id = 1; id < 3; id++)
+            for (int id = 0; id < 2; id++)
             {
-                int index = (id - 1) * opt.nb_areas + i;
+                int index = (id)*opt.nb_areas + i;
                 pf = NULL;
                 pfront = NULL;
                 if (i)
@@ -412,6 +412,38 @@ int main(int argc, char **argv)
         }
 
         main_display_area_time_mean(times_area, opt.nb_areas);
+        long int tot_time_areas = 0;
+        Dict_seglist_t **merged;
+        int size = 0;
+
+        for (int i = 1; i < opt.nb_areas - 1; i++)
+        {
+            for (int id = 0; id < 2; id++)
+            {
+                merged = NULL;
+                int index = (id)*opt.nb_areas + i;
+                area_src = Topology_search_abr_id(areas[0], 0, i, id);
+
+                gettimeofday(&start, NULL);
+                merged = cart(cf_area[0], cf_area[index], opt.cstr1, area_src);
+                gettimeofday(&stop, NULL);
+                size++;
+
+                tot_time_areas += (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+
+                for (int j = 0; j <= SEG_MAX; j++)
+                {
+                    for (int k = 0; k < cf_area[index]->nbNodes; k++)
+                    {
+                        Dict_seglist_free(&merged[j][k]);
+                    }
+                    free(merged[j]);
+                }
+                free(merged);
+            }
+        }
+
+        RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
 
         for (int i = 0; i < opt.nb_areas - 1; i++)
         {
@@ -570,9 +602,9 @@ void main_display_area_time_mean(long int *times, int nb_areas)
     tot = 0;
     for (int i = 0; i < nb_areas - 1; i++)
     {
-        for (int id = 1; id < 3; id++)
+        for (int id = 0; id < 2; id++)
         {
-            int index = (id - 1) * nb_areas + i;
+            int index = (id)*nb_areas + i;
             tot += times[index];
         }
     }
@@ -582,9 +614,9 @@ void main_display_area_time_mean(long int *times, int nb_areas)
     tot = 0;
     for (int i = 0; i < nb_areas - 1; i++)
     {
-        for (int id = 1; id < 3; id++)
+        for (int id = 0; id < 2; id++)
         {
-            int index = (id - 1) * nb_areas + i;
+            int index = (id)*nb_areas + i;
             tot += (mean - times[index]) * (mean - times[index]);
         }
     }
@@ -592,5 +624,5 @@ void main_display_area_time_mean(long int *times, int nb_areas)
     square = sqrt(square);
 
     RESULTS("Mean time for areas is %ld us\n", mean);
-    RESULTS("Square (95%%) for areas is %ld us\n", square);
+    RESULTS("Standard deviation (95%%) for areas is %ld us\n", 2 * square);
 }
