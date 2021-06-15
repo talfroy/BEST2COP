@@ -73,9 +73,8 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         }
         (*iters)[src] = 0;
     }
-
     while (extendable != NULL && nbIter <= maxIter) {
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int dst = 0 ; dst < graph->nbNode ; dst++) {
 
             if (dst == src) {
@@ -135,7 +134,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
 
         nbIter++;
     }
-
     
 
     Extendable_list_free(extendable);

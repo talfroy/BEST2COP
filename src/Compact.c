@@ -108,6 +108,18 @@ void print_compact_array_2D(compact_front *compact_pf)
 	}
 }
 
+void Compact_free(compact_front* cp)
+{
+	for (int i = 0 ; i < cp->nbNodes ; i++) {
+		for (int j = 0 ; j < cp->iter ; j++) {
+			free(cp->paths[i][j]);
+		}
+		free(cp->paths[i]);
+	}
+	free(cp->paths);
+	free(cp);
+}
+
 // take the pfront and put it in an array, indexed first on the destination node,
 // than on the number of segments.
 // In other words, it lists, for a given node, all paths using a given
@@ -148,7 +160,15 @@ compact_front* compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 		}
 	}
 	cf->nbNodes = nbNodes;
+	cf->iter = iter;
 	cf->paths = compact_pf;
+
+	for (int i = 0 ; i < nbNodes ; i++) {
+		free(nb_paths_per_segments[i]);
+	}
+
+	free(nb_paths_per_segments);
+
 	return cf;
 }
 

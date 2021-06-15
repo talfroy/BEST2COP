@@ -180,4 +180,6 @@ Topology_t* Topology_create_random_uniform(int size, int exist, my_m1 max_delay,
 
 Topology_t* Topology_create_random_non_align(int size, int exist, my_m1 max_delay, my_m2 max_igp);
 
+extern int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id);
+
 #endif

@@ -31,6 +31,7 @@ int LabelTable_add_node(LabelTable_t* hash, char* name)
         }
     }
 
+
     strcpy(hash->node[hash->nextNodeId].name, name);
     hash->nextNodeId++;
     return hash->nextNodeId - 1;

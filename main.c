@@ -106,7 +106,7 @@ int main(int argc, char** argv)
     } else if (opt.loadingMode == LOAD_TOPO_AREAS) {
         areas = Topology_load_multiple_areas(opt.filename, opt.accuracy, opt.biDir, opt.nb_areas);
 
-        if (topo == NULL) {
+        if (areas == NULL) {
             ERROR("Topology can't be load\n");
             return EXIT_FAILURE;
         }
@@ -123,7 +123,11 @@ int main(int argc, char** argv)
         ERROR("Please choose an available loading mode\n");
     }
 
-    ASSERT(sr, 1, "Segment Routing Graph hasn't been loaded yet so we kill the program\n");
+    if (!opt.nb_areas) {
+        ASSERT(sr, 1, "Segment Routing Graph hasn't been loaded yet so we kill the program\n");
+    } else {
+        ASSERT(sr_areas, 1, "Segment Routing Graph hasn't been loaded yet so we kill the program\n");
+    }
 
     if (opt.output != NULL) {
         output = fopen(opt.output, "w");
@@ -140,7 +144,10 @@ int main(int argc, char** argv)
         SrGraph_save_bin(sr, opt.saveSrGraphBin);
     }
 
-    my_m1 maxSpread = SrGraph_get_max_spread(sr);
+    my_m1 maxSpread = 100;
+    if (!opt.nb_areas) {
+        maxSpread = SrGraph_get_max_spread(sr);
+    }
 
 
     if (maxSpread == -1) {
@@ -288,7 +295,81 @@ int main(int argc, char** argv)
         free(pfront);
         free(pf);
         free(itersSolo);
-    } else if (opt.nb_areas > 0) {
+    } 
+    /* If the topology is decomposed into many areas */
+    else if (opt.nb_areas > 0) {
+        struct segment_list**** sl_areas = calloc(opt.nb_areas * 2, sizeof(struct segment_list***));
+        ASSERT(sl_areas, EXIT_FAILURE);
+
+        long int *times_area = calloc(opt.nb_areas * 2, sizeof(long int));
+        ASSERT(times_area, EXIT_FAILURE);
+
+        compact_front** cf_area = calloc(opt.nb_areas * 2, sizeof(compact_front*));
+        ASSERT(cf_area, EXIT_FAILURE);
+        int area_src;
+        int iter;
+
+        for (int i = 0 ; i < opt.nb_areas - 1 ; i++) {
+            for (int id = 1 ; id < 3 ; id++) {
+                int index = (id - 1) * opt.nb_areas + i;
+                pf = NULL;
+                pfront = NULL;
+                if (i) {
+                    area_src = Topology_search_abr_id(areas[i], 0, i, id);
+                } else {
+                    area_src = Topology_search_abr_id(areas[i], 0, opt.nb_areas - 1, id);
+                }
+
+                gettimeofday(&start, NULL);
+                /* first do the BEST2COP on each areas */
+                iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL);
+
+                /* then retreive the paths using the pareto front */
+                sl_areas[index] = Dict_retreive_paths(pf, sr_areas[i], iter, area_src);
+
+                /* finally, tranform the tab into a list (emulate packet formation) */
+                cf_area[index] = compact_to_array_2D(pfront, pf, iter, sr_areas[i]->nbNode, sl_areas[index]);
+                
+                gettimeofday(&stop, NULL);
+                times_area[index] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+
+                
+                maxIter = SEG_MAX + 1;
+
+
+                
+                for (int j = 0 ; j < maxIter ; j++) {
+                    for (int k = 0 ; k < sr_areas[i]->nbNode ; k++) {
+                        Pfront_free(&pfront[j][k]);
+                        Dict_free(&pf[j][k]);
+                    }
+                    free(pfront[j]);
+                    free(pf[j]);
+                }
+
+
+
+                free(pfront);
+                free(pf);
+                segment_list_free(sl_areas[index], iter, sr_areas[i]->nbNode);
+            }
+        }
+
+        for (int i = 0 ; i < opt.nb_areas - 1 ; i++) {
+            for (int id = 1 ; id < 3 ; id++) {
+                int index = (id - 1) * opt.nb_areas + i;
+                Compact_free(cf_area[index]);
+            }
+        }
+
+        for (int i = 0 ; i < opt.nb_areas ; i++) {
+            Topology_free(areas[i]);
+            SrGraph_free(sr_areas[i]);
+        }
+
+        free(cf_area);
+        free(times_area);
+        free(sl_areas);
 
     } else {
         ERROR("Choose an available loading mode\n");
@@ -298,8 +379,13 @@ int main(int argc, char** argv)
         free(opt.filename);
     }
 
-    Topology_free(topo);
-    SrGraph_free(sr);
+    if (!opt.nb_areas) {
+        Topology_free(topo);
+        SrGraph_free(sr);
+    } else {
+        free(areas);
+        free(sr_areas);
+    }
     return 0;
 }
 

@@ -15,6 +15,7 @@ typedef struct path path;
 struct compact_front
 {
 	int nbNodes;
+	int iter;
 	path ***paths;
 };
 
@@ -34,6 +35,8 @@ compact_front* compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, int c1, int ABR);
 
 struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2);
+
+extern void Compact_free(compact_front* cp);
 
 
 #endif

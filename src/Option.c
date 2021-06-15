@@ -56,6 +56,7 @@ int Option_command_parser (int argc, char** argv) {
         switch(optValue)
         {
             case 'A' :
+                opt.loadingMode = LOAD_TOPO_AREAS;
                 opt.nb_areas = atoi(optarg);
                 break;
                 
@@ -189,7 +190,7 @@ int Option_command_parser (int argc, char** argv) {
         return 0;
     }
 
-    if (!opt.allNodes && opt.src == -1) {
+    if (!opt.allNodes && opt.src == -1 && !opt.nb_areas) {
         ERROR("Please provide option --src [node] or --all-nodes\n");
         return -1;
     }
@@ -216,6 +217,9 @@ int Option_command_parser (int argc, char** argv) {
             break;
 
         case LOAD_SR_BIN:
+            break;
+
+        case LOAD_TOPO_AREAS:
             break;
 
         default:

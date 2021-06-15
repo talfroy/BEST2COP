@@ -120,6 +120,7 @@ Topology_t** Topology_load_multiple_areas(const char* filename, int precision, c
     labels = calloc(nb_areas, sizeof(LabelTable_t*));
 
     for (int i = 0 ; i < nb_areas ; i++) {
+        labels[i] = calloc(1, sizeof(LabelTable_t));
         LabelTable_init(labels[i]);
     }
 
@@ -145,9 +146,6 @@ Topology_t** Topology_load_multiple_areas(const char* filename, int precision, c
                 ERROR("At line %d, area exceed the maximum value\n", nbLine);
                 continue;
             }
-            src = LabelTable_add_node(labels[area], srcLabel);
-            dst = LabelTable_add_node(labels[area], destLabel);
-        } else if (sscanf(line, "%s %s %d\n", &srcLabel[0], &destLabel[0], &m2) == 3) {
             src = LabelTable_add_node(labels[area], srcLabel);
             dst = LabelTable_add_node(labels[area], destLabel);
         } else {
@@ -195,6 +193,8 @@ Topology_t** Topology_load_multiple_areas(const char* filename, int precision, c
         }
         nbLine++;
     }
+
+    free(labels);
 
     fclose(file);
     return areas;
@@ -554,4 +554,26 @@ Topology_t* Topology_create_random_non_align(int size, int exist, my_m1 max_dela
     }
 
     return topo;
+}
+
+
+int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id)
+{
+    if (area1 > area2) {
+        int tmp = area2;
+        area2 = area1;
+        area1 = tmp;
+    }
+
+    char label[1024];
+    memset(label, 0, 1024);
+    sprintf(label, "ABR%d%d.%d", area1, area2, id);
+
+    for (int i = 0 ; i < topo->labels->nextNodeId ; i++) {
+        if (strstr(topo->labels->node[i].name, label) != NULL) {
+            return i;
+        }
+    }
+
+    return -1;
 }
