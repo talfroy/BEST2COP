@@ -13,7 +13,7 @@ void Pfront_init(Pfront_t* bp, int size)
 {
     bp->heapSize = 0;
     bp->keys = malloc(size * sizeof(my_m1));
-    ASSERT_VOID(bp->keys);
+    ASSERT(bp->keys, , size);
     bp->maxSize = size;
 }
 
