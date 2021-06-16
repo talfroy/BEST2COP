@@ -15,12 +15,12 @@ void my_print_progress(int percentage)
 SrGraph_t* SrGraph_init(int nbNodes)
 {
     SrGraph_t* graph = malloc(sizeof(SrGraph_t));
-    ASSERT(graph, NULL);
+    ASSERT(graph, NULL, 1);
 
     graph->nbNode = nbNodes;
 
     graph->pred = malloc(nbNodes * sizeof(Edge_t**));
-    ASSERT(graph->pred, NULL);
+    ASSERT(graph->pred, NULL, nbNodes);
 
     // graph->succ = malloc(nbNodes * sizeof(Edge_t**));
     // ASSERT(graph->succ, NULL);
@@ -30,7 +30,7 @@ SrGraph_t* SrGraph_init(int nbNodes)
         // ASSERT(graph->succ[i], NULL);
 
         graph->pred[i] = malloc(nbNodes * sizeof(Edge_t*));
-        ASSERT(graph->pred[i], NULL);
+        ASSERT(graph->pred[i], NULL, nbNodes);
         for (int j = 0 ; j < nbNodes ; j++) {
             // graph->succ[i][j] = NULL;
             graph->pred[i][j] = NULL;
@@ -38,18 +38,18 @@ SrGraph_t* SrGraph_init(int nbNodes)
     }
 
     graph->m1dists = malloc(nbNodes * sizeof(my_m1*));
-    ASSERT(graph->m1dists, NULL);
+    ASSERT(graph->m1dists, NULL, nbNodes);
 
     graph->m2dists = malloc(nbNodes * sizeof(my_m2*));
-    ASSERT(graph->m2dists, NULL);
+    ASSERT(graph->m2dists, NULL, nbNodes);
 
     for (int i = 0 ; i < nbNodes ; i++) {
 
         graph->m2dists[i] = malloc(nbNodes * sizeof(my_m2));
-        ASSERT(graph->m2dists[i], NULL);
+        ASSERT(graph->m2dists[i], NULL, nbNodes);
 
         graph->m1dists[i] = malloc(nbNodes * sizeof(my_m1));
-        ASSERT(graph->m1dists[i], NULL);
+        ASSERT(graph->m1dists[i], NULL, nbNodes);
     }
 
     return graph;
@@ -258,7 +258,7 @@ SrGraph_t* SrGraph_load_with_id(char* filename, int nbNodes, int accuracy, char 
         return NULL;
     }
 
-    ASSERT(file, NULL);
+    ASSERT(file, NULL, 1);
 
     int src, dst;
     my_m2 m2;
@@ -817,7 +817,7 @@ bool SrGraph_is_connex(SrGraph_t* sr)
 SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr)
 {
     int* nbNeighbors = malloc(sr->nbNode * sizeof(int));
-    ASSERT(nbNeighbors, NULL);
+    ASSERT(nbNeighbors, NULL, sr->nbNode);
 
     memset(nbNeighbors, 0, sr->nbNode * sizeof(int));
 
@@ -837,7 +837,7 @@ SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr)
     }
 
     int* nodes = malloc(sr->nbNode * sizeof(int));
-    ASSERT(nodes, NULL);
+    ASSERT(nodes, NULL, sr->nbNode);
 
     int nbNodes = 0;
 

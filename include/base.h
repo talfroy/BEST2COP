@@ -67,15 +67,15 @@ typedef char bool;
     fprintf(stderr, "[" RED "ERROR" DEFAULT "] : " MAGENTA __VA_ARGS__ ); \
     fprintf(stderr, DEFAULT); \
 
-#define ASSERT(value, code,...)\
+#define ASSERT(value, code, size)\
     if(!value) {\
-        fprintf(stderr,RED "ASSERTION FAILED - file : \"%s\", line : %d, function \"%s\". " MAGENTA  __VA_ARGS__ "\n",__FILE__,__LINE__,__func__); \
+        fprintf(stderr,RED "ASSERTION FAILED - file : \"%s\", line : %d, function \"%s\". with size %d" MAGENTA ,__FILE__,__LINE__,__func__, size); \
         return code;\
     }
 
 #define ASSERT_VOID(value,...)\
     if(!value) {\
-        fprintf(stderr,RED "ASSERTION FAILED - file : \"%s\", line : %d, function \"%s\". " MAGENTA  __VA_ARGS__ "\n",__FILE__,__LINE__,__func__); \
+        fprintf(stderr,RED "ASSERTION FAILED - file : \"%s\", line : %d, function \"%s\". " MAGENTA  __VA_ARGS__,__FILE__,__LINE__,__func__); \
         return;\
     }
 

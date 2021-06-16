@@ -5,10 +5,10 @@
 void Dict_init(Dict_t* dic, int size)
 {
     dic->paths = malloc(size * sizeof(int));
-    ASSERT_VOID(dic->paths);
+    ASSERT(dic->paths, , size);
 
     dic->preds = malloc(size * sizeof(short));
-    ASSERT_VOID(dic->preds);
+    ASSERT(dic->preds, , size);
     
     for (int i = 0 ; i < size ; i++) {
         dic->paths[i] = INF;
@@ -83,10 +83,10 @@ void Dict_seglist_free(Dict_seglist_t* dic)
 void Dict_seglist_init(Dict_seglist_t* dic, int size)
 {
     dic->paths = malloc(size * sizeof(int));
-    ASSERT(dic->paths, );
+    ASSERT(dic->paths, , size);
 
     dic->seg_list = malloc(size * sizeof(struct segment_list));
-    ASSERT(dic->seg_list, );
+    ASSERT(dic->seg_list, , size);
     
     for (int i = 0 ; i < size ; i++) {
         dic->paths[i] = INF;

@@ -6,7 +6,7 @@ Llist_t* Llist_new(Llist_t* next, my_m1 m1, my_m2 m2, int edgeDst, int segType)
 {
     Llist_t* new = malloc(sizeof(Llist_t));
 
-    ASSERT(new, NULL);
+    ASSERT(new, NULL, 1);
 
     new->infos.edgeDst = edgeDst;
     new->infos.m1 = m1;

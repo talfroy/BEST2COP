@@ -237,12 +237,12 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, int c1, int ABR)
 	// pf1 = dist to ABR
 	Dict_seglist_t **pf3 = NULL;
 	pf3 = calloc(11, sizeof(Dict_t*));
-	ASSERT(pf3, NULL);
+	ASSERT(pf3, NULL, 11);
 
 	for (int i = 0; i <= 10; i++)
 	{
 		pf3[i] = malloc(pf2->nbNodes * sizeof(Dict_t));
-		ASSERT(pf3[i], NULL);
+		ASSERT(pf3[i], NULL, pf2->nbNodes);
 
 		for (int j = 0; j < pf2->nbNodes; j++)
 		{

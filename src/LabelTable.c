@@ -4,7 +4,7 @@
 void LabelTable_init(LabelTable_t* hash)
 {
     hash->node = malloc(NB_NODE_ALLOC * sizeof(node));
-    ASSERT_VOID(hash->node);
+    ASSERT(hash->node, , 1);
 
     for (int i = 0 ; i < NB_NODE_ALLOC ; i++) {
         memset(hash->node[i].name, 0, 128);
@@ -24,7 +24,7 @@ int LabelTable_add_node(LabelTable_t* hash, char* name)
 
     if ((hash->nextNodeId % NB_NODE_ALLOC) == 0 && hash->nextNodeId != 0) {
         hash->node = realloc(hash->node, (hash->nextNodeId + NB_NODE_ALLOC) * sizeof(node));
-        ASSERT(hash->node, -1);
+        ASSERT(hash->node, -1, (hash->nextNodeId + NB_NODE_ALLOC));
 
         for (int i = 0 ; i < NB_NODE_ALLOC ; i++) {
             memset(hash->node[hash->nextNodeId + i].name, 0, 128);

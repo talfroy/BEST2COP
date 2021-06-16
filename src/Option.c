@@ -60,7 +60,7 @@ int Option_command_parser (int argc, char** argv) {
                 opt.nb_areas = atoi(optarg);
                 break;
                 
-            case 'j' :
+            case 'j' :  
                 opt.nbThreads = atoi(optarg);
                 break;
 
@@ -234,14 +234,13 @@ int Option_command_parser (int argc, char** argv) {
 void usage(char* name)
 {
     printf ("Usage:\n");
-	printf ("\t%s [options] --file input_file --topo/--sr --labels/--id --all-nodes/--src [source node]\n", name);
+	printf ("\t%s [options] --file input_file --loading_mode --execution_mode\n", name);
 
-    printf("\nMandatory parameters :\n" \
-            "You need to use --file, --topo or --sr, --labels or --id and --all-nodes or --src\n" \
-           "\t--file [filename]\t\tUse the given file as graph file\n" \
-           "\t--topo/--sr \t\t\tdefine which type of loading will be choosen\n" \
-           "\t--labels/--id \t\t\tdefine if src and dst in the file are represented by ids or labels\n" \
-           "\t--all-nodes/-src [source]\tdefine if the main function will be lauch on all nodes or only one\n");
+    printf("\nloading mode :\n" \
+           "--topo\t\tUsed to specifie that the loaded file represents the topology\n" \
+           "--sr\t\tUsed to specifie that the loaded file represents the Segment Routing Graph\n" \
+           "--sr-bin\t\tUsed to specifie that the loaded file represents the Segment Routing Graph in binary format\n" \
+           "");
 
     printf("\nOptions :\n"           \
     "\t--accu [value]\t\t\tSet the accuracy of delay to value. By default this parameter is 1 (0.1ms)\n"   \

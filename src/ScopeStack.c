@@ -5,7 +5,7 @@
 myStack* initStack(int nbNode)
 {
     myStack* stack = malloc(sizeof(myStack));
-    ASSERT(stack, NULL);
+    ASSERT(stack, NULL, 1);
     stack->stackSize = 0;
 
     stack->maxSize = nbNode;

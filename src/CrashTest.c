@@ -5,7 +5,7 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 {
     int src = 0;
     Dict_t* dist = malloc(graph->nbNode * sizeof(Dict_t));
-    ASSERT(dist, -1);
+    ASSERT(dist, -1, graph->nbNode);
 
     for (int i = 0 ; i < graph->nbNode ; i++) {
         Dict_init(dist + i, cstrM1 + 1);
@@ -14,11 +14,11 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
     Dict_add(dist + src, 0, 0, 0);
 
     Pfront_t** pfront = malloc((SEG_MAX + 1) * sizeof(Pfront_t*));
-    ASSERT(pfront, -1);
+    ASSERT(pfront, -1, (SEG_MAX + 1));
 
     for (int i = 0 ; i <= SEG_MAX ; i++) {
         pfront[i] = malloc(graph->nbNode * sizeof(Pfront_t));
-        ASSERT(pfront[i], -1);
+        ASSERT(pfront[i], -1, graph->nbNode);
         for (int j = 0 ; j < graph->nbNode ; j++) {
             Pfront_init(&pfront[i][j], cstrM1 + 1);
         }
@@ -32,7 +32,7 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
     extendable->ext = Extendable_new(0, 0, NULL);
 
     Extendable_t** nextextendable = malloc(graph->nbNode * sizeof(Extendable_t*));
-    ASSERT(nextextendable, -1);
+    ASSERT(nextextendable, -1, graph->nbNode);
 
     for (int i = 0 ; i < graph->nbNode ; i++) {
         nextextendable[i] = NULL;

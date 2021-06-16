@@ -4,13 +4,13 @@
 Topology_t* Topology_init(int nbNode)
 {
     Topology_t* topo = malloc(sizeof(Topology_t));
-    ASSERT(topo, NULL);
+    ASSERT(topo, NULL, 1);
 
     topo->pred = malloc(nbNode * sizeof(Llist_t*));
-    ASSERT(topo->pred, NULL);
+    ASSERT(topo->pred, NULL, nbNode);
 
     topo->succ = malloc(nbNode * sizeof(Llist_t*));
-    ASSERT(topo->succ, NULL);
+    ASSERT(topo->succ, NULL, nbNode);
 
     for (int i = 0 ; i < nbNode ; i++) {
         topo->pred[i] = NULL;

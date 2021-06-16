@@ -5,7 +5,7 @@
 ParetoFront_t* ParetoFront_new(ParetoFront_t* prev, my_m1 m1, my_m2 m2)
 {
     ParetoFront_t* new_pf = malloc(sizeof(ParetoFront_t));
-    ASSERT(new_pf, NULL);
+    ASSERT(new_pf, NULL, 1);
 
     new_pf->m1 = m1;
     new_pf->m2 = m2;

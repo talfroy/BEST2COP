@@ -7,7 +7,7 @@ Extendable_t* Extendable_new(my_m1 m1, my_m2 m2, Extendable_t* next)
 {
     Extendable_t* new = malloc(sizeof(Extendable_t));
 
-    ASSERT(new, NULL);
+    ASSERT(new, NULL, 1);
 
     new->infos.m1 = m1;
     new->infos.m2 = m2;
@@ -66,7 +66,7 @@ Extendable_t* Extendable_copy(Extendable_t* ext)
 Extendable_list_t* Extendable_list_new(Extendable_list_t* next, int node, Extendable_t* ext)
 {
     Extendable_list_t* new_e = malloc(sizeof(Extendable_list_t));
-    ASSERT(new_e, NULL);
+    ASSERT(new_e, NULL, 1);
 
     new_e->node = node;
     new_e->ext = ext;

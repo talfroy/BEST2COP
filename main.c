@@ -162,11 +162,11 @@ int main(int argc, char **argv)
 
     if (!opt.nb_areas)
     {
-        ASSERT(sr, 1, "Segment Routing Graph hasn't been loaded yet so we kill the program\n");
+        ASSERT(sr, 1, 1);
     }
     else
     {
-        ASSERT(sr_areas, 1, "Segment Routing Graph hasn't been loaded yet so we kill the program\n");
+        ASSERT(sr_areas, 1, opt.nb_areas);
     }
 
     if (opt.output != NULL)
@@ -364,13 +364,13 @@ int main(int argc, char **argv)
     else if (opt.nb_areas > 0)
     {
         struct segment_list ****sl_areas = calloc(opt.nb_areas * 2, sizeof(struct segment_list ***));
-        ASSERT(sl_areas, EXIT_FAILURE);
+        ASSERT(sl_areas, EXIT_FAILURE, opt.nb_areas * 2);
 
         long int *times_area = calloc(opt.nb_areas * 2, sizeof(long int));
-        ASSERT(times_area, EXIT_FAILURE);
+        ASSERT(times_area, EXIT_FAILURE, opt.nb_areas * 2);
 
         compact_front **cf_area = calloc(opt.nb_areas * 2, sizeof(compact_front *));
-        ASSERT(cf_area, EXIT_FAILURE);
+        ASSERT(cf_area, EXIT_FAILURE, opt.nb_areas * 2);
         int area_src;
         int iter;
 

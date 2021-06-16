@@ -16,11 +16,11 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     int nbIter = 1;
 
     (*pfront) = malloc((maxIter + 1) * sizeof(Pfront_t*));
-    ASSERT(pfront, -1);
+    ASSERT(pfront, -1, (maxIter + 1));
 
     for (int i = 0 ; i <= maxIter ; i++) {
         (*pfront)[i] = malloc(graph->nbNode * sizeof(Pfront_t));
-        ASSERT((*pfront)[i], -1);
+        ASSERT((*pfront)[i], -1, graph->nbNode);
 
         for (int j = 0 ; j < graph->nbNode ; j++) {
             Pfront_init(&(*pfront)[i][j], dictSize);
@@ -30,7 +30,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     Pfront_insert_key(&(*pfront)[0][src], 0);
 
     Dict_t* dist = malloc(graph->nbNode * sizeof(Dict_t));
-    ASSERT(dist, -1);
+    ASSERT(dist, -1, graph->nbNode);
 
     for (int i = 0 ; i < graph->nbNode ; i++) {
         Dict_init(&dist[i], dictSize);
@@ -44,7 +44,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     extendable->ext = Extendable_new(0, 0, NULL);
 
     Extendable_t** nextextendable = malloc(graph->nbNode * sizeof(Extendable_t*));
-    ASSERT(nextextendable, -1);
+    ASSERT(nextextendable, -1, graph->nbNode);
 
     for (int i = 0 ; i < graph->nbNode ; i++) {
         nextextendable[i] = NULL;
@@ -54,11 +54,11 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
 
 
     (*pf) = malloc((maxIter+ 1) * sizeof(Dict_t*));
-    ASSERT((*pf), -1);
+    ASSERT((*pf), -1, (maxIter+ 1));
 
     for (int i = 0 ; i <= maxIter ; i++) {
         (*pf)[i] = malloc(graph->nbNode * sizeof(Dict_t));
-        ASSERT((*pf)[i], -1);
+        ASSERT((*pf)[i], -1, graph->nbNode);
         for (int j = 0 ; j < graph->nbNode ; j++) {
             Dict_init((*pf)[i] + j, dictSize);
         }
