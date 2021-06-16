@@ -52,6 +52,7 @@ static int **get_nb_paths_per_segments(Dict_t **dist, int nbNodes, int iter)
 	{
 		nb_paths[i] = calloc(iter, sizeof(int));
 	}
+	//int tot = 0;
 	for (int i = 0; i < nbNodes; i++)
 	{
 		for (int k = 0; k < iter; k++)
@@ -63,8 +64,14 @@ static int **get_nb_paths_per_segments(Dict_t **dist, int nbNodes, int iter)
 					nb_paths[i][k] += 1;
 				}
 			}
+			//printf("Dist[%d][%d].nb_add = %d\n", k, i, dist[k][i].nb_add);
+			//nb_paths[i][k] = dist[k][i].nb_add;
+			//tot += nb_paths[i][k];
 		}
 	}
+
+	//RESULTS("There are %d paths for %d nodes\n", tot, nbNodes);
+
 	return nb_paths;
 }
 
@@ -137,13 +144,13 @@ compact_front* compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 
 	for (int i = 0; i < nbNodes; i++)
 	{
-		compact_pf[i] = calloc(iter + 2, sizeof(path *));
+		compact_pf[i] = calloc((iter + 2), sizeof(path *));
 		compact_pf[i][iter + 1] = NULL;
 		for (int seg = 0; seg < iter; seg++)
 		{
 			// get nb of paths composed of seg segments
 			int nb_paths = nb_paths_per_segments[i][seg];
-			compact_pf[i][seg] = calloc(nb_paths + 1, sizeof(path));
+			compact_pf[i][seg] = calloc((nb_paths + 1), sizeof(path));
 			path end = {.cost = -1};
 			int index = 0;
 			for (int delay = 0; delay < dist[seg][i].size; delay++)
@@ -159,6 +166,7 @@ compact_front* compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 			compact_pf[i][seg][index] = end;
 		}
 	}
+
 	cf->nbNodes = nbNodes;
 	cf->iter = iter;
 	cf->paths = compact_pf;
@@ -168,7 +176,6 @@ compact_front* compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 	}
 
 	free(nb_paths_per_segments);
-
 	return cf;
 }
 

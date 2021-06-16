@@ -74,7 +74,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         (*iters)[src] = 0;
     }
     while (extendable != NULL && nbIter <= maxIter) {
-        //#pragma omp parallel for
+        #pragma omp parallel for
         for (int dst = 0 ; dst < graph->nbNode ; dst++) {
 
             if (dst == src) {
@@ -118,11 +118,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
 
                     if (analyse == ANALYSE_2COP) {
                         (*iters)[i] = nbIter;
-                        // if (src == 208 && i == 8) {
-                        //     printf("for node %d ", i);
-                        //     Extendable_print(nextextendable[i]);
-                        //     printf("\n");
-                        // }
                     }
                 }
                 extendable = Extendable_list_new(extendable, i, NULL);
@@ -130,7 +125,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
                 Extendable_free(nextextendable[i]);
             }
         }
-        //printf("nb iters = %d\n", nbIter);
 
         nbIter++;
     }
@@ -242,6 +236,7 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
             Pfront_insert_key(&(*pfront)[iter][dst], i);
             if (pf_cand->paths[i] != INF) {
                 Dict_add(pf, i, dist_v->paths[i], dist_v->preds[i]);
+                pf->nb_add++;
                 (*nextextendable) = Extendable_new(i, pf_cand->paths[i], (*nextextendable));
             }
         }

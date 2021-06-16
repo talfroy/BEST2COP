@@ -49,6 +49,7 @@ struct Dict_s {
     my_m2* paths;             /**< all the existing paths */
     short* preds;
     int size;               /**< max size of the Dictionnary */
+    int nb_add;
 };
 
 

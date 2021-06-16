@@ -42,6 +42,7 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
     double m1;
     int nbNode = 0;
     int nbLine = 1;
+    int area;
 
     while (fgets(line, 1024,  file))
     {
@@ -49,7 +50,7 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
             src = LabelTable_add_node(labels, srcLabel);
             dst = LabelTable_add_node(labels, destLabel);
             nbNode = MAX(nbNode, labels->nextNodeId);
-        } else if (sscanf(line, "%s %s %d\n", &srcLabel[0], &destLabel[0], &m2) == 3) {
+        } else if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5) {
             src = LabelTable_add_node(labels, srcLabel);
             dst = LabelTable_add_node(labels, destLabel);
             nbNode = MAX(nbNode, labels->nextNodeId);
@@ -91,14 +92,14 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
                 topo->succ[dst] = Llist_new(topo->succ[dst], m1, m2, src, ADJACENCY_SEGMENT);
                 topo->pred[src] = Llist_new(topo->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
             }
-        } else if (sscanf(line, "%s %s %d\n", &srcLabel[0], &destLabel[0], &m2) == 3) {
+        } else if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5) {
             src = LabelTable_get_id(labels, srcLabel);
             dst = LabelTable_get_id(labels, destLabel);
-            topo->succ[src] = Llist_new(topo->succ[src], 0, m2, dst, ADJACENCY_SEGMENT);
-            topo->pred[dst] = Llist_new(topo->pred[dst], 0, m2, src, ADJACENCY_SEGMENT);
+            topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
+            topo->pred[dst] = Llist_new(topo->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
             if (biDir) {
-                topo->succ[dst] = Llist_new(topo->succ[dst], 0, m2, src, ADJACENCY_SEGMENT);
-                topo->pred[src] = Llist_new(topo->pred[src], 0, m2, dst, ADJACENCY_SEGMENT);
+                topo->succ[dst] = Llist_new(topo->succ[dst], m1, m2, src, ADJACENCY_SEGMENT);
+                topo->pred[src] = Llist_new(topo->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
             }
         } else {
             ERROR("Can't load line %d : your file might not have the good format : \n\t[source_node]  [destination_node]  [delay]  [IGP_weight]\n", nbLine);

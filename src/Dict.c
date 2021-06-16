@@ -14,6 +14,7 @@ void Dict_init(Dict_t* dic, int size)
         dic->paths[i] = INF;
     }
     dic->size = size;
+    dic->nb_add = 0;
 }
 
 

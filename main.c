@@ -24,6 +24,8 @@ void Main_display_all_paths(FILE *output, ParetoFront_t ***dist, int nbNodes, in
 
 void main_display_area_time_mean(long int *times, int nb_areas);
 
+void main_display_area_sr_time_mean(long int *times, int nb_areas);
+
 int main(int argc, char **argv)
 {
 
@@ -137,10 +139,19 @@ int main(int argc, char **argv)
         INFO("Areas succesfully loaded\n");
 
         sr_areas = calloc(opt.nb_areas, sizeof(SrGraph_t *));
+        long int *times_tr = calloc(opt.nb_areas, sizeof(long int));
         for (int i = 0; i < opt.nb_areas; i++)
         {
+            gettimeofday(&start, NULL);
             sr_areas[i] = SrGraph_create_from_topology_best_m2(areas[i]);
+            gettimeofday(&stop, NULL);
+
+            times_tr[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
         }
+
+        main_display_area_sr_time_mean(times_tr, opt.nb_areas);
+
+        free(times_tr);
 
         INFO("Areas SrGraph succesfully loaded\n");
     }
@@ -428,7 +439,7 @@ int main(int argc, char **argv)
                 merged = cart(cf_area[0], cf_area[index], opt.cstr1, area_src);
                 gettimeofday(&stop, NULL);
                 size++;
-
+                //RESULTS("For index %d -> %ld us\n", index, (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
                 tot_time_areas += (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
                 for (int j = 0; j <= SEG_MAX; j++)
@@ -600,7 +611,7 @@ void main_display_area_time_mean(long int *times, int nb_areas)
 {
     long int tot, mean, square;
     tot = 0;
-    for (int i = 0; i < nb_areas - 1; i++)
+    for (int i = 1; i < nb_areas - 1; i++)
     {
         for (int id = 0; id < 2; id++)
         {
@@ -609,20 +620,45 @@ void main_display_area_time_mean(long int *times, int nb_areas)
         }
     }
 
-    mean = tot / ((nb_areas - 1) * 2);
+    mean = tot / ((nb_areas - 2) * 2);
 
     tot = 0;
-    for (int i = 0; i < nb_areas - 1; i++)
+    for (int i = 1; i < nb_areas - 1; i++)
     {
         for (int id = 0; id < 2; id++)
         {
             int index = (id)*nb_areas + i;
             tot += (mean - times[index]) * (mean - times[index]);
+            //RESULTS("Value is %ld\n", times[index]);
         }
     }
-    square = tot / ((nb_areas - 1) * 2);
+    square = tot / ((nb_areas - 2) * 2);
     square = sqrt(square);
 
     RESULTS("Mean time for areas is %ld us\n", mean);
     RESULTS("Standard deviation (95%%) for areas is %ld us\n", 2 * square);
+}
+
+
+void main_display_area_sr_time_mean(long int *times, int nb_areas)
+{
+    long int tot, mean, square;
+    tot = 0;
+    for (int i = 1; i < nb_areas - 1; i++)
+    {
+        tot += times[i];
+    }
+
+    mean = tot / (nb_areas - 2);
+
+    tot = 0;
+    for (int i = 1; i < nb_areas - 1; i++)
+    {
+        tot += (mean - times[i]) * (mean - times[i]);
+    }
+    square = tot / ((nb_areas - 2) * 2);
+    square = sqrt(square);
+
+    RESULTS("Mean time for areas transformation is %ld us\n", mean);
+    RESULTS("Standard deviation (95%%) for areas transformation is %ld us\n", 2 * square);
 }
