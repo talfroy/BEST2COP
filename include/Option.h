@@ -30,6 +30,7 @@ struct Options {
     bool flex;              /**< enable flex algo (disble by default) */
     bool pretty;
     short nb_areas;
+    char *src_lab;
 };
 
 extern struct Options opt;

@@ -26,6 +26,8 @@ void main_display_area_time_mean(long int *times, int nb_areas);
 
 void main_display_area_sr_time_mean(long int *times, int nb_areas);
 
+void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int src, LabelTable_t *lt);
+
 int main(int argc, char **argv)
 {
 
@@ -295,8 +297,11 @@ int main(int argc, char **argv)
         free(times);
         free(iters);
     }
-    else if (opt.src != -1)
-    {
+    else if (opt.src != -1 || opt.src_lab != NULL)
+    {   
+        if (opt.src == -1) {
+            opt.src = LabelTable_get_id(topo->labels, opt.src_lab);
+        }
         pf = NULL;
         pfront = NULL;
         int *itersSolo = malloc(sr->nbNode * sizeof(int));
@@ -319,6 +324,8 @@ int main(int argc, char **argv)
 
         //Main_display_results(output, pf, sr->nbNode, pfront, iter);
         //Main_display_all_paths(output, dist, sr->nbNode, iter);
+
+        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo->labels);
         if (opt.analyse)
         {
             maxIter = 10 * SEG_MAX;
@@ -374,7 +381,7 @@ int main(int argc, char **argv)
         int area_src;
         int iter;
 
-        for (int i = 0; i < opt.nb_areas - 1; i++)
+        for (int i = 0; i < opt.nb_areas; i++)
         {
             for (int id = 0; id < 2; id++)
             {
@@ -394,6 +401,9 @@ int main(int argc, char **argv)
                 /* first do the BEST2COP on each areas */
                 iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL);
 
+                if (!id && i == opt.nb_areas - 1) {
+                    main_display_distances(output, pf, iter, sr_areas[i]->nbNode, area_src, areas[i]->labels);
+                }
                 /* then retreive the paths using the pareto front */
                 sl_areas[index] = Dict_retreive_paths(pf, sr_areas[i], iter, area_src);
 
@@ -424,34 +434,59 @@ int main(int argc, char **argv)
 
         main_display_area_time_mean(times_area, opt.nb_areas);
         long int tot_time_areas = 0;
-        Dict_seglist_t **merged;
+        Dict_seglist_t **merged[2];
+        Dict_t *final;
         int size = 0;
+        int index = 0;
 
         for (int i = 1; i < opt.nb_areas - 1; i++)
         {
             for (int id = 0; id < 2; id++)
             {
-                merged = NULL;
-                int index = (id)*opt.nb_areas + i;
+                merged[id] = NULL;
+                index = (id)*opt.nb_areas + i;
                 area_src = Topology_search_abr_id(areas[0], 0, i, id);
 
                 gettimeofday(&start, NULL);
-                merged = cart(cf_area[0], cf_area[index], opt.cstr1, area_src);
+                merged[id] = cart(cf_area[0], cf_area[index], opt.cstr1, area_src);
                 gettimeofday(&stop, NULL);
                 size++;
                 //RESULTS("For index %d -> %ld us\n", index, (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
                 tot_time_areas += (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+            }
 
+            final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
+
+            for (int k = 0; k < cf_area[index]->nbNodes; k++)
+            {
+                for (int y = 0 ; y < final[k].size ; y++) {
+                    if (final[k].paths[y] != INF) {
+                                fprintf(output, "%s %s %d %d\n", LabelTable_get_name(areas[0]->labels, Topology_search_abr_id(areas[0], 0, opt.nb_areas-1, 0)), 
+                                        LabelTable_get_name(areas[i]->labels, k), y, final[k].paths[y]);
+                    }
+                }
+            }
+
+
+            for (int id = 0; id < 2; id++) {
+                index = (id)*opt.nb_areas + i;
                 for (int j = 0; j <= SEG_MAX; j++)
                 {
                     for (int k = 0; k < cf_area[index]->nbNodes; k++)
                     {
-                        Dict_seglist_free(&merged[j][k]);
+                        Dict_seglist_free(&merged[id][j][k]);
                     }
-                    free(merged[j]);
+                    free(merged[id][j]);
                 }
-                free(merged);
+                free(merged[id]);
             }
+
+            for (int k = 0; k < cf_area[i]->nbNodes; k++)
+            {
+                Dict_free(&final[k]);
+            }
+            free(final);
+
         }
 
         RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
@@ -460,7 +495,7 @@ int main(int argc, char **argv)
         {
             for (int id = 1; id < 3; id++)
             {
-                int index = (id - 1) * opt.nb_areas + i;
+                index = (id - 1) * opt.nb_areas + i;
                 Compact_free(cf_area[index]);
             }
         }
@@ -661,4 +696,19 @@ void main_display_area_sr_time_mean(long int *times, int nb_areas)
 
     RESULTS("Mean time for areas transformation is %ld us\n", mean);
     RESULTS("Standard deviation (95%%) for areas transformation is %ld us\n", 2 * square);
+}
+
+
+void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int src, LabelTable_t *lt)
+{
+    for (int i = 0 ; i < iter ; i++) {
+        for (int j = 0 ; j < nbNodes ; j++) {
+            for (int k = 0 ; k < dist[i][j].size ; k++) {
+                if (dist[i][j].paths[k] != INF) {
+                    fprintf(out, "%s %s %d %d\n", LabelTable_get_name(lt, src), 
+                            LabelTable_get_name(lt, j), k, dist[i][j].paths[k]);
+                }
+            }
+        }
+    }
 }
