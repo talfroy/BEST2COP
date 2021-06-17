@@ -38,7 +38,7 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 
 extern void Compact_free(compact_front* cp);
 
-extern Dict_t* compact_pareto_front_ify(Dict_seglist_t** merged[2], int nbNodes);
+extern Dict_t** compact_pareto_front_ify(Dict_seglist_t** merged[2], int nbNodes);
 
 
 #endif
