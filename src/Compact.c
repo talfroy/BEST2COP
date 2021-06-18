@@ -305,6 +305,13 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, int c1, int ABR)
 Dict_t** compact_pareto_front_ify(Dict_seglist_t** merged[2], int nbNodes)
 {
 	Dict_t **pf3 = NULL;
+	Dict_t *dist = malloc(nbNodes * sizeof(Dict_t));
+	ASSERT(dist, NULL, nbNodes);
+
+	for (int i = 0 ; i < nbNodes ; i++) {
+		Dict_init(&dist[i], 1000);
+	}
+
 	pf3 = malloc((SEG_MAX + 1) * sizeof(Dict_t*));
 	for (int i = 0 ; i <= SEG_MAX ; i++) {
 		pf3[i] = malloc(nbNodes * sizeof(Dict_t));
@@ -318,19 +325,37 @@ Dict_t** compact_pareto_front_ify(Dict_seglist_t** merged[2], int nbNodes)
 
 	my_m2 last_m2 = INF;
 	my_m2 min = INF;
+	Dict_t pfcand;
+	Dict_init(&pfcand, 1000);
 
 	for (int i = 0 ; i <= 10 ; i++) {
 		for (int j = 0 ; j < nbNodes ; j++) {
 			last_m2 = INF;
+			Dict_reset(&pfcand);
 			for (int k = 0 ; k < 1000 ; k++) {
 				min = MIN(merged[0][i][j].paths[k], merged[1][i][j].paths[k]);
-				if (min < last_m2) {
-					last_m2 = min;
-					Dict_add(&pf3[i][j], k, min, 0);
+				if (min < dist[j].paths[k]) {
+					Dict_add(&dist[j], k, min, 0);
+					Dict_add(&pfcand, k, min, 0);
+				}
+			}
+			
+			for (int k = 0 ; k < 1000 ; k++) {
+				if (dist[j].paths[k] < last_m2) {
+					last_m2 = dist[j].paths[k];
+					if (pfcand.paths[k] != INF) {
+						Dict_add(&pf3[i][j], k, dist[j].paths[k], 0);
+					}
 				}
 			}
 		}
 	}
+
+	for (int i = 0 ; i < nbNodes ; i++) {
+		Dict_free(&dist[i]);
+	}
+
+	free(dist);
 
 	return pf3;
 }

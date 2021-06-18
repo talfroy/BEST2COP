@@ -183,5 +183,8 @@ void Dict_free(Dict_t* dic);
 extern void Dict_seglist_free(Dict_seglist_t* dic);
 
 
+extern void Dict_reset(Dict_t* d);
+
+
 
 #endif

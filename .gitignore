@@ -10,6 +10,7 @@ glibx-connex
 *.isp
 RLT/*
 NBSEG/*
+*.res
 #generate_random.c
 #genTopoNonAlign.c
 #randomSpread.c
