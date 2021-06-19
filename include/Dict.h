@@ -34,6 +34,7 @@ struct segment_list {
     short seg[10];
     char seg_type[10];
     int size;
+    short removable;
 };
 
 /**

@@ -438,6 +438,8 @@ int main(int argc, char **argv)
         Dict_t **final;
         int size = 0;
         int index = 0;
+        int index2 = 0;
+        int area_src2 = 0;
 
         for (int i = 1; i < opt.nb_areas - 1; i++)
         {
@@ -445,16 +447,23 @@ int main(int argc, char **argv)
             {
                 merged[id] = NULL;
                 index = (id)*opt.nb_areas + i;
+                index2 = ((id+1)%2) * opt.nb_areas + i;
                 area_src = Topology_search_abr_id(areas[0], 0, i, id);
+                area_src2 = Topology_search_abr_id(areas[0], 0, i, (id+1)%2);
 
                 gettimeofday(&start, NULL);
-                merged[id] = cart(cf_area[0], cf_area[index], opt.cstr1, area_src);
+                merged[id] = cart(cf_area[0], cf_area[index], 
+                cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0]);
                 gettimeofday(&stop, NULL);
                 size++;
                 //RESULTS("For index %d -> %ld us\n", index, (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
                 tot_time_areas += (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
             }
 
+           
+            
+
+            
             final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
 
             for (int j = 0 ; j <= SEG_MAX ; j++) {
