@@ -213,8 +213,10 @@ path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, 
 	return compact_pf;
 }
 
-struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2, compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb, int other_abr)
+struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2, compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb, int other_abr, Topology_t* topo_bb, Topology_t* topo_area, int src)
 {
+	UNUSED(topo_bb);
+	UNUSED(topo_area);
 	struct segment_list sl3;
 	sl3.size = sl1.size + sl2.size;
 	int i;
@@ -235,9 +237,25 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 		return sl3;
 	}
 
-	short abr1 = sl3.seg[i];
-	short af_abr = sl3.seg[i + 1];
-	short bf_abr = sl3.seg[i - 1];
+	// int l = 0;
+
+
+
+	// for (l = 0; l < sl1.size; l++){
+	// 	printf(" SEGMENTS %s ", topo_bb->labels->node[sl1.seg[l]].name);
+	// }
+	// for(int i = 0; i < sl2.size; i++){
+	// 	printf("%s ", topo_area->labels->node[sl2.seg[i]].name);
+	// }
+	// printf("\n");
+	short abr1 = sl3.seg[i-1];
+	short af_abr = sl3.seg[i];
+	short bf_abr;
+	if (i < 2){
+		bf_abr = src;
+	} else {
+		bf_abr = sl3.seg[i - 2];
+	}
 
 	int cost_bf_abr1 = sr_bb->m2dists[bf_abr][abr1];
 	int delay_bf_abr1 = sr_bb->m1dists[bf_abr][abr1];
@@ -245,30 +263,47 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	int cost_bf_abr2 = sr_bb->m2dists[bf_abr][other_abr];
 	int delay_bf_abr2 = sr_bb->m1dists[bf_abr][other_abr];
 
+
 	my_m1 cost_af_abr1 = pf_area_abr1->paths[af_abr][1][pf_area_abr1->nb_path[af_abr][1] - 1].cost;
 	my_m2 delay_af_abr1 = pf_area_abr1->paths[af_abr][1][pf_area_abr1->nb_path[af_abr][1] - 1].delay;
 
-	my_m1 cost_af_abr2 = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1] - 1].cost;
+	my_m1 cost_af_abr2 = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1]  - 1].cost;
 	my_m2 delay_af_abr2 = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1] - 1].delay;
+
 
 	int cost_via_abr1 = cost_bf_abr1 + cost_af_abr1;
 	int cost_via_abr2 = cost_bf_abr2 + cost_af_abr2;
 	int delay_via_abr1 = delay_bf_abr1 + delay_af_abr1;
 	int delay_via_abr2 = delay_bf_abr2 + delay_af_abr2;
 
+	// if (cost_via_abr1 < 0 || cost_via_abr2 < 0 || delay_via_abr1 < 0 || delay_via_abr2 < 0) {
+	// 	printf("==)=)=)=)=)=)=)=ds)f=)ds=f)=ds)f=ds)f=s\n");
+	// }
+
+// Mar-ABR0.2.1
+	//printf("%s\n", topo_bb->labels->node[sl3.seg[sl3.size-1]].name);
+	// if (strstr(topo_bb->labels->node[sl3.seg[sl3.size-1]].name, "Mar-ABR0.2.1") != NULL) {
+	printf("DEBUG Paths = %s ; (%s ; %s) ; %s\n",topo_bb->labels->node[bf_abr].name, topo_bb->labels->node[abr1].name, topo_bb->labels->node[other_abr].name, topo_area->labels->node[af_abr].name);
+	printf("DEBUG => (%d,%d) vs (%d, %d)\n", cost_via_abr1, delay_via_abr1, cost_via_abr2, delay_via_abr2);
+	printf("DEBUG %d + %d ; %d + %d\n", cost_bf_abr1, cost_af_abr1, delay_bf_abr1, delay_af_abr1);
+	printf("DEBUG %d + %d ; %d + %d\n", cost_bf_abr2, cost_af_abr2, delay_bf_abr2, delay_af_abr2);
+	// }
+
 	if (cost_via_abr1 < cost_via_abr2)
 	{
 		sl3.size--;
+		printf("Removed one\n");
 	}
 	else if (cost_via_abr1 == cost_via_abr2 && delay_via_abr1 == delay_via_abr2)
 	{
+		printf("Removed one\n");
 		sl3.size--;
 	}
 	
 	return sl3;
 }
 
-Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, int c1, int ABR, int other_ABR, SrGraph_t *sr_bb)
+Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t* topo_bb, Topology_t* topo_area, int src)
 {
 	// pf1 = dist to ABR
 	Dict_seglist_t **pf3 = NULL;
@@ -319,7 +354,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 						}
 						struct segment_list sl3 =
 							merge_and_correct_sl(pf1->paths[ABR][s1_index][d1_index].sl,
-												 pf2->paths[out_node][s2_index][d2_index].sl, pf2, pf2bis, sr_bb, other_ABR);
+												 pf2->paths[out_node][s2_index][d2_index].sl, pf2, pf2bis, sr_bb, other_ABR, topo_bb, topo_area, src);
 
 						if (sl3.size > 10)
 						{
@@ -328,10 +363,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 						int cost3 = pf1->paths[ABR][s1_index][d1_index].cost + pf2->paths[out_node][s2_index][d2_index].cost;
 						int delay3 = delay1 + delay2;
 						//printf("To %d: %d, %d, %d\n", out_node, sl3.size, delay3, cost3);
-						if (cost3 == 0 && delay3 == 0 && sl3.size == 0)
-						{
-							printf("WARNING --------------");
-						}
+						
 						Dict_seglist_add(&pf3[sl3.size][out_node], delay3, cost3, sl3);
 					}
 				}

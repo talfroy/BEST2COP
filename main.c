@@ -380,6 +380,7 @@ int main(int argc, char **argv)
         ASSERT(cf_area, EXIT_FAILURE, opt.nb_areas * 2);
         int area_src;
         int iter;
+        int src  = -1;
 
         for (int i = 0; i < opt.nb_areas; i++)
         {
@@ -395,6 +396,9 @@ int main(int argc, char **argv)
                 else
                 {
                     area_src = Topology_search_abr_id(areas[i], 0, opt.nb_areas - 1, id);
+                    if (src == -1) {
+                        src = area_src;
+                    }
                 }
 
                 gettimeofday(&start, NULL);
@@ -451,9 +455,14 @@ int main(int argc, char **argv)
                 area_src = Topology_search_abr_id(areas[0], 0, i, id);
                 area_src2 = Topology_search_abr_id(areas[0], 0, i, (id+1)%2);
 
+                
+
+                // printf("SRC  = %s %d\n", areas[0]->labels->node[src].name, src);
+                // printf("Area src2 = %s\n", areas[0]->labels->node[area_src2].name);
+
                 gettimeofday(&start, NULL);
                 merged[id] = cart(cf_area[0], cf_area[index], 
-                cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0]);
+                cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src);
                 gettimeofday(&stop, NULL);
                 size++;
                 //RESULTS("For index %d -> %ld us\n", index, (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
