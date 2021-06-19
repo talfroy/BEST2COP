@@ -264,11 +264,7 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	{
 		sl3.size--;
 	}
-	// else
-	// {
-	// 	sl3.size--;
-	// }
-
+	
 	return sl3;
 }
 
