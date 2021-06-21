@@ -232,7 +232,7 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 		sl3.seg_type[j + i] = sl2.seg_type[j];
 	}
 
-	if ((sl3.seg_type[i-1] == ADJACENCY_SEGMENT || sl3.seg_type[i] == ADJACENCY_SEGMENT) || sl3.size < 2)
+	if ((sl3.seg_type[i-1] == ADJACENCY_SEGMENT || sl3.seg_type[i] == ADJACENCY_SEGMENT) || sl3.size < 2 || !sl2.size)
 	{
 		return sl3;
 	}
@@ -413,9 +413,11 @@ Dict_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes)
 			{
 				//Min IGP via both ABR
 				min = MIN(merged[0][i][j].paths[k], merged[1][i][j].paths[k]);
-				if (min < last_m2) {
-					last_m2 = min;
-					Dict_add(&pf3[i][j], k, min, 0);
+				if (min < dist[j].paths[k]) {
+					//last_m2 = min;
+					//Dict_add(&pf3[i][j], k, min, 0);
+					Dict_add(&pfcand, k, min, 0);
+					Dict_add(&dist[j], k, min, 0);
 				}
 			}
 			// 	if (min < dist[j].paths[k])
@@ -425,17 +427,17 @@ Dict_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes)
 			// 	}
 			// }
 
-			// for (int k = 0; k < 1000; k++)
-			// {
-			// 	if (dist[j].paths[k] < last_m2)
-			// 	{
-			// 		last_m2 = dist[j].paths[k];
-			// 		if (pfcand.paths[k] != INF)
-			// 		{
-			// 			Dict_add(&pf3[i][j], k, dist[j].paths[k], 0);
-			// 		}
-			// 	}
-			// }
+			for (int k = 0; k < 1000; k++)
+			{
+				if (dist[j].paths[k] < last_m2)
+				{
+					last_m2 = dist[j].paths[k];
+					if (pfcand.paths[k] != INF)
+					{
+						Dict_add(&pf3[i][j], k, dist[j].paths[k], 0);
+					}
+				}
+			}
 		}
 	}
 

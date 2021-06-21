@@ -7,7 +7,7 @@ PG ?= -g
 # -pg 
 # -p -g on mac
 
-CC := gcc-10
+CC := gcc-11
 
 ## for clang
 #LIBS := -lm -lomp # -fopenmp
