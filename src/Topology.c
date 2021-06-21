@@ -326,7 +326,7 @@ void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph,
     for (int i = 0 ; i < nbNodes ; i++) {
         if (i != root) {
             //(*succOutGraph)[root][i] = Edge_add((*succOutGraph)[root][i], (*m1dists)[i], (*m2dists)[i]);
-            (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
+            (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i], NODE_SEGMENT);
         }
     }
 
@@ -421,7 +421,7 @@ void dikjstra_best_m1(Edge_t**** predOutGraph, Llist_t** ingraph,
     for (int i = 0 ; i < nbNodes ; i++) {
         if (i != root) {
             //(*succOutGraph)[root][i] = Edge_add((*succOutGraph)[root][i], (*m1dists)[i], (*m2dists)[i]);
-            (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i]);
+            (*predOutGraph)[i][root] = Edge_add((*predOutGraph)[i][root], (*m1dists)[i], (*m2dists)[i], NODE_SEGMENT);
         }
     }
 

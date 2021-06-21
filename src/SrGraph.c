@@ -117,7 +117,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
             int dst = tmp->infos.edgeDst;
             if (m1 < graph->m1dists[i][dst]) {
                 //graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
-                graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
+                graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2, ADJACENCY_SEGMENT);
             }
         }
     }
@@ -168,7 +168,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo)
             int dst = tmp->infos.edgeDst;
             if (m1 < graph->m1dists[i][dst]) {
                 //graph->succ[i][dst] = Edge_add(graph->succ[i][dst], m1, m2);
-                graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
+                graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2, ADJACENCY_SEGMENT);
             }
         }
     }
@@ -224,12 +224,12 @@ SrGraph_t* SrGraph_add_adjacencies(SrGraph_t* graph, Topology_t* topo)
 
                 if (graph->pred[i][dst]->next == NULL) {
                     if (m1 < graph->pred[i][dst]->m1) {
-                        graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
+                        graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2, ADJACENCY_SEGMENT);
                     }
                 } else {
 
                     if (m1 < graph->pred[i][dst]->m1 && m2 < graph->pred[i][dst]->next->m2) {
-                        graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2);
+                        graph->pred[i][dst] = Edge_add(graph->pred[i][dst], m1, m2, ADJACENCY_SEGMENT);
                     }
                 }
             }
@@ -271,12 +271,12 @@ SrGraph_t* SrGraph_load_with_id(char* filename, int nbNodes, int accuracy, char 
         if (sscanf(line, "%d %d %lf %d\n", &src, &dst, &m1, &m2)) {
             m1 *= my_pow(10, accuracy);
             //sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2);
-            sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2);
+            sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2, NODE_SEGMENT);
             sr->nbNode = MAX(sr->nbNode, src + 1);
             sr->nbNode = MAX(sr->nbNode, dst + 1);
             if (bi_dir) {
                 //sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2);
-                sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2);
+                sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2, NODE_SEGMENT);
             }
         } else {
             ERROR("Can't load line %d : your file might not have the good format : \n\t[source_node]  [destination_node]  [delay]  [IGP_weight]\n", nbLine);
@@ -353,10 +353,10 @@ SrGraph_t* SrGraph_load_with_label(char* filename, int accuracy, char bi_dir)
 
             m1 *= my_pow(10, accuracy);
             //sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2);
-            sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2);
+            sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2, NODE_SEGMENT);
             if (bi_dir) {
                 //sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2);
-                sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2);
+                sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2, NODE_SEGMENT);
             }
         } else {
             ERROR("Can't load line %d : your file might not have the good format : \n\t[source_node]  [destination_node]  [delay]  [IGP_weight]\n", nbLine);
@@ -390,7 +390,7 @@ SrGraph_t* SrGraph_create_crash_test(int nbNode, int nbPlinks)
             my_m2 m2 = 1;
             for (int k = 0 ; k < nbPlinks ; k++) {
                 //graph->succ[i][j] = Edge_new(graph->succ[i][j], m1, m2);
-                graph->pred[j][i] = Edge_new(graph->pred[j][i], m1, m2);
+                graph->pred[j][i] = Edge_new(graph->pred[j][i], m1, m2, NODE_SEGMENT);
             }
         }
     }
@@ -423,7 +423,7 @@ SrGraph_t* SrGraph_create_random_topo(int nbNode, int maxSpread)
                 my_m1 m1 = rand_c_d(1, maxSpread);
                 my_m2 m2 = rand_c_d(1, INT_MAX / 10 - 1);
                 //sr->succ[i][j] = Edge_new(sr->succ[i][j], m1, m2);
-                sr->pred[j][i] = Edge_new(sr->pred[j][i], m1, m2);
+                sr->pred[j][i] = Edge_new(sr->pred[j][i], m1, m2, NODE_SEGMENT);
             }
         }
     }
@@ -523,7 +523,7 @@ SrGraph_t* SrGraph_load_bin(char* filename)
             while(edge.m1 != -1 || edge.m2 != -1)
             {
                 //printf("%d %d %d %d\n", i, j, edge.m1, edge.m2);
-                sr->pred[i][j] = Edge_add(sr->pred[i][j], edge.m1, edge.m2);
+                sr->pred[i][j] = Edge_add(sr->pred[i][j], edge.m1, edge.m2, NODE_SEGMENT);
                 if(fread(&edge, sizeof(edge.m1)+sizeof(edge.m2), 1, in) == 0)
                 {
                     ERROR("Unable to read edge %d %d\n",i,j);

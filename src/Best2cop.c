@@ -316,7 +316,9 @@ struct segment_list*** Dict_retreive_paths(Dict_t** d, SrGraph_t* sr, int maxite
 
 
                         for (int i = 0 ; i < stacksize ; i++) {
-                            stack[i]->seg[stack[i]->size++] = pred;
+                            stack[i]->seg[stack[i]->size] = pred;
+                            stack[i]->seg_type[stack[i]->size] = l->seg_type;
+                            stack[i]->size++;
                         }
 
                         pred = p_pred;

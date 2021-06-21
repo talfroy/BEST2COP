@@ -11,6 +11,7 @@ struct Edge_s {
     my_m1 m1;
     my_m2 m2;
     char id;
+    char seg_type;
     Edge_t* next;
 };
 
@@ -25,7 +26,7 @@ struct Edge_s {
  * @return return the new list
  */
 
-Edge_t* Edge_new(Edge_t* prev, my_m1 m1, my_m2 m2);
+Edge_t* Edge_new(Edge_t* prev, my_m1 m1, my_m2 m2, char segType);
 
 
 /**
@@ -40,7 +41,7 @@ Edge_t* Edge_new(Edge_t* prev, my_m1 m1, my_m2 m2);
  * @return return the new list
  */
 
-Edge_t* Edge_new_force_id(Edge_t* prev, my_m1 m1, my_m2 m2, char id);
+Edge_t* Edge_new_force_id(Edge_t* prev, my_m1 m1, my_m2 m2, char id, char segType);
 
 
 /**
@@ -55,7 +56,7 @@ Edge_t* Edge_new_force_id(Edge_t* prev, my_m1 m1, my_m2 m2, char id);
  * @return return the new list
  */
 
-Edge_t* Edge_add(Edge_t* prev, my_m1 m1, my_m2 m2);
+Edge_t* Edge_add(Edge_t* prev, my_m1 m1, my_m2 m2, char segType);
 
 
 /**
