@@ -289,6 +289,9 @@ void SrGraph_check_m1(SrGraph_t*);
 bool SrGraph_is_connex(SrGraph_t* sr);
 
 
+extern void SrGraph_print_in_file_labels(SrGraph_t* sr, FILE* output, LabelTable_t* lt);
+
+
 #define PBSTR "############################################################"
 #define PBWIDTH 60
 

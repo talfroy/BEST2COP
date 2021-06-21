@@ -37,3 +37,7 @@ typedef int my_m1;
 
 
 #define NB_THREADS              4
+
+#define LINUX                   1
+#define MACOS                   2
+#define OS_TYPE                 MACOS

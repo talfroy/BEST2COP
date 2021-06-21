@@ -264,15 +264,15 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	int delay_bf_abr2 = sr_bb->m1dists[bf_abr][other_abr];
 
 
-	my_m1 cost_af_abr1 = pf_area_abr1->paths[af_abr][1][pf_area_abr1->nb_path[af_abr][1] - 1].cost;
+	my_m1 cost_af_abr1  = pf_area_abr1->paths[af_abr][1][pf_area_abr1->nb_path[af_abr][1] - 1].cost;
 	my_m2 delay_af_abr1 = pf_area_abr1->paths[af_abr][1][pf_area_abr1->nb_path[af_abr][1] - 1].delay;
 
-	my_m1 cost_af_abr2 = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1]  - 1].cost;
+	my_m1 cost_af_abr2  = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1]  - 1].cost;
 	my_m2 delay_af_abr2 = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1] - 1].delay;
 
 
-	int cost_via_abr1 = cost_bf_abr1 + cost_af_abr1;
-	int cost_via_abr2 = cost_bf_abr2 + cost_af_abr2;
+	int cost_via_abr1  = cost_bf_abr1  + cost_af_abr1;
+	int cost_via_abr2  = cost_bf_abr2  + cost_af_abr2;
 	int delay_via_abr1 = delay_bf_abr1 + delay_af_abr1;
 	int delay_via_abr2 = delay_bf_abr2 + delay_af_abr2;
 
@@ -354,7 +354,8 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 						}
 						struct segment_list sl3 =
 							merge_and_correct_sl(pf1->paths[ABR][s1_index][d1_index].sl,
-												 pf2->paths[out_node][s2_index][d2_index].sl, pf2, pf2bis, sr_bb, other_ABR, topo_bb, topo_area, src);
+												 pf2->paths[out_node][s2_index][d2_index].sl, pf2, 
+												 pf2bis, sr_bb, other_ABR, topo_bb, topo_area, src);
 
 						if (sl3.size > 10)
 						{

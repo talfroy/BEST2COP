@@ -18,6 +18,9 @@ struct compact_front
 	int nbNodes;
 	int iter;
 	int **nb_path;
+	// first  dimension : nbNodes
+	// second dimension : nbIter
+	// third  dimension : nbPath
 	path ***paths;
 };
 

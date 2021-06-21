@@ -450,6 +450,23 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output)
 }
 
 
+void SrGraph_print_in_file_labels(SrGraph_t* sr, FILE* output, LabelTable_t* lt)
+{
+    for (int i = 0 ; i < sr->nbNode ; i++) {
+        for (int j = 0 ; j < sr->nbNode ; j++) {
+            if (i == j) {
+                continue;
+            }
+            for (Edge_t* edge = sr->pred[i][j] ; edge != NULL ; edge = edge->next) {
+                fprintf(output, "%s %s %d %d\n", LabelTable_get_name(lt, i), LabelTable_get_name(lt, j), edge->m1, edge->m2);
+            }
+            // fprintf(output, "%d -> %d : ", i, j);
+            // Edge_print_list(sr->succ[i][j], output);
+        }
+    }
+}
+
+
 
 void SrGraph_save_bin(SrGraph_t* sr, char* filename)
 {

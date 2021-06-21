@@ -9,6 +9,7 @@
 #include "include/Option.h"
 #include "include/Best2cop.h"
 #include "include/Compact.h"
+#include "include/my_printf.h"
 
 //struct Options opt;
 
@@ -52,6 +53,10 @@ int main(int argc, char **argv)
     SrGraph_t **sr_areas = NULL;
     FILE *output = stdout;
     struct timeval start, stop;
+
+#if OS_TYPE == LINUX
+    register_printf_function('S', print_seglist, print_seglist_arginfo);
+#endif
 
     if (opt.interface)
     {
@@ -202,7 +207,7 @@ int main(int argc, char **argv)
         maxSpread = SrGraph_get_max_spread(sr);
     }
 
-    //SrGraph_print_in_file(sr, stdout);
+    //SrGraph_print_in_file_labels(sr, stdout, topo->labels);
     maxSpread *= SEG_MAX;
     opt.cstr1 *= my_pow(10, opt.accuracy);
     my_m1 max_dict_size = MIN(maxSpread, opt.cstr1);
