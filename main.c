@@ -490,7 +490,8 @@ int main(int argc, char **argv)
                         if (final[j][k].paths[y] != INF) {
                                     fprintf(output, "%s %s %d %d %d", LabelTable_get_name(areas[0]->labels, Topology_search_abr_id(areas[0], 0, opt.nb_areas-1, 0)), 
                                             LabelTable_get_name(areas[i]->labels, k), j, y, final[j][k].paths[y]);
-                                    //Segment_list_print(output, &final[j][k].seg_list[y], areas[0], areas[i]);
+                                    Segment_list_print(output, &final[j][k].seg_list[y], areas[0], areas[i]);
+                                    //Segment_list_print_id(output, &final[j][k].seg_list[y]);
                                     fprintf(output, "\n");
                         }
                     }
@@ -742,7 +743,8 @@ void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int
                 if (dist[i][j].paths[k] != INF) {
                     fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src), 
                             LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
-                    //Segment_list_print(out, &sl[i][j][k], topo, NULL);
+                    Segment_list_print(out, &sl[i][j][k], topo, NULL);
+                    //Segment_list_print_id(out, &sl[i][j][k]);
                     fprintf(out, "\n");
                 }
             }

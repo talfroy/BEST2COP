@@ -587,15 +587,15 @@ void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1
 {
     if (topo2) {
         fprintf(stream, " [");
-        for (int i = sl->size - 1 ; i >= 0 ; i--) {
+        for (int i = 0 ; i < sl->size; i++) {
             if (i <= sl->abr_index) {
-                if (i) {
+                if (i < sl->size - 1) {
                     fprintf(stream, " %s ,", LabelTable_get_name(topo1->labels, sl->seg[i]));
                 } else {
                     fprintf(stream, " %s ", LabelTable_get_name(topo1->labels, sl->seg[i]));
                 }
             } else {
-                if (i) {
+                if (i < sl->size - 1) {
                     fprintf(stream, " %s ,", LabelTable_get_name(topo2->labels, sl->seg[i]));
                 } else {
                     fprintf(stream, " %s ", LabelTable_get_name(topo2->labels, sl->seg[i]));
@@ -605,8 +605,8 @@ void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1
         fprintf(stream, "]");
     } else {
         fprintf(stream, " [");
-        for (int i = sl->size - 1 ; i >= 0 ; i--) {
-            if (i) {
+        for (int i = 0 ; i < sl->size; i++) {
+            if (i < sl->size - 1) {
                 fprintf(stream, " %s ,", LabelTable_get_name(topo1->labels, sl->seg[i]));
             } else {
                 fprintf(stream, " %s ", LabelTable_get_name(topo1->labels, sl->seg[i]));
@@ -614,4 +614,18 @@ void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1
         }
         fprintf(stream, "]");
     }
+}
+
+
+void Segment_list_print_id(FILE* stream, struct segment_list *sl)
+{
+    fprintf(stream, " [");
+    for (int i = 0 ; i < sl->size; i++) {
+        if (i < sl->size - 1) {
+            fprintf(stream, " %d ,", sl->seg[i]);
+        } else {
+            fprintf(stream, " %d ", sl->seg[i]);
+        }
+    }
+    fprintf(stream, "]");
 }

@@ -222,17 +222,17 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	struct segment_list sl3;
 	sl3.size = sl1.size + sl2.size;
 	int i;
-	for (i = sl1.size; i >= 0 ; i--)
+	for (i = sl1.size - 1 ; i >= 0 ; i--)
 	{
-		sl3.seg[sl1.size-i] = sl1.seg[i];
-		sl3.seg_type[sl1.size-i] = sl1.seg_type[i];
+		sl3.seg[sl1.size-i - 1] = sl1.seg[i];
+		sl3.seg_type[sl1.size-i - 1] = sl1.seg_type[i];
 	}
-	sl3.abr_index = i-1;
+	sl3.abr_index = sl1.size - 1;
 	// sl2 -> sl3
-	for (int j = sl2.size; j >= 0; j--)
+	for (int j = sl2.size - 1 ; j >= 0; j--)
 	{
-		sl3.seg[j + (sl1.size-i)] = sl2.seg[sl2.size-j];
-		sl3.seg_type[j + (sl1.size-i)] = sl2.seg_type[sl2.size-j];
+		sl3.seg[j + (sl1.size)] = sl2.seg[sl2.size - j - 1];
+		sl3.seg_type[j + (sl1.size)] = sl2.seg_type[sl2.size - j - 1];
 	}
 
 
@@ -292,13 +292,13 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 
 	if (cost_via_abr1 < cost_via_abr2)
 	{
-		sl3.size--;
+		//sl3.size--;
 		//printf("Removed one\n");
 	}
 	else if (cost_via_abr1 == cost_via_abr2 && delay_via_abr1 == delay_via_abr2)
 	{
 		// printf("Removed one\n");
-		sl3.size--;
+		//sl3.size--;
 	}
 	
 	return sl3;
