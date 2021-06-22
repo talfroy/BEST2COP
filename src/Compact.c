@@ -213,7 +213,9 @@ path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, 
 	return compact_pf;
 }
 
-struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2, compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb, int other_abr, Topology_t* topo_bb, Topology_t* topo_area, int src)
+struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2, 
+						compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb, 
+						int other_abr, Topology_t* topo_bb, Topology_t* topo_area, int src)
 {
 	UNUSED(topo_bb);
 	UNUSED(topo_area);
@@ -373,9 +375,9 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 	return pf3;
 }
 
-Dict_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes)
+Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes)
 {
-	Dict_t **pf3 = NULL;
+	Dict_seglist_t **pf3 = NULL;
 	Dict_t *dist = malloc(nbNodes * sizeof(Dict_t));
 	ASSERT(dist, NULL, nbNodes);
 
@@ -384,15 +386,15 @@ Dict_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes)
 		Dict_init(&dist[i], 1000);
 	}
 
-	pf3 = malloc((SEG_MAX + 1) * sizeof(Dict_t *));
+	pf3 = malloc((SEG_MAX + 1) * sizeof(Dict_seglist_t *));
 	for (int i = 0; i <= SEG_MAX; i++)
 	{
-		pf3[i] = malloc(nbNodes * sizeof(Dict_t));
+		pf3[i] = malloc(nbNodes * sizeof(Dict_seglist_t));
 		ASSERT(pf3[i], NULL, nbNodes);
 
 		for (int j = 0; j < nbNodes; j++)
 		{
-			Dict_init(pf3[i] + j, 1000);
+			Dict_seglist_init(pf3[i] + j, 1000);
 		}
 	}
 
@@ -434,7 +436,11 @@ Dict_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes)
 					last_m2 = dist[j].paths[k];
 					if (pfcand.paths[k] != INF)
 					{
-						Dict_add(&pf3[i][j], k, dist[j].paths[k], 0);
+						if (dist[j].paths[k] == merged[0][i][j].paths[k]) {
+							Dict_seglist_add(&pf3[i][j], k, dist[j].paths[k], merged[0][i][j].seg_list[k]);
+						} else {
+							Dict_seglist_add(&pf3[i][j], k, dist[j].paths[k], merged[1][i][j].seg_list[k]);
+						}
 					}
 				}
 			}
