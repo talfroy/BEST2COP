@@ -213,35 +213,32 @@ path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, 
 	return compact_pf;
 }
 
-struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2, 
-						compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb, 
-						int other_abr, Topology_t* topo_bb, Topology_t* topo_area, int src)
+struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2,
+										 compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb,
+										 int other_abr, Topology_t *topo_bb, Topology_t *topo_area, int src)
 {
 	UNUSED(topo_bb);
 	UNUSED(topo_area);
 	struct segment_list sl3;
 	sl3.size = sl1.size + sl2.size;
 	int i;
-	for (i = sl1.size - 1 ; i >= 0 ; i--)
+	for (i = sl1.size - 1; i >= 0; i--)
 	{
-		sl3.seg[sl1.size-i - 1] = sl1.seg[i];
-		sl3.seg_type[sl1.size-i - 1] = sl1.seg_type[i];
+		sl3.seg[sl1.size - i - 1] = sl1.seg[i];
+		sl3.seg_type[sl1.size - i - 1] = sl1.seg_type[i];
 	}
 	sl3.abr_index = sl1.size - 1;
 	// sl2 -> sl3
-	for (int j = sl2.size - 1 ; j >= 0; j--)
+	for (int j = sl2.size - 1; j >= 0; j--)
 	{
 		sl3.seg[j + (sl1.size)] = sl2.seg[sl2.size - j - 1];
 		sl3.seg_type[j + (sl1.size)] = sl2.seg_type[sl2.size - j - 1];
 	}
 
-
-	if ((sl3.seg_type[sl1.size-i-1] == ADJACENCY_SEGMENT || sl3.seg_type[sl1.size-i] == ADJACENCY_SEGMENT) || sl3.size < 2 || !sl2.size)
+	if ((sl3.seg_type[sl1.size - i - 1] == ADJACENCY_SEGMENT || sl3.seg_type[sl1.size - i] == ADJACENCY_SEGMENT) || sl3.size < 2 || !sl2.size)
 	{
 		return sl3;
 	}
-
-
 
 	// printf("%d + %d\n", sl1.size, sl2.size);
 	// for (int l = 0; l < sl1.size; l++){
@@ -251,12 +248,15 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	// 	printf("SL2 %s ", topo_area->labels->node[sl2.seg[i]].name);
 	// }
 	// printf("\n");
-	short abr1 = sl3.seg[sl1.size-i-1];
-	short af_abr = sl3.seg[sl1.size-i];
+	short abr1 = sl3.seg[sl1.size - 1];
+	short af_abr = sl3.seg[sl1.size];
 	short bf_abr;
-	if (i < 2){
+	if (i < 2)
+	{
 		bf_abr = src;
-	} else {
+	}
+	else
+	{
 		bf_abr = sl3.seg[i - 2];
 	}
 
@@ -266,16 +266,14 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	int cost_bf_abr2 = sr_bb->m2dists[bf_abr][other_abr];
 	int delay_bf_abr2 = sr_bb->m1dists[bf_abr][other_abr];
 
-
-	my_m1 cost_af_abr1  = pf_area_abr1->paths[af_abr][1][pf_area_abr1->nb_path[af_abr][1] - 1].cost;
+	my_m1 cost_af_abr1 = pf_area_abr1->paths[af_abr][1][pf_area_abr1->nb_path[af_abr][1] - 1].cost;
 	my_m2 delay_af_abr1 = pf_area_abr1->paths[af_abr][1][pf_area_abr1->nb_path[af_abr][1] - 1].delay;
 
-	my_m1 cost_af_abr2  = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1]  - 1].cost;
+	my_m1 cost_af_abr2 = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1] - 1].cost;
 	my_m2 delay_af_abr2 = pf_area_abr2->paths[af_abr][1][pf_area_abr2->nb_path[af_abr][1] - 1].delay;
 
-
-	int cost_via_abr1  = cost_bf_abr1  + cost_af_abr1;
-	int cost_via_abr2  = cost_bf_abr2  + cost_af_abr2;
+	int cost_via_abr1 = cost_bf_abr1 + cost_af_abr1;
+	int cost_via_abr2 = cost_bf_abr2 + cost_af_abr2;
 	int delay_via_abr1 = delay_bf_abr1 + delay_af_abr1;
 	int delay_via_abr2 = delay_bf_abr2 + delay_af_abr2;
 
@@ -283,28 +281,29 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	// 	printf("==)=)=)=)=)=)=)=ds)f=)ds=f)=ds)f=ds)f=s\n");
 	// }
 
-// Mar-ABR0.2.1
+	// Mar-ABR0.2.1
 	// printf("%s\n", topo_bb->labels->node[sl3.seg[sl3.size-1]].name);
 	// printf("DEBUG Paths = %s ; (%s ; %s) ; %s\n",topo_bb->labels->node[bf_abr].name, topo_bb->labels->node[abr1].name, topo_bb->labels->node[other_abr].name, topo_area->labels->node[af_abr].name);
 	// printf("DEBUG => (%d,%d) vs (%d, %d)\n", cost_via_abr1, delay_via_abr1, cost_via_abr2, delay_via_abr2);
 	// printf("DEBUG %d + %d ; %d + %d\n", cost_bf_abr1, cost_af_abr1, delay_bf_abr1, delay_af_abr1);
 	// printf("DEBUG %d + %d ; %d + %d\n", cost_bf_abr2, cost_af_abr2, delay_bf_abr2, delay_af_abr2);
 
-	if (cost_via_abr1 < cost_via_abr2)
+	if ((cost_via_abr1 < cost_via_abr2) || (cost_via_abr1 == cost_via_abr2 && delay_via_abr1 == delay_via_abr2))
 	{
-		//sl3.size--;
+		for (int i = sl3.abr_index; i < sl3.size - 1; i++)
+		{
+			sl3.seg[i] = sl3.seg[i + 1];
+			sl3.seg_type[i] = sl3.seg_type[i + 1];
+		}
+		sl3.size--;
+		sl3.abr_index--;
 		//printf("Removed one\n");
 	}
-	else if (cost_via_abr1 == cost_via_abr2 && delay_via_abr1 == delay_via_abr2)
-	{
-		// printf("Removed one\n");
-		//sl3.size--;
-	}
-	
+
 	return sl3;
 }
 
-Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t* topo_bb, Topology_t* topo_area, int src)
+Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t *topo_bb, Topology_t *topo_area, int src)
 {
 	// pf1 = dist to ABR
 	Dict_seglist_t **pf3 = NULL;
@@ -355,7 +354,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 						}
 						struct segment_list sl3 =
 							merge_and_correct_sl(pf1->paths[ABR][s1_index][d1_index].sl,
-												 pf2->paths[out_node][s2_index][d2_index].sl, pf2, 
+												 pf2->paths[out_node][s2_index][d2_index].sl, pf2,
 												 pf2bis, sr_bb, other_ABR, topo_bb, topo_area, src);
 
 						if (sl3.size > 10)
@@ -365,7 +364,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 						int cost3 = pf1->paths[ABR][s1_index][d1_index].cost + pf2->paths[out_node][s2_index][d2_index].cost;
 						int delay3 = delay1 + delay2;
 						// printf("To %s: %d, %d, %d\n", topo_area->labels->node[out_node].name, sl3.size, delay3, cost3);
-						
+
 						Dict_seglist_add(&pf3[sl3.size][out_node], delay3, cost3, sl3);
 					}
 				}
@@ -408,14 +407,14 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 		for (int j = 0; j < nbNodes; j++)
 		{
 			last_m2 = INF;
-		
-			
+
 			Dict_reset(&pfcand);
 			for (int k = 0; k < 1000; k++)
 			{
 				//Min IGP via both ABR
 				min = MIN(merged[0][i][j].paths[k], merged[1][i][j].paths[k]);
-				if (min < dist[j].paths[k]) {
+				if (min < dist[j].paths[k])
+				{
 					//last_m2 = min;
 					//Dict_add(&pf3[i][j], k, min, 0);
 					Dict_add(&pfcand, k, min, 0);
@@ -436,9 +435,12 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 					last_m2 = dist[j].paths[k];
 					if (pfcand.paths[k] != INF)
 					{
-						if (dist[j].paths[k] == merged[0][i][j].paths[k]) {
+						if (dist[j].paths[k] == merged[0][i][j].paths[k])
+						{
 							Dict_seglist_add(&pf3[i][j], k, dist[j].paths[k], merged[0][i][j].seg_list[k]);
-						} else {
+						}
+						else
+						{
 							Dict_seglist_add(&pf3[i][j], k, dist[j].paths[k], merged[1][i][j].seg_list[k]);
 						}
 					}
