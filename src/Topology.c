@@ -586,7 +586,7 @@ int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id)
 void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1, Topology_t* topo2)
 {
     if (topo2) {
-        fprintf(stream, "[");
+        fprintf(stream, " [");
         for (int i = sl->size - 1 ; i >= 0 ; i--) {
             if (i <= sl->abr_index) {
                 if (i) {
@@ -604,7 +604,7 @@ void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1
         }
         fprintf(stream, "]");
     } else {
-        fprintf(stream, "[");
+        fprintf(stream, " [");
         for (int i = sl->size - 1 ; i >= 0 ; i--) {
             if (i) {
                 fprintf(stream, " %s ,", LabelTable_get_name(topo1->labels, sl->seg[i]));

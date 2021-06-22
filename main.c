@@ -447,7 +447,7 @@ int main(int argc, char **argv)
         main_display_area_time_mean(times_area, opt.nb_areas);
         long int tot_time_areas = 0;
         Dict_seglist_t **merged[2];
-        Dict_t **final;
+        Dict_seglist_t **final;
         int size = 0;
         int index = 0;
         int index2 = 0;
@@ -488,8 +488,10 @@ int main(int argc, char **argv)
                 {
                     for (int y = 0 ; y < final[j][k].size ; y++) {
                         if (final[j][k].paths[y] != INF) {
-                                    fprintf(output, "%s %s %d %d %d\n", LabelTable_get_name(areas[0]->labels, Topology_search_abr_id(areas[0], 0, opt.nb_areas-1, 0)), 
+                                    fprintf(output, "%s %s %d %d %d", LabelTable_get_name(areas[0]->labels, Topology_search_abr_id(areas[0], 0, opt.nb_areas-1, 0)), 
                                             LabelTable_get_name(areas[i]->labels, k), j, y, final[j][k].paths[y]);
+                                    Segment_list_print(output, &final[j][k].seg_list[y], areas[0], areas[i]);
+                                    fprintf(output, "\n");
                         }
                     }
                 }
@@ -512,7 +514,7 @@ int main(int argc, char **argv)
             for (int j = 0 ; j <= SEG_MAX ; j++) {
                 for (int k = 0; k < cf_area[i]->nbNodes; k++)
                 {
-                    Dict_free(&final[j][k]);
+                    Dict_seglist_free(&final[j][k]);
                 }
                 free(final[j]);
             }
