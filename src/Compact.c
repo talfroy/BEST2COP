@@ -220,37 +220,37 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	struct segment_list sl3;
 	sl3.size = sl1.size + sl2.size;
 	int i;
-	for (i = 0; i < sl1.size; i++)
+	for (i = sl1.size; i >= 0 ; i--)
 	{
-		sl3.seg[i] = sl1.seg[i];
-		sl3.seg_type[i] = sl1.seg_type[i];
+		sl3.seg[sl1.size-i] = sl1.seg[i];
+		sl3.seg_type[sl1.size-i] = sl1.seg_type[i];
 	}
 	sl3.abr_index = i-1;
 	// sl2 -> sl3
-	for (int j = 0; j < sl2.size; j++)
+	for (int j = sl2.size; j >= 0; j--)
 	{
-		sl3.seg[j + i] = sl2.seg[j];
-		sl3.seg_type[j + i] = sl2.seg_type[j];
+		sl3.seg[j + (sl1.size-i)] = sl2.seg[sl2.size-j];
+		sl3.seg_type[j + (sl1.size-i)] = sl2.seg_type[sl2.size-j];
 	}
 
-	if ((sl3.seg_type[i-1] == ADJACENCY_SEGMENT || sl3.seg_type[i] == ADJACENCY_SEGMENT) || sl3.size < 2 || !sl2.size)
+
+	if ((sl3.seg_type[sl1.size-i-1] == ADJACENCY_SEGMENT || sl3.seg_type[sl1.size-i] == ADJACENCY_SEGMENT) || sl3.size < 2 || !sl2.size)
 	{
 		return sl3;
 	}
 
-	// int l = 0;
 
 
-
-	// for (l = 0; l < sl1.size; l++){
-	// 	printf(" SEGMENTS %s ", topo_bb->labels->node[sl1.seg[l]].name);
+	// printf("%d + %d\n", sl1.size, sl2.size);
+	// for (int l = 0; l < sl1.size; l++){
+	// 	printf(" SL1 %s ", topo_bb->labels->node[sl1.seg[l]].name);
 	// }
 	// for(int i = 0; i < sl2.size; i++){
-	// 	printf("%s ", topo_area->labels->node[sl2.seg[i]].name);
+	// 	printf("SL2 %s ", topo_area->labels->node[sl2.seg[i]].name);
 	// }
 	// printf("\n");
-	short abr1 = sl3.seg[i-1];
-	short af_abr = sl3.seg[i];
+	short abr1 = sl3.seg[sl1.size-i-1];
+	short af_abr = sl3.seg[sl1.size-i];
 	short bf_abr;
 	if (i < 2){
 		bf_abr = src;
@@ -283,12 +283,10 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 
 // Mar-ABR0.2.1
 	// printf("%s\n", topo_bb->labels->node[sl3.seg[sl3.size-1]].name);
-	// if (strstr(topo_bb->labels->node[sl3.seg[sl3.size-1]].name, "Mar-ABR0.2.1") != NULL) {
 	// printf("DEBUG Paths = %s ; (%s ; %s) ; %s\n",topo_bb->labels->node[bf_abr].name, topo_bb->labels->node[abr1].name, topo_bb->labels->node[other_abr].name, topo_area->labels->node[af_abr].name);
 	// printf("DEBUG => (%d,%d) vs (%d, %d)\n", cost_via_abr1, delay_via_abr1, cost_via_abr2, delay_via_abr2);
 	// printf("DEBUG %d + %d ; %d + %d\n", cost_bf_abr1, cost_af_abr1, delay_bf_abr1, delay_af_abr1);
 	// printf("DEBUG %d + %d ; %d + %d\n", cost_bf_abr2, cost_af_abr2, delay_bf_abr2, delay_af_abr2);
-	// }
 
 	if (cost_via_abr1 < cost_via_abr2)
 	{
