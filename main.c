@@ -153,7 +153,6 @@ int main(int argc, char **argv)
             gettimeofday(&start, NULL);
             sr_areas[i] = SrGraph_create_from_topology_best_m2(areas[i]);
             gettimeofday(&stop, NULL);
-            SrGraph_print_in_file_labels(sr_areas[i], stdout, areas[i]->labels);
 
             times_tr[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
         }
@@ -491,7 +490,7 @@ int main(int argc, char **argv)
                         if (final[j][k].paths[y] != INF) {
                                     fprintf(output, "%s %s %d %d %d", LabelTable_get_name(areas[0]->labels, Topology_search_abr_id(areas[0], 0, opt.nb_areas-1, 0)), 
                                             LabelTable_get_name(areas[i]->labels, k), j, y, final[j][k].paths[y]);
-                                    Segment_list_print(output, &final[j][k].seg_list[y], areas[0], areas[i]);
+                                    //Segment_list_print(output, &final[j][k].seg_list[y], areas[0], areas[i]);
                                     fprintf(output, "\n");
                         }
                     }
@@ -736,13 +735,14 @@ void main_display_area_sr_time_mean(long int *times, int nb_areas)
 void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int src, 
                             Topology_t *topo, struct segment_list*** sl)
 {
+    UNUSED(sl);
     for (int i = 0 ; i < iter ; i++) {
         for (int j = 0 ; j < nbNodes ; j++) {
             for (int k = 0 ; k < dist[i][j].size ; k++) {
                 if (dist[i][j].paths[k] != INF) {
                     fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src), 
                             LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
-                    Segment_list_print(out, &sl[i][j][k], topo, NULL);
+                    //Segment_list_print(out, &sl[i][j][k], topo, NULL);
                     fprintf(out, "\n");
                 }
             }
