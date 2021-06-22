@@ -207,7 +207,7 @@ int main(int argc, char **argv)
         maxSpread = SrGraph_get_max_spread(sr);
     }
 
-    //SrGraph_print_in_file_labels(sr, stdout, topo->labels);
+    SrGraph_print_in_file_labels(sr, stdout, topo->labels);
     maxSpread *= SEG_MAX;
     opt.cstr1 *= my_pow(10, opt.accuracy);
     my_m1 max_dict_size = MIN(maxSpread, opt.cstr1);

@@ -6,8 +6,8 @@ void my_print_progress(int percentage)
 {
     int lpad = percentage * PBWIDTH / 100;
     int rpad = PBWIDTH - lpad;
-    printf("\r%3d%% [%.*s%*s]", percentage, lpad, PBSTR, rpad, "");
-    fflush(stdout);
+    fprintf(stderr, "\r%3d%% [%.*s%*s]", percentage, lpad, PBSTR, rpad, "");
+    fflush(stderr);
 }
 
 
@@ -104,7 +104,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo)
                 my_print_progress((i + 1) * 100 / topo->nbNode);
                 last_per = (i + 1) * 100 / topo->nbNode;
                 if (last_per == 100) {
-                    printf("\n");
+                    fprintf(stderr, "\n");
                 }
             }
         }

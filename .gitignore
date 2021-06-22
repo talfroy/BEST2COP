@@ -12,6 +12,10 @@ RLT/*
 NBSEG/*
 *.res
 !test.isp
+!lFlat.res
+!lSep.res
+!topoFR10.isp
+*.sr
 #generate_random.c
 #genTopoNonAlign.c
 #randomSpread.c
