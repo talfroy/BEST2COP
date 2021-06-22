@@ -241,23 +241,23 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	}
 
 	// printf("%d + %d\n", sl1.size, sl2.size);
-	// for (int l = 0; l < sl1.size; l++){
+	// for (int l =  sl1.size-1; l >=0; l--){
 	// 	printf(" SL1 %s ", topo_bb->labels->node[sl1.seg[l]].name);
 	// }
-	// for(int i = 0; i < sl2.size; i++){
+	// for(int i = sl2.size-1; i >= 0; i--){
 	// 	printf("SL2 %s ", topo_area->labels->node[sl2.seg[i]].name);
 	// }
 	// printf("\n");
 	short abr1 = sl3.seg[sl1.size - 1];
 	short af_abr = sl3.seg[sl1.size];
 	short bf_abr;
-	if (i < 2)
+	if (sl1.size -1 < 2)
 	{
 		bf_abr = src;
 	}
 	else
 	{
-		bf_abr = sl3.seg[i - 2];
+		bf_abr = sl3.seg[sl1.size - 2];
 	}
 
 	int cost_bf_abr1 = sr_bb->m2dists[bf_abr][abr1];
@@ -282,7 +282,7 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	// }
 
 	// Mar-ABR0.2.1
-	// printf("%s\n", topo_bb->labels->node[sl3.seg[sl3.size-1]].name);
+	// printf("%s\n", topo_area->labels->node[sl3.seg[sl3.size-1]].name);
 	// printf("DEBUG Paths = %s ; (%s ; %s) ; %s\n",topo_bb->labels->node[bf_abr].name, topo_bb->labels->node[abr1].name, topo_bb->labels->node[other_abr].name, topo_area->labels->node[af_abr].name);
 	// printf("DEBUG => (%d,%d) vs (%d, %d)\n", cost_via_abr1, delay_via_abr1, cost_via_abr2, delay_via_abr2);
 	// printf("DEBUG %d + %d ; %d + %d\n", cost_bf_abr1, cost_af_abr1, delay_bf_abr1, delay_af_abr1);
