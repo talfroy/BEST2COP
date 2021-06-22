@@ -153,6 +153,7 @@ int main(int argc, char **argv)
             gettimeofday(&start, NULL);
             sr_areas[i] = SrGraph_create_from_topology_best_m2(areas[i]);
             gettimeofday(&stop, NULL);
+            SrGraph_print_in_file_labels(sr_areas[i], stdout, areas[i]->labels);
 
             times_tr[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
         }
