@@ -225,6 +225,7 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 		sl3.seg[i] = sl1.seg[i];
 		sl3.seg_type[i] = sl1.seg_type[i];
 	}
+	sl3.abr_index = i-1;
 	// sl2 -> sl3
 	for (int j = 0; j < sl2.size; j++)
 	{

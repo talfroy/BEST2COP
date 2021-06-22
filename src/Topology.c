@@ -581,3 +581,37 @@ int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id)
 
     return -1;
 }
+
+
+void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1, Topology_t* topo2)
+{
+    if (topo2) {
+        fprintf(stream, "[");
+        for (int i = sl->size - 1 ; i >= 0 ; i--) {
+            if (i <= sl->abr_index) {
+                if (i) {
+                    fprintf(stream, " %s ,", LabelTable_get_name(topo1->labels, sl->seg[i]));
+                } else {
+                    fprintf(stream, " %s ", LabelTable_get_name(topo1->labels, sl->seg[i]));
+                }
+            } else {
+                if (i) {
+                    fprintf(stream, " %s ,", LabelTable_get_name(topo2->labels, sl->seg[i]));
+                } else {
+                    fprintf(stream, " %s ", LabelTable_get_name(topo2->labels, sl->seg[i]));
+                }
+            }
+        }
+        fprintf(stream, "]");
+    } else {
+        fprintf(stream, "[");
+        for (int i = sl->size - 1 ; i >= 0 ; i--) {
+            if (i) {
+                fprintf(stream, " %s ,", LabelTable_get_name(topo1->labels, sl->seg[i]));
+            } else {
+                fprintf(stream, " %s ", LabelTable_get_name(topo1->labels, sl->seg[i]));
+            }
+        }
+        fprintf(stream, "]");
+    }
+}

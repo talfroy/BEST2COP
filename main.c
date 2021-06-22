@@ -27,7 +27,8 @@ void main_display_area_time_mean(long int *times, int nb_areas);
 
 void main_display_area_sr_time_mean(long int *times, int nb_areas);
 
-void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int src, LabelTable_t *lt);
+void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int src, 
+                            Topology_t *topo, struct segment_list*** sl);
 
 int main(int argc, char **argv)
 {
@@ -207,7 +208,7 @@ int main(int argc, char **argv)
         maxSpread = SrGraph_get_max_spread(sr);
     }
 
-    SrGraph_print_in_file_labels(sr, stdout, topo->labels);
+    //SrGraph_print_in_file_labels(sr, stdout, topo->labels);
     maxSpread *= SEG_MAX;
     opt.cstr1 *= my_pow(10, opt.accuracy);
     my_m1 max_dict_size = MIN(maxSpread, opt.cstr1);
@@ -330,7 +331,6 @@ int main(int argc, char **argv)
         //Main_display_results(output, pf, sr->nbNode, pfront, iter);
         //Main_display_all_paths(output, dist, sr->nbNode, iter);
 
-        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo->labels);
         if (opt.analyse)
         {
             maxIter = 10 * SEG_MAX;
@@ -341,6 +341,7 @@ int main(int argc, char **argv)
         }
         //return 0;
         struct segment_list ***sl = Dict_retreive_paths(pf, sr, iter, opt.src);
+        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);    
         //print_segment_list(sl, iter, sr->nbNode);
         // return 0;
         //int* nb_paths = get_nb_paths_per_dest(pf, sr->nbNode, iter);
@@ -410,11 +411,13 @@ int main(int argc, char **argv)
                 /* first do the BEST2COP on each areas */
                 iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL);
 
-                if (!id && i == opt.nb_areas - 1) {
-                    main_display_distances(output, pf, iter, sr_areas[i]->nbNode, area_src, areas[i]->labels);
-                }
+
                 /* then retreive the paths using the pareto front */
                 sl_areas[index] = Dict_retreive_paths(pf, sr_areas[i], iter, area_src);
+
+                if (!id && i == opt.nb_areas - 1) {
+                    main_display_distances(output, pf, iter, sr_areas[i]->nbNode, area_src, areas[i], sl_areas[index]);
+                }
 
                 /* finally, tranform the tab into a list (emulate packet formation) */
                 cf_area[index] = compact_to_array_2D(pfront, pf, iter, sr_areas[i]->nbNode, sl_areas[index]);
@@ -727,14 +730,17 @@ void main_display_area_sr_time_mean(long int *times, int nb_areas)
 }
 
 
-void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int src, LabelTable_t *lt)
+void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int src, 
+                            Topology_t *topo, struct segment_list*** sl)
 {
     for (int i = 0 ; i < iter ; i++) {
         for (int j = 0 ; j < nbNodes ; j++) {
             for (int k = 0 ; k < dist[i][j].size ; k++) {
                 if (dist[i][j].paths[k] != INF) {
-                    fprintf(out, "%s %s %d %d %d\n", LabelTable_get_name(lt, src), 
-                            LabelTable_get_name(lt, j), i, k, dist[i][j].paths[k]);
+                    fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src), 
+                            LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
+                    Segment_list_print(out, &sl[i][j][k], topo, NULL);
+                    fprintf(out, "\n");
                 }
             }
         }

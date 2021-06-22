@@ -26,6 +26,8 @@ struct Topology_s {
 };
 
 
+extern void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1, Topology_t* topo2);
+
 /**
  * @brief init an empty but allocate Topology with nbNode nodes
  * 
