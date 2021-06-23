@@ -416,9 +416,11 @@ int main(int argc, char **argv)
                 /* then retreive the paths using the pareto front */
                 sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[i], iter, area_src);
 
+#ifdef DEBUG_ALL
                 if (!id && i == opt.nb_areas - 1) {
                     main_display_distances(output, pf, iter, sr_areas[i]->nbNode, area_src, areas[i], sl_areas[index]);
                 }
+#endif
 
                 /* finally, tranform the tab into a list (emulate packet formation) */
                 cf_area[index] = compact_to_array_2D(pfront, pf, iter, sr_areas[i]->nbNode, sl_areas[index]);
@@ -444,7 +446,6 @@ int main(int argc, char **argv)
                 segment_list_free(sl_areas[index], iter, sr_areas[i]->nbNode);
             }
         }
-
         main_display_area_time_mean(times_area, opt.nb_areas);
         long int tot_time_areas = 0;
         Dict_seglist_t **merged[2];
@@ -480,9 +481,9 @@ int main(int argc, char **argv)
 
            
             
-
-            
             final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
+
+#ifdef DEBUG_ALL          
 
             for (int j = 0 ; j <= SEG_MAX ; j++) {
                 for (int k = 0; k < cf_area[index]->nbNodes; k++)
@@ -498,7 +499,10 @@ int main(int argc, char **argv)
                     }
                 }
             }
-
+#endif  
+            if (opt.analyse) {
+                Segment_list_print_analyse(output, final, areas[i]->nbNode, SEG_MAX, opt.analyse, areas[i]);
+            }
 
             for (int id = 0; id < 2; id++) {
                 index = (id)*opt.nb_areas + i;
@@ -524,7 +528,9 @@ int main(int argc, char **argv)
 
         }
 
-        RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
+        if (!opt.analyse) {
+            RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
+        }
 
         for (int i = 0; i < opt.nb_areas - 1; i++)
         {
@@ -744,6 +750,7 @@ void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int
                 if (dist[i][j].paths[k] != INF) {
                     fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src), 
                             LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
+                    segment_list_invert(&sl[i][j][k]);
                     Segment_list_print(out, &sl[i][j][k], topo, NULL);
                     //Segment_list_print_id(out, &sl[i][j][k]);
                     fprintf(out, "\n");

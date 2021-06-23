@@ -60,8 +60,8 @@ typedef char bool;
 #define WARNING(...)\
     fprintf(stderr,YELLOW "\nWARNING : " DEFAULT __VA_ARGS__); \
 
-#define DEBUG(file, ...)\
-    fprintf(file,"[DEBUG] " __VA_ARGS__); \
+#define DEBUG(...)\
+    fprintf(stderr, CYAN "[DEBUG] " DEFAULT __VA_ARGS__); \
 
 #define ERROR(...)\
     fprintf(stderr, "[" RED "ERROR" DEFAULT "] : " MAGENTA __VA_ARGS__ ); \

@@ -75,6 +75,38 @@ static int **get_nb_paths_per_segments(Dict_t **dist, int nbNodes, int iter)
 	return nb_paths;
 }
 
+
+
+static int **get_nb_paths_per_segments_list(Dict_seglist_t **dist, int nbNodes, int iter)
+{
+	int **nb_paths = calloc(nbNodes, sizeof(int *));
+	for (int i = 0; i < nbNodes; i++)
+	{
+		nb_paths[i] = calloc(iter, sizeof(int));
+	}
+	//int tot = 0;
+	for (int i = 0; i < nbNodes; i++)
+	{
+		for (int k = 0; k < iter; k++)
+		{
+			for (int j = 0; j < dist[k][i].size; j++)
+			{
+				if (dist[k][i].paths[j] != INF)
+				{
+					nb_paths[i][k] += 1;
+				}
+			}
+			//printf("Dist[%d][%d].nb_add = %d\n", k, i, dist[k][i].nb_add);
+			//nb_paths[i][k] = dist[k][i].nb_add;
+			//tot += nb_paths[i][k];
+		}
+	}
+
+	//RESULTS("There are %d paths for %d nodes\n", tot, nbNodes);
+
+	return nb_paths;
+}
+
 // Print the 1D version on the compact array
 void print_compact_array_1D(path **compact_pf)
 {
@@ -183,6 +215,59 @@ compact_front *compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 	return cf;
 }
 
+
+
+compact_front *dict_seglist_to_compact(Pfront_t **pf, Dict_seglist_t **dist, int iter, int nbNodes)
+{
+	compact_front *cf = calloc(1, sizeof(compact_front));
+	path ***compact_pf;
+	UNUSED(pf);
+	compact_pf = calloc(nbNodes, sizeof(path **));
+
+	//mark end of array
+	//compact_pf[nbNodes] = NULL;
+
+	int **nb_paths_per_segments = get_nb_paths_per_segments_list(dist, nbNodes, iter);
+	cf->nb_path = nb_paths_per_segments;
+	for (int i = 0; i < nbNodes; i++)
+	{
+		compact_pf[i] = calloc((iter + 2), sizeof(path *));
+		compact_pf[i][iter + 1] = NULL;
+		for (int seg = 0; seg < iter; seg++)
+		{
+			// get nb of paths composed of seg segments
+			int nb_paths = nb_paths_per_segments[i][seg];
+			compact_pf[i][seg] = calloc((nb_paths + 1), sizeof(path));
+			path end = {.cost = -1};
+			int index = 0;
+			for (int delay = 0; delay < dist[seg][i].size; delay++)
+			{
+				if (dist[seg][i].paths[delay] != INF)
+				{
+					struct segment_list sl2 = dist[seg][i].seg_list[delay];
+					path p = {.cost = dist[seg][i].paths[delay], .delay = delay, .sl = sl2};
+					compact_pf[i][seg][index++] = p;
+				}
+			}
+			// end of sub-array
+			compact_pf[i][seg][index] = end;
+		}
+	}
+
+	cf->nbNodes = nbNodes;
+	cf->iter = iter;
+	cf->paths = compact_pf;
+
+	// for (int i = 0; i < nbNodes; i++)
+	// {
+	// 	free(nb_paths_per_segments[i]);
+	// }
+
+	// free(nb_paths_per_segments);
+	return cf;
+}
+
+
 // Put all paths to a given node in an array
 path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, struct segment_list ***sl)
 {
@@ -213,7 +298,7 @@ path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, 
 	return compact_pf;
 }
 
-struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2,
+static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2,
 										 compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb,
 										 int other_abr, Topology_t *topo_bb, Topology_t *topo_area, int src)
 {
@@ -251,7 +336,7 @@ struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment
 	short abr1 = sl3.seg[sl1.size - 1];
 	short af_abr = sl3.seg[sl1.size];
 	short bf_abr;
-	if (sl1.size -1 < 2)
+	if (sl1.size < 2)
 	{
 		bf_abr = src;
 	}
@@ -352,6 +437,10 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 						{
 							break;
 						}
+
+						int cost3 = pf1->paths[ABR][s1_index][d1_index].cost + pf2->paths[out_node][s2_index][d2_index].cost;
+						int delay3 = delay1 + delay2;
+
 						struct segment_list sl3 =
 							merge_and_correct_sl(pf1->paths[ABR][s1_index][d1_index].sl,
 												 pf2->paths[out_node][s2_index][d2_index].sl, pf2,
@@ -361,8 +450,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 						{
 							continue;
 						}
-						int cost3 = pf1->paths[ABR][s1_index][d1_index].cost + pf2->paths[out_node][s2_index][d2_index].cost;
-						int delay3 = delay1 + delay2;
+
 						// printf("To %s: %d, %d, %d\n", topo_area->labels->node[out_node].name, sl3.size, delay3, cost3);
 
 						Dict_seglist_add(&pf3[sl3.size][out_node], delay3, cost3, sl3);

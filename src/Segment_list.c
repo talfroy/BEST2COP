@@ -1,4 +1,5 @@
 #include "../include/Segment_list.h"
+#include "../include/Option.h"
 
 void Dict_seglist_free(Dict_seglist_t* dic)
 {
@@ -99,6 +100,16 @@ void segment_list_free(struct segment_list*** sl, int maxiter, int nbNodes){
     free(sl);
 }
 
+void segment_list_invert(struct segment_list *sl)
+{
+    short tmp;
+    for (int i = 0 ; i < sl->size / 2 ; i++) {
+        tmp = sl->seg[i];
+        sl->seg[i] = sl->seg[sl->size - i - 1];
+        sl->seg[sl->size - i - 1] = tmp;
+    }
+}
+
 struct segment_list*** Segment_list_retreive_paths(Dict_t** d, SrGraph_t* sr, int maxiter, short src)
 {
     struct segment_list*** sl = calloc(maxiter + 1, sizeof(struct segment_list**));
@@ -155,7 +166,7 @@ struct segment_list*** Segment_list_retreive_paths(Dict_t** d, SrGraph_t* sr, in
                     for (Edge_t* l = sr->pred[pred][p_pred] ; l ; l = l->next) {
                         p_n_d1 = n_d1 - l->m1;
                         p_n_d2 = n_d2 - l->m2;
-
+                        
                         if (d[curr_iter][p_pred].paths[p_n_d1] != p_n_d2) {
                             continue;
                         }
@@ -203,3 +214,44 @@ void print_segment_list(struct segment_list*** sl, int maxiter, int nbNodes)
         }
     }
 }
+
+
+
+void Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes, int nbIters, char analyse, Topology_t* topo_area)
+{
+    my_m2 min_igp;
+    int nb_seg_min_igp;
+
+    if (analyse == ANALYSE_DCLC) {
+        for (int node = 0 ; node < nbNodes ; node++) {
+            min_igp = INF;
+            nb_seg_min_igp = -1;
+
+            for (int iter = 0 ; iter < nbIters ; iter++) {
+                for (my_m1 delay = 0 ; delay < final[iter][node].size ; delay++) {
+                    if (min_igp > final[iter][node].paths[delay]) {
+                        min_igp = final[iter][node].paths[delay];
+                        nb_seg_min_igp = iter;
+                    }
+                }
+            }
+
+            fprintf(stream, "%s %s %d\n", opt.src_lab, LabelTable_get_name(topo_area->labels, node), nb_seg_min_igp);
+        }
+    } else if (analyse == ANALYSE_2COP) {
+        for (int node = 0 ; node < nbNodes ; node++) {
+            nb_seg_min_igp = -1;
+
+            for (int iter = 0 ; iter < nbIters ; iter++) {
+                for (my_m1 delay = 0 ; delay < final[iter][node].size ; delay++) {
+                    if (final[iter][node].paths[delay] != INF) {
+                        nb_seg_min_igp = iter;
+                    }
+                }
+            }
+
+            fprintf(stream, "%s %s %d\n", opt.src_lab, LabelTable_get_name(topo_area->labels, node), nb_seg_min_igp);
+        }
+    }
+}
+

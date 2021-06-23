@@ -202,4 +202,7 @@ extern Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v
 extern int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id);
 
 
+extern int Topology_search_acc_id(Topology_t* topo, int area1, int aggGroup, int id);
+
+
 #endif

@@ -494,3 +494,20 @@ int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id)
 
     return -1;
 }
+
+
+int Topology_search_acc_id(Topology_t* topo, int area1, int aggGroup, int id)
+{
+
+    char label[1024];
+    memset(label, 0, 1024);
+    sprintf(label, "ACC%d.%d.%d", area1, aggGroup, id);
+
+    for (int i = 0 ; i < topo->labels->nextNodeId ; i++) {
+        if (strstr(topo->labels->node[i].name, label) != NULL) {
+            return i;
+        }
+    }
+
+    return -1;
+}

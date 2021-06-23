@@ -81,4 +81,8 @@ extern struct segment_list*** Segment_list_retreive_paths(Dict_t** dist, SrGraph
 
 extern void print_segment_list(struct segment_list*** sl, int maxiter, int nbNodes);
 
+extern void segment_list_invert(struct segment_list *sl);
+
+extern void Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes, int nbIters, char analyse, Topology_t* topo_area);
+
 #endif

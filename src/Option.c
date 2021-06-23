@@ -172,14 +172,14 @@ int Option_command_parser (int argc, char** argv) {
                 break;
 
             case 'u' :
-                if (opt.analyse != -1) {
+                if (opt.analyse) {
                     WARNING("You are going to overide the analyse type with option --2COP\n");
                 }
                 opt.analyse = ANALYSE_2COP;
                 break;
 
             case 'w' :
-                if (opt.analyse != -1) {
+                if (opt.analyse) {
                     WARNING("You are going to overide the analyse type with option --DCLC\n");
                 }
                 opt.analyse = ANALYSE_DCLC;
