@@ -27,13 +27,6 @@ struct SrGraph_s {
     int nbNode;             /**< exact number of node */
 };
 
-typedef struct edge_s edge;
-
-struct edge_s {
-    int src;
-    int dst;
-};
-
 
 
 
@@ -45,7 +38,7 @@ struct edge_s {
  * @return return an allocate empty Segment Routing Graph structure
  */
 
-SrGraph_t* SrGraph_init(int nbNodes);
+extern SrGraph_t* SrGraph_init(int nbNodes);
 
 
 /**
@@ -57,7 +50,7 @@ SrGraph_t* SrGraph_init(int nbNodes);
  * @return return the corresponding SR graph (at least full-mech)
  */
 
-SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo);
+extern SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo);
 
 
 /**
@@ -70,7 +63,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m2(Topology_t* topo);
  */
 
 
-SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo);
+extern SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo);
 
 
 /**
@@ -84,7 +77,7 @@ SrGraph_t* SrGraph_create_from_topology_best_m1(Topology_t* topo);
  * NULL if not
  */
 
-LinkInfos* SrGraph_get_Edge_infos(SrGraph_t* graph, int src, int dst, int adjType);
+extern LinkInfos* SrGraph_get_Edge_infos(SrGraph_t* graph, int src, int dst, int adjType);
 
 
 /**
@@ -93,14 +86,14 @@ LinkInfos* SrGraph_get_Edge_infos(SrGraph_t* graph, int src, int dst, int adjTyp
  * @param graph             SR Graph structure
  */
 
-void SrGraph_free(SrGraph_t* graph);
+extern void SrGraph_free(SrGraph_t* graph);
 
 
 /**
  * @brief Only use for debug
  */
 
-void SrGraph_print(SrGraph_t* graph, LabelTable_t* hash);
+extern void SrGraph_print(SrGraph_t* graph, LabelTable_t* hash);
 
 
 /**
@@ -111,7 +104,7 @@ void SrGraph_print(SrGraph_t* graph, LabelTable_t* hash);
  * @param output            output file
  */
 
-void SrGraph_print_in_file(SrGraph_t* sr, FILE* output);
+extern void SrGraph_print_in_file(SrGraph_t* sr, FILE* output);
 
 /**
  * @brief Save the SR Graph in the given file in binary
@@ -120,40 +113,16 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output);
  * @param filename          output filename
  */
 
-void SrGraph_save_bin(SrGraph_t* sr, char* filename);
+extern void SrGraph_save_bin(SrGraph_t* sr, char* filename);
+
 
 /**
  * @brief Load the SR Graph from the given file in binary
  * 
  * @param filename          input filename
  */
-SrGraph_t* SrGraph_load_bin(char* filename);
 
-/**
- * @brief remove all the Edge which violate at least one constraint
- * 
- * @param graph             SR graph filled by a Topology
- * @param src               source from which we want a path
- * @param cstrIgp           constraint on first component
- * @param cstrDelay         constraint on second component
- */
-
-void SrGraph_prune(SrGraph_t* graph, int src, my_m1 cstrM1, my_m2 cstrM2);
-
-
-
-/**
- * @brief use the result of bellman fork to give a Segment sequence
- * 
- * @param graph             SR graph to compute
- * @param paths             all the paths from src to all destination
- * nodes which respects the constriants
- * this parameter must not be filled and not allocate
- * @param preds             result of bellman Fork
- * @param src               source node
- */
-
-void SrGraph_retrieve_path(SrGraph_t* graph, Dict_t*** paths, Dict_t** preds, int src);
+extern SrGraph_t* SrGraph_load_bin(char* filename);
 
 
 /**
@@ -169,7 +138,7 @@ void SrGraph_retrieve_path(SrGraph_t* graph, Dict_t*** paths, Dict_t** preds, in
  * @param biDir             define if edges are bi-directionals or not
  */
 
-SrGraph_t* SrGraph_load_with_id(char* filename, int nbNodes, int accuracy, char biDir);
+extern SrGraph_t* SrGraph_load_with_id(char* filename, int nbNodes, int accuracy, char biDir);
 
 
 /**
@@ -183,7 +152,7 @@ SrGraph_t* SrGraph_load_with_id(char* filename, int nbNodes, int accuracy, char 
  * @param biDir             define if edges are bi-directionals or not
  */
 
-SrGraph_t* SrGraph_load_with_label(char* filename, int accuracy, char biDir);
+extern SrGraph_t* SrGraph_load_with_label(char* filename, int accuracy, char biDir);
 
 
 /**
@@ -193,10 +162,7 @@ SrGraph_t* SrGraph_load_with_label(char* filename, int accuracy, char biDir);
  * @param nbPlinks          number of parallel links
  */
 
-SrGraph_t* SrGraph_create_crash_test(int nbNode, int nbPlinks);
-
-
-SrGraph_t* SrGraph_create_diablo(int nbNode, int nbPlinks, char mode);
+extern SrGraph_t* SrGraph_create_crash_test(int nbNode, int nbPlinks);
 
 
 /**
@@ -211,20 +177,7 @@ SrGraph_t* SrGraph_create_diablo(int nbNode, int nbPlinks, char mode);
  * is not a conexe component
  */
 
-my_m1 SrGraph_get_max_spread(SrGraph_t* sr);
-
-
-/**
- * @brief Create a double full-mesh random SR Graph
- * 
- * The delay are choosen between 1 and maxSpread
- * The IGP weight are choosen between 1 and MAX_INT / SEGMAX
- * 
- * @param nbNode            number of node in the random SR Graph
- * @param maxSpread         delays' max spread
- */
-
-SrGraph_t* SrGraph_create_random_topo(int nbNode, int maxSpread);
+extern my_m1 SrGraph_get_max_spread(SrGraph_t* sr);
 
 
 /**
@@ -236,7 +189,7 @@ SrGraph_t* SrGraph_create_random_topo(int nbNode, int maxSpread);
  * @return return the biggest connex component of sr
  */
 
-SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr);
+extern SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr);
 
 
 /**
@@ -249,7 +202,7 @@ SrGraph_t* SrGraph_get_biggest_connexe_coponent(SrGraph_t* sr);
  * @return return the flex-algo sr graph
  */
 
-SrGraph_t* SrGraph_create_flex_algo(Topology_t* topo);
+extern SrGraph_t* SrGraph_create_flex_algo(Topology_t* topo);
 
 
 /**
@@ -263,7 +216,7 @@ SrGraph_t* SrGraph_create_flex_algo(Topology_t* topo);
  * @return return th merged sr graph
  */
 
-SrGraph_t* SrGraph_merge_sr_graph(SrGraph_t* best_m1, SrGraph_t* best_m2, int size);
+extern SrGraph_t* SrGraph_merge_sr_graph(SrGraph_t* best_m1, SrGraph_t* best_m2, int size);
 
 
 /**
@@ -276,18 +229,18 @@ SrGraph_t* SrGraph_merge_sr_graph(SrGraph_t* best_m1, SrGraph_t* best_m2, int si
  * @return return the new sr graph
  */
 
-SrGraph_t* SrGraph_add_adjacencies(SrGraph_t* graph, Topology_t* topo);
-
-
-void SrGraph_check_m1(SrGraph_t*);
+extern SrGraph_t* SrGraph_add_adjacencies(SrGraph_t* graph, Topology_t* topo);
 
 
 /**
- * @brief check if a sr graph is connex
+ * @brief Print a Segment Routing Graph in a file, using the node label
+ * for the links.
+ * 
+ * @param sr                Segment Routing Graph to print
+ * @param output            Output stream
+ * @param lt                label table of the topology used to 
+ * compute the Segment Routing Graph.
  */
-
-bool SrGraph_is_connex(SrGraph_t* sr);
-
 
 extern void SrGraph_print_in_file_labels(SrGraph_t* sr, FILE* output, LabelTable_t* lt);
 

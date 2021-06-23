@@ -18,6 +18,29 @@ Llist_t* Llist_new(Llist_t* next, my_m1 m1, my_m2 m2, int edgeDst, int segType)
 }
 
 
+static bool LinkInfos_compare(my_m1 m1, my_m2 m2, int edgeDst, LinkInfos* infos2)
+{
+    if (infos2 == NULL) {
+        return false;
+    }
+
+    if (m2 != infos2->m2) {
+        return false;
+    }
+
+    if (m1 != infos2->m1) {
+        return false;
+    }
+
+    if (edgeDst != infos2->edgeDst) {
+        return false;
+    }
+
+    return true;
+}
+
+
+
 Llist_t* Llist_add(Llist_t* list, my_m1 m1, my_m2 m2, int edgeDst, int segType)
 {
     if (list == NULL)  {
@@ -84,7 +107,6 @@ Llist_t* Llist_search(Llist_t* list, int edgeDst, int adjType)
     return Llist_search(list->next, edgeDst, adjType);
 }
 
-
 bool Llist_compare(Llist_t* list1, Llist_t* list2)
 {
     if (list1 == NULL) {
@@ -108,28 +130,6 @@ bool Llist_compare(Llist_t* list1, Llist_t* list2)
     }
 
     return false;
-}
-
-
-bool LinkInfos_compare(my_m1 m1, my_m2 m2, int edgeDst, LinkInfos* infos2)
-{
-    if (infos2 == NULL) {
-        return false;
-    }
-
-    if (m2 != infos2->m2) {
-        return false;
-    }
-
-    if (m1 != infos2->m1) {
-        return false;
-    }
-
-    if (edgeDst != infos2->edgeDst) {
-        return false;
-    }
-
-    return true;
 }
 
 
@@ -177,76 +177,4 @@ Llist_t* Llist_get_at_pos(Llist_t* list, int pos)
     }
 
     return Llist_get_at_pos(list->next, pos-1);
-}
-
-
-Llist_t* Llist_reverse(Llist_t* list)
-{
-    Llist_t* current = list;
-    Llist_t* prev = NULL, *next = NULL;
-
-    while (current != NULL) {
-        next = current->next;
-        current->next = prev;
-
-        prev = current;
-        current = next;
-    }
-    return prev;
-}
-
-
-bool node_is_in_tab(int* node, int nbNodes, int nodeToTest)
-{
-    for (int i = 0 ; i < nbNodes ; i++) {
-        if (nodeToTest == node[i]) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-
-Llist_t* Llist_prune(Llist_t* list, int* node, int nbNodes)
-{
-    if (list == NULL) {
-        return NULL;
-    }
-
-    if (!node_is_in_tab(node, nbNodes, list->infos.edgeDst)) {
-        Llist_t* tmp = list->next;
-        free(list);
-        list = tmp;
-        list->next = Llist_prune(list->next, node, nbNodes);
-        return list;
-    }
-
-    list->next = Llist_prune(list->next, node, nbNodes);
-    return list;
-}
-
-
-Llist_t* Llist_copy_select(Llist_t* list, int* node, int nbNodes)
-{
-    if (list == NULL) {
-        return NULL;
-    }
-
-    if (node_is_in_tab(node, nbNodes, list->infos.edgeDst)) {
-        return Llist_new(Llist_copy_select(list->next, node, nbNodes),list->infos.m1, list->infos.m2, list->infos.edgeDst, list->infos.segType);
-    }
-
-    return Llist_copy_select(list->next, node, nbNodes);
-}
-
-
-Llist_t* Llist_copy(Llist_t* list)
-{
-    if (list == NULL) {
-        return NULL;
-    }
-
-    Llist_t* last = Llist_copy(list->next);
-    return Llist_new(last, list->infos.m1, list->infos.m2, list->infos.edgeDst, list->infos.segType);
 }

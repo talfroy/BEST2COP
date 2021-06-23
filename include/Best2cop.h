@@ -3,6 +3,7 @@
 
 #include "SrGraph.h"
 #include "ParetoFront.h"
+#include "Segment_list.h"
 
 
 /**
@@ -27,7 +28,7 @@
  * @return return the number of iteration (between 1 and SEGMAX)
  */
 
-int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
+extern int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
             my_m2 cstrM2, my_m1 dictSize, char full, int** iters);
 
 
@@ -50,7 +51,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
  * @param c2                constraint on igp weight
  */
 
-void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, Pfront_t* pfcandlist, 
+extern void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, Pfront_t* pfcandlist, 
                             Dict_t* dist_v, SrGraph_t* graph, int* t, my_m1* imax, my_m1 c1, my_m2 c2);
 
 
@@ -71,7 +72,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
  * @param pf                will contain all the non-domintaed paths
  */
 
-void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
+extern void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int t, int imax, int iter, int dst, Dict_t* pf);
 
 
@@ -82,7 +83,7 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pf
  * indexes of the paths added at the current step
  */
 
-void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_t*** pfront, 
+extern void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int iter, int dst, Dict_t* pf);
 
 
@@ -94,18 +95,12 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_
  * if there exists an element with a given index
  */
 
-void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
+extern void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, int imax, Dict_t* pf);
 
 
-my_m2 update_min_igp(my_m2 old, Extendable_t* nextext);
+extern my_m2 update_min_igp(my_m2 old, Extendable_t* nextext);
 
 
-
-void segment_list_free(struct segment_list*** sl, int maxiter, int nbNodes);
-
-extern struct segment_list*** Dict_retreive_paths(Dict_t** dist, SrGraph_t* sr, int maxiter, short src);
-
-extern void print_segment_list(struct segment_list*** sl, int maxiter, int nbNodes);
 
 #endif

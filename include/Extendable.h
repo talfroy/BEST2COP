@@ -31,6 +31,10 @@ struct Extendable_s {
 
 typedef struct Extendable_list_s Extendable_list_t;
 
+/**
+ * @brief structure representing a linked list of Extendable paths
+ */
+
 struct Extendable_list_s {
     short node;
     Extendable_t* ext;
@@ -48,17 +52,17 @@ struct Extendable_list_s {
  * @return return the new list
  */
 
-Extendable_t* Extendable_new(my_m1 m1, my_m2 m2, Extendable_t* next);
+extern Extendable_t* Extendable_new(my_m1 m1, my_m2 m2, Extendable_t* next);
 
 
-void Extendable_free(Extendable_t* ext);
+extern void Extendable_free(Extendable_t* ext);
 
 
 /**
  * @brief only use for debug
  */
 
-void Extendable_print(Extendable_t* ext);
+extern void Extendable_print(Extendable_t* ext);
 
 /**
  * @brief check if all the element of an array of ext are NULL
@@ -69,7 +73,7 @@ void Extendable_print(Extendable_t* ext);
  * @return return true if the array is empty, false if not
  */
 
-bool Extendable_is_empty(Extendable_t** ext, int nbNode);
+extern bool Extendable_is_empty(Extendable_t** ext, int nbNode);
 
 
 /**
@@ -80,7 +84,7 @@ bool Extendable_is_empty(Extendable_t** ext, int nbNode);
  * @return return the copied list
  */
 
-Extendable_t* Extendable_copy(Extendable_t* ext);
+extern Extendable_t* Extendable_copy(Extendable_t* ext);
 
 
 /**
@@ -93,7 +97,7 @@ Extendable_t* Extendable_copy(Extendable_t* ext);
  * @return return the new list
  */
 
-Extendable_list_t* Extendable_list_new(Extendable_list_t* next, int node, Extendable_t* ext);
+extern Extendable_list_t* Extendable_list_new(Extendable_list_t* next, int node, Extendable_t* ext);
 
 void Extendable_list_free(Extendable_list_t* next);
 

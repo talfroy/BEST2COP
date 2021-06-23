@@ -4,6 +4,7 @@
 #include "Dict.h"
 #include "Pfront.h"
 #include "SrGraph.h"
+#include "Segment_list.h"
 
 struct path
 {
@@ -26,12 +27,40 @@ struct compact_front
 
 typedef struct compact_front compact_front;
 
+
+/**
+ * @brief unused for now
+ */
+
 path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, struct segment_list ***sl);
+
+
+/**
+ * @brief unused for now
+ */
 
 int *get_nb_paths_per_dest(Dict_t **dist, int nbNodes, int iter);
 
 void print_compact_array(path **compact_pf);
+
+
+/**
+ * @brief returns a array containing for each node and each number of segments,
+ * the number of paths.
+ * 
+ * @param dist				distance array to convert
+ * @param nbNodes			first dimension size
+ * @param iter				second dimension size
+ * 
+ * @return Return the array
+ */
+
 int **get_nb_paths_per_delay(Dict_t **dist, int nbNodes, int iter);
+
+
+/**
+ * @brief 
+ */
 
 void print_compact_array_2D(compact_front *compact_pf);
 

@@ -92,3 +92,15 @@ void Pfront_free(Pfront_t* bh)
 {
     free(bh->keys);
 }
+
+
+bool hasapath(Pfront_t** pfront, int dst)
+{
+    for (int i = 0 ; i <= SEG_MAX ; i++) {
+        if (pfront[i][dst].heapSize != 0) {
+            return true;
+        }
+    }
+
+    return false;
+}

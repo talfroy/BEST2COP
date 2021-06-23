@@ -26,8 +26,6 @@ struct Topology_s {
 };
 
 
-extern void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1, Topology_t* topo2);
-
 /**
  * @brief init an empty but allocate Topology with nbNode nodes
  * 
@@ -36,7 +34,7 @@ extern void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t
  * @return return the empty Topology
  */
 
-Topology_t* Topology_init(int nbNode);
+extern Topology_t* Topology_init(int nbNode);
 
 
 /**
@@ -49,8 +47,20 @@ Topology_t* Topology_init(int nbNode);
  * @return return the corresponding Topology
  */
 
-Topology_t* Topology_load_from_file(const char* filename, int precision, char bi_dir);
+extern Topology_t* Topology_load_from_file(const char* filename, int precision, char bi_dir);
 
+
+/**
+ * @brief Load a topology and store it in multiple areas.
+ * 
+ * @param filename          Topology file to load
+ * @param precision         Delay accuracy
+ * @param bi_dir            Tells if the links are bi-directionnal
+ * or not
+ * @param nb_areas          Number of areas in the loaded topology
+ * 
+ * @return Returns a topology array, where topo[i] is area i
+ */
 
 extern Topology_t** Topology_load_multiple_areas(const char* filename, int precision, char bi_dir, int nb_areas);
 
@@ -65,10 +75,10 @@ extern Topology_t** Topology_load_multiple_areas(const char* filename, int preci
  * @return return the infos if the link exists, NULL if not
  */
 
-LinkInfos* Topology_get_edge_infos(Topology_t* topo, int src, int dst, int adjType);
+extern LinkInfos* Topology_get_edge_infos(Topology_t* topo, int src, int dst, int adjType);
 
 
-void Topology_print(Topology_t* topo, char* topoF);
+extern void Topology_print(Topology_t* topo, char* topoF);
 
 
 /**
@@ -77,7 +87,7 @@ void Topology_print(Topology_t* topo, char* topoF);
  * @param topo              Topology to freed
  */
 
-void Topology_free(Topology_t* topo);
+extern void Topology_free(Topology_t* topo);
 
 
 /**
@@ -106,7 +116,7 @@ void Topology_free(Topology_t* topo);
  * @param nbNodes           number of nodes in the Topology
  **/
 
-void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph, 
+extern void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes);
 
 
@@ -136,11 +146,11 @@ void dikjstra_best_m2(Edge_t**** predOutGraph, Llist_t** ingraph,
  * @param nbNodes           number of nodes in the Topology
  **/
 
-void dikjstra_best_m1(Edge_t**** predOutGraph, Llist_t** ingraph, 
+extern void dikjstra_best_m1(Edge_t**** predOutGraph, Llist_t** ingraph, 
                 int root, my_m1** m1dists, my_m2** m2dists, int nbNodes);
 
 
-long int my_pow(long int x, int y);
+extern long int my_pow(long int x, int y);
 
 
 /**
@@ -156,7 +166,7 @@ long int my_pow(long int x, int y);
  * @return return the random topology
  */
 
-Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[]);
+extern Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[]);
 
 
 /**
@@ -174,16 +184,22 @@ Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[]);
  * @return return the random topology
  */
 
-Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[], int exist);
+extern Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[], int exist);
 
 
-Topology_t* Topology_create_random_uniform(int size, int exist, my_m1 max_delay, my_m2 max_igp);
-
-
-Topology_t* Topology_create_random_non_align(int size, int exist, my_m1 max_delay, my_m2 max_igp);
+/**
+ * @brief Get the id of th required ABR (note that the name of the node must
+ * be on the good format)
+ * 
+ * @param topo              Area in which we search
+ * @param area1             Right ABR area
+ * @param area2             Left  ABR area
+ * @param id                ABR id (0 or 1)
+ * 
+ * @return Returns the id of the required ABR if it exists, -1 if not
+ */
 
 extern int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id);
 
-extern void Segment_list_print_id(FILE* stream, struct segment_list *sl);
 
 #endif

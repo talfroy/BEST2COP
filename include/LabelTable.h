@@ -66,7 +66,7 @@ int LabelTable_add_node(LabelTable_t* hash, char* name);
 /**
  * @brief return the ID of a node with a given name
  * 
- * @param               name of the node
+ * @param name          name of the node
  * 
  * @return return the id if the node exists, -1 if not
  */

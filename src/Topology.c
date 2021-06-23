@@ -54,7 +54,6 @@ Topology_t* Topology_load_from_file(const char* filename, int precision, char bi
             src = LabelTable_add_node(labels, srcLabel);
             dst = LabelTable_add_node(labels, destLabel);
             nbNode = MAX(nbNode, labels->nextNodeId);
-            ERROR("Read a line with 4 fields\n");
         } else {
             ERROR("Can't load line %d : your file might not have the good format : \n\t[source_node]  [destination_node]  [delay]  [IGP_weight]\n", nbLine);
             return NULL;
@@ -444,32 +443,6 @@ int rand_a_b(int a, int b)
 }
 
 
-Topology_t* Topology_create_random(int size, int v_delay[], int v_igp[])
-{
-    Topology_t* topo = Topology_init(size);
-
-    for (int i = 0 ; i < size ; i++) {
-        for (int j = i + 1 ; j < size ; j++) {
-            if (i == j) {
-                continue;
-            }
-            my_m1 m1 = v_delay[RAND(0, 10000)];
-            my_m2 m2 = v_igp[RAND(0, 10000)];
-            // if (m1 < 0) {
-            //     printf("There is a problem in random part : %d\n", m1);
-            // }
-            //printf("add a new arc (%d -> %d)\n", i, j);
-            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
-            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
-            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
-            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
-        }
-
-    }
-
-    return topo;
-}
-
 
 Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[], int exist)
 {
@@ -501,66 +474,6 @@ Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v_igp[],
 }
 
 
-
-Topology_t* Topology_create_random_uniform(int size, int exist, my_m1 max_delay, my_m2 max_igp)
-{
-    Topology_t* topo = Topology_init(size);
-
-    for (int i = 0 ; i < size ; i++) {
-        for (int j = i + 1 ; j < size ; j++) {
-            if (i == j) {
-                continue;
-            }
-            if (RAND(0, size) > exist) {
-                continue;
-            }
-            my_m1 m1 = RAND(1, max_delay);
-            my_m2 m2 = RAND(1, max_igp);
-            //     printf("There is a problem in random part : %d\n", m1);
-            // }
-            //printf("add a new arc (%d -> %d)\n", i, j);
-            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
-            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
-            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
-            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
-        }
-
-    }
-
-    return topo;
-}
-
-
-Topology_t* Topology_create_random_non_align(int size, int exist, my_m1 max_delay, my_m2 max_igp)
-{
-    Topology_t* topo = Topology_init(size);
-    int diff = max_igp / max_delay;
-
-    for (int i = 0 ; i < size ; i++) {
-        for (int j = i + 1 ; j < size ; j++) {
-            if (i == j) {
-                continue;
-            }
-            if (RAND(0, size) > exist) {
-                continue;
-            }
-            my_m1 m1 = RAND(1, max_delay);
-            my_m2 m2 = max_igp / m1 +  RAND(0, diff);
-            //     printf("There is a problem in random part : %d\n", m1);
-            // }
-            //INFO("add a new arc (%d -> %d) : (%d ; %d)\n", i, j, m1 ,m2);
-            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
-            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
-            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
-            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
-        }
-
-    }
-
-    return topo;
-}
-
-
 int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id)
 {
     if (area1 > area2) {
@@ -580,52 +493,4 @@ int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id)
     }
 
     return -1;
-}
-
-
-void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1, Topology_t* topo2)
-{
-    if (topo2) {
-        fprintf(stream, " [");
-        for (int i = 0 ; i < sl->size; i++) {
-            if (i <= sl->abr_index) {
-                if (i < sl->size - 1) {
-                    fprintf(stream, " %s ,", LabelTable_get_name(topo1->labels, sl->seg[i]));
-                } else {
-                    fprintf(stream, " %s ", LabelTable_get_name(topo1->labels, sl->seg[i]));
-                }
-            } else {
-                if (i < sl->size - 1) {
-                    fprintf(stream, " %s ,", LabelTable_get_name(topo2->labels, sl->seg[i]));
-                } else {
-                    fprintf(stream, " %s ", LabelTable_get_name(topo2->labels, sl->seg[i]));
-                }
-            }
-        }
-        fprintf(stream, "]");
-    } else {
-        fprintf(stream, " [");
-        for (int i = 0 ; i < sl->size; i++) {
-            if (i < sl->size - 1) {
-                fprintf(stream, " %s ,", LabelTable_get_name(topo1->labels, sl->seg[i]));
-            } else {
-                fprintf(stream, " %s ", LabelTable_get_name(topo1->labels, sl->seg[i]));
-            }
-        }
-        fprintf(stream, "]");
-    }
-}
-
-
-void Segment_list_print_id(FILE* stream, struct segment_list *sl)
-{
-    fprintf(stream, " [");
-    for (int i = 0 ; i < sl->size; i++) {
-        if (i < sl->size - 1) {
-            fprintf(stream, " %d ,", sl->seg[i]);
-        } else {
-            fprintf(stream, " %d ", sl->seg[i]);
-        }
-    }
-    fprintf(stream, "]");
 }

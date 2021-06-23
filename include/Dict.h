@@ -8,35 +8,6 @@
 
 
 
-#define EXTREMITY_PRUNING_OFF   0
-#define EXTREMITY_PUNNING_ON    1
-
-#define MINIMAL                 1
-#define LAZY                    2
-
-
-/**
- * @brief this structure represents a 
- * association between a key (igp weight)
- * and a value (complexe metric)
- */
-
-typedef struct Sol_s Sol;
-
-struct Sol_s {
-    my_m2 value;    /**< second path component */
-};
-
-typedef struct Dict_s Dict_t;
-
-
-struct segment_list {
-    short seg[10];
-    char seg_type[10];
-    int size;
-    int abr_index;
-};
-
 /**
  * @brief this structure represent a Dictionnary in which
  * all the paths will be stored
@@ -53,32 +24,13 @@ struct Dict_s {
     int nb_add;
 };
 
-
-typedef struct DictPath_s DictPath;
-
-struct DictPath_s {
-    Llist_t* paths[MAX_SIZE];
-};
-
-struct Dict_seg_list_s {
-    my_m2* paths;
-    struct segment_list* seg_list;
-    int size;
-};
-
-typedef struct Dict_seg_list_s Dict_seglist_t;
-
-
-void Dict_seglist_init(Dict_seglist_t* dic, int size);
-
-void Dict_seglist_add(Dict_seglist_t* dic, my_m1 key, my_m2 value, struct segment_list seglist);
-
+typedef struct Dict_s Dict_t;
 
 /**
  * @brief create a new empty Dictionary
  */
 
-Dict_t* Dict_new();
+extern Dict_t* Dict_new();
 
 
 /**
@@ -90,21 +42,8 @@ Dict_t* Dict_new();
  * @param realSpread    real spread in the SR Graph
  */
 
-void Dict_init(Dict_t* dic, int size);
+extern void Dict_init(Dict_t* dic, int size);
 
-
-/**
- * @brief unused for now
- */
-
-void DictPath_init(DictPath* dic);
-
-
-/**
- * @brief unused for now
- */
-
-void DictPath_add(DictPath* dic, my_m1 key, Llist_t* path);
 
 
 /**
@@ -117,75 +56,26 @@ void DictPath_add(DictPath* dic, my_m1 key, Llist_t* path);
  * this path
  */
 
-void Dict_add(Dict_t* dic, my_m1 key, my_m2 value, short pred);
-
-
-/**
- * @brief function used to reduce the Dictionary to a Pareto Front
- * 
- * @param dic           Dictionary to reduce
- * @param ext           Extendable paths
- * @param nbSeg         index of current step
- */
-
-void Dict_reduce_to_pareto_front(Dict_t* dic, Extendable_t** ext, char nbSeg);
-
-
-/**
- * @brief Used to reduce the Dictionary to a pareto front if 
- * there is a lot of new path at this step
- * 
- * @param dic           Dictionary to reduce
- * @param ext           Extendable paths
- * @param nbSeg         index of current step
- */
-
-void Dict_reduce_to_pareto_front_all(Dict_t* dic, Extendable_t** ext, char nbSeg);
-
-
-/**
- * @brief Used to reduce the Dictionary to a pareto front if 
- * there is not too many new path at this step
- * 
- * @param dic           Dictionary to reduce
- * @param ext           Extendable paths
- * @param nbSeg         index of current step
- */
-
-void Dict_reduce_to_pareto_front_select(Dict_t* dic, Extendable_t** ext, char nbSeg);
-
+extern void Dict_add(Dict_t* dic, my_m1 key, my_m2 value, short pred);
 
 
 /**
  * @brief Only use for debug
  */
 
-void Dict_print(Dict_t* dic);
+extern void Dict_print(Dict_t* dic);
+
+
+extern void Dict_free(Dict_t* dic);
 
 
 /**
- * @brief Only use for debug
- */
-
-void Dict_print_stack(Dict_t* dic);
-
-
-/**
- * @brief Use for crash test
+ * @brief Reset all the values in path component of dict, i.e INF
  * 
- * This function emulate the worst pareto reduction possible
+ * @param d             Dictionnary to reset
  */
-
-void Dict_reduce_to_pareto_crash_test(Dict_t* dist, int nb_seg);
-
-
-void Dict_free(Dict_t* dic);
-
-extern void Dict_seglist_free(Dict_seglist_t* dic);
-
 
 extern void Dict_reset(Dict_t* d);
-
 
 
 #endif

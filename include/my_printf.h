@@ -4,6 +4,7 @@
 #include "Dict.h"
 #include "base.h"
 #include <printf.h>
+#include "Segment_list.h"
 
 extern int print_seglist (FILE* stream, const struct printf_info *info, const void *const *args);
 

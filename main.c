@@ -9,6 +9,7 @@
 #include "include/Option.h"
 #include "include/Best2cop.h"
 #include "include/Compact.h"
+#include "include/Segment_list.h"
 #include "include/my_printf.h"
 
 //struct Options opt;
@@ -340,7 +341,7 @@ int main(int argc, char **argv)
             maxIter = SEG_MAX + 1;
         }
         //return 0;
-        struct segment_list ***sl = Dict_retreive_paths(pf, sr, iter, opt.src);
+        struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
         main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);    
         //print_segment_list(sl, iter, sr->nbNode);
         // return 0;
@@ -413,7 +414,7 @@ int main(int argc, char **argv)
 
 
                 /* then retreive the paths using the pareto front */
-                sl_areas[index] = Dict_retreive_paths(pf, sr_areas[i], iter, area_src);
+                sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[i], iter, area_src);
 
                 if (!id && i == opt.nb_areas - 1) {
                     main_display_distances(output, pf, iter, sr_areas[i]->nbNode, area_src, areas[i], sl_areas[index]);
