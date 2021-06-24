@@ -96,6 +96,23 @@ typedef char bool;
 #define UNUSED(x) (void)(x)
 
 
+#define FREE_3D(d1, d2, d3, tab, free_func, it)                             \
+    for (int it ## _d1 = 0 ; it ## _d1 < d1 ; it ## _d1 ++) {               \
+        for (int it ## _d2 = 0 ; it ## _d2 < d2 ; it ## _d2 ++) {           \
+            for (int it ## _d3 = 0 ; it ## _d3 < d3 ; it ## _d3 ++) {       \
+                free_func(&tab[it ## _d1][it ## _d2][it ## _d3]);           \
+            }                                                               \
+            free(tab[it ## _d1][it ## _d2]);                                \
+        }                                                                   \
+        free(tab[it ## _d1]);                                               \
+    }                                                                       \
 
+#define FREE_2D(d1, d2, tab, free_func, it)                                 \
+    for (int it ## _d1 = 0 ; it ## _d1 < d1 ; it ## _d1 ++) {               \
+        for (int it ## _d2 = 0 ; it ## _d2 < d2 ; it ## _d2 ++) {           \
+            free_func(&tab[it ## _d1][it ## _d2]);                          \
+        }                                                                   \
+        free(tab[it ## _d1]);                                               \
+    }                                                                       \
 
 #endif

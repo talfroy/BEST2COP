@@ -74,5 +74,7 @@ extern Dict_seglist_t** compact_pareto_front_ify(Dict_seglist_t** merged[2], int
 
 extern compact_front *dict_seglist_to_compact(Pfront_t **pf, Dict_seglist_t **dist, int iter, int nbNodes);
 
+extern Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNodes);
+
 
 #endif

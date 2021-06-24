@@ -31,6 +31,8 @@ void main_display_area_sr_time_mean(long int *times, int nb_areas);
 void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int src, 
                             Topology_t *topo, struct segment_list*** sl);
 
+int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* output);
+
 int main(int argc, char **argv)
 {
 
@@ -377,179 +379,183 @@ int main(int argc, char **argv)
     /* If the topology is decomposed into many areas */
     else if (opt.nb_areas > 0)
     {
-        struct segment_list ****sl_areas = calloc(opt.nb_areas * 2, sizeof(struct segment_list ***));
-        ASSERT(sl_areas, EXIT_FAILURE, opt.nb_areas * 2);
+        if (!opt.analyse) {
+            struct segment_list ****sl_areas = calloc(opt.nb_areas * 2, sizeof(struct segment_list ***));
+            ASSERT(sl_areas, EXIT_FAILURE, opt.nb_areas * 2);
 
-        long int *times_area = calloc(opt.nb_areas * 2, sizeof(long int));
-        ASSERT(times_area, EXIT_FAILURE, opt.nb_areas * 2);
+            long int *times_area = calloc(opt.nb_areas * 2, sizeof(long int));
+            ASSERT(times_area, EXIT_FAILURE, opt.nb_areas * 2);
 
-        compact_front **cf_area = calloc(opt.nb_areas * 2, sizeof(compact_front *));
-        ASSERT(cf_area, EXIT_FAILURE, opt.nb_areas * 2);
-        int area_src;
-        int iter;
-        int src  = -1;
+            compact_front **cf_area = calloc(opt.nb_areas * 2, sizeof(compact_front *));
+            ASSERT(cf_area, EXIT_FAILURE, opt.nb_areas * 2);
+            int area_src;
+            int iter;
+            int src  = -1;
 
-        for (int i = 0; i < opt.nb_areas; i++)
-        {
-            for (int id = 0; id < 2; id++)
+            for (int i = 0; i < opt.nb_areas; i++)
             {
-                int index = (id)*opt.nb_areas + i;
-                pf = NULL;
-                pfront = NULL;
-                if (i)
+                for (int id = 0; id < 2; id++)
                 {
-                    area_src = Topology_search_abr_id(areas[i], 0, i, id);
-                }
-                else
-                {
-                    area_src = Topology_search_abr_id(areas[i], 0, opt.nb_areas - 1, id);
-                    if (src == -1) {
-                        src = area_src;
-                    }
-                }
-
-                gettimeofday(&start, NULL);
-                /* first do the BEST2COP on each areas */
-                iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL);
-
-
-                /* then retreive the paths using the pareto front */
-                sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[i], iter, area_src);
-
-#ifdef DEBUG_ALL
-                if (!id && i == opt.nb_areas - 1) {
-                    main_display_distances(output, pf, iter, sr_areas[i]->nbNode, area_src, areas[i], sl_areas[index]);
-                }
-#endif
-
-                /* finally, tranform the tab into a list (emulate packet formation) */
-                cf_area[index] = compact_to_array_2D(pfront, pf, iter, sr_areas[i]->nbNode, sl_areas[index]);
-
-                gettimeofday(&stop, NULL);
-                times_area[index] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
-
-                maxIter = SEG_MAX + 1;
-
-                for (int j = 0; j < maxIter; j++)
-                {
-                    for (int k = 0; k < sr_areas[i]->nbNode; k++)
+                    int index = (id)*opt.nb_areas + i;
+                    pf = NULL;
+                    pfront = NULL;
+                    if (i)
                     {
-                        Pfront_free(&pfront[j][k]);
-                        Dict_free(&pf[j][k]);
+                        area_src = Topology_search_abr_id(areas[i], 0, i, id);
                     }
-                    free(pfront[j]);
-                    free(pf[j]);
+                    else
+                    {
+                        area_src = Topology_search_abr_id(areas[i], 0, opt.nb_areas - 1, id);
+                        if (src == -1) {
+                            src = area_src;
+                        }
+                    }
+
+                    gettimeofday(&start, NULL);
+                    /* first do the BEST2COP on each areas */
+                    iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL);
+
+
+                    /* then retreive the paths using the pareto front */
+                    sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[i], iter, area_src);
+
+    #ifdef DEBUG_ALL
+                    if (!id && i == opt.nb_areas - 1) {
+                        main_display_distances(output, pf, iter, sr_areas[i]->nbNode, area_src, areas[i], sl_areas[index]);
+                    }
+    #endif
+
+                    /* finally, tranform the tab into a list (emulate packet formation) */
+                    cf_area[index] = compact_to_array_2D(pfront, pf, iter, sr_areas[i]->nbNode, sl_areas[index]);
+
+                    gettimeofday(&stop, NULL);
+                    times_area[index] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+
+                    maxIter = SEG_MAX + 1;
+
+                    for (int j = 0; j < maxIter; j++)
+                    {
+                        for (int k = 0; k < sr_areas[i]->nbNode; k++)
+                        {
+                            Pfront_free(&pfront[j][k]);
+                            Dict_free(&pf[j][k]);
+                        }
+                        free(pfront[j]);
+                        free(pf[j]);
+                    }
+
+                    free(pfront);
+                    free(pf);
+                    segment_list_free(sl_areas[index], iter, sr_areas[i]->nbNode);
+                }
+            }
+            main_display_area_time_mean(times_area, opt.nb_areas);
+            long int tot_time_areas = 0;
+            Dict_seglist_t **merged[2];
+            Dict_seglist_t **final;
+            int size = 0;
+            int index = 0;
+            int index2 = 0;
+            int area_src2 = 0;
+
+            for (int i = 1; i < opt.nb_areas - 1; i++)
+            {
+                for (int id = 0; id < 2; id++)
+                {
+                    merged[id] = NULL;
+                    index = (id)*opt.nb_areas + i;
+                    index2 = ((id+1)%2) * opt.nb_areas + i;
+                    area_src = Topology_search_abr_id(areas[0], 0, i, id);
+                    area_src2 = Topology_search_abr_id(areas[0], 0, i, (id+1)%2);
+
+                    
+
+                    // printf("SRC  = %s %d\n", areas[0]->labels->node[src].name, src);
+                    // printf("Area src2 = %s\n", areas[0]->labels->node[area_src2].name);
+
+                    gettimeofday(&start, NULL);
+                    merged[id] = cart(cf_area[0], cf_area[index], 
+                    cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src);
+                    gettimeofday(&stop, NULL);
+                    size++;
+                    //RESULTS("For index %d -> %ld us\n", index, (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
+                    tot_time_areas += (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
                 }
 
-                free(pfront);
-                free(pf);
-                segment_list_free(sl_areas[index], iter, sr_areas[i]->nbNode);
-            }
-        }
-        main_display_area_time_mean(times_area, opt.nb_areas);
-        long int tot_time_areas = 0;
-        Dict_seglist_t **merged[2];
-        Dict_seglist_t **final;
-        int size = 0;
-        int index = 0;
-        int index2 = 0;
-        int area_src2 = 0;
-
-        for (int i = 1; i < opt.nb_areas - 1; i++)
-        {
-            for (int id = 0; id < 2; id++)
-            {
-                merged[id] = NULL;
-                index = (id)*opt.nb_areas + i;
-                index2 = ((id+1)%2) * opt.nb_areas + i;
-                area_src = Topology_search_abr_id(areas[0], 0, i, id);
-                area_src2 = Topology_search_abr_id(areas[0], 0, i, (id+1)%2);
-
-                
-
-                // printf("SRC  = %s %d\n", areas[0]->labels->node[src].name, src);
-                // printf("Area src2 = %s\n", areas[0]->labels->node[area_src2].name);
-
-                gettimeofday(&start, NULL);
-                merged[id] = cart(cf_area[0], cf_area[index], 
-                cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src);
-                gettimeofday(&stop, NULL);
-                size++;
-                //RESULTS("For index %d -> %ld us\n", index, (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
-                tot_time_areas += (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
-            }
-
-           
             
-            final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
+                
+                final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
 
-#ifdef DEBUG_ALL          
+    #ifdef DEBUG_ALL          
 
-            for (int j = 0 ; j <= SEG_MAX ; j++) {
-                for (int k = 0; k < cf_area[index]->nbNodes; k++)
-                {
-                    for (int y = 0 ; y < final[j][k].size ; y++) {
-                        if (final[j][k].paths[y] != INF) {
-                                    fprintf(output, "%s %s %d %d %d", LabelTable_get_name(areas[0]->labels, Topology_search_abr_id(areas[0], 0, opt.nb_areas-1, 0)), 
-                                            LabelTable_get_name(areas[i]->labels, k), j, y, final[j][k].paths[y]);
-                                    Segment_list_print(output, &final[j][k].seg_list[y], areas[0], areas[i]);
-                                    //Segment_list_print_id(output, &final[j][k].seg_list[y]);
-                                    fprintf(output, "\n");
+                for (int j = 0 ; j <= SEG_MAX ; j++) {
+                    for (int k = 0; k < cf_area[index]->nbNodes; k++)
+                    {
+                        for (int y = 0 ; y < final[j][k].size ; y++) {
+                            if (final[j][k].paths[y] != INF) {
+                                        fprintf(output, "%s %s %d %d %d", LabelTable_get_name(areas[0]->labels, Topology_search_abr_id(areas[0], 0, opt.nb_areas-1, 0)), 
+                                                LabelTable_get_name(areas[i]->labels, k), j, y, final[j][k].paths[y]);
+                                        Segment_list_print(output, &final[j][k].seg_list[y], areas[0], areas[i]);
+                                        //Segment_list_print_id(output, &final[j][k].seg_list[y]);
+                                        fprintf(output, "\n");
+                            }
                         }
                     }
                 }
-            }
-#endif  
-            if (opt.analyse) {
-                Segment_list_print_analyse(output, final, areas[i]->nbNode, SEG_MAX, opt.analyse, areas[i]);
-            }
+    #endif  
+                if (opt.analyse) {
+                    Segment_list_print_analyse(output, final, areas[i]->nbNode, SEG_MAX, opt.analyse, areas[i]);
+                }
 
-            for (int id = 0; id < 2; id++) {
-                index = (id)*opt.nb_areas + i;
-                for (int j = 0; j <= SEG_MAX; j++)
-                {
-                    for (int k = 0; k < cf_area[index]->nbNodes; k++)
+                for (int id = 0; id < 2; id++) {
+                    index = (id)*opt.nb_areas + i;
+                    for (int j = 0; j <= SEG_MAX; j++)
                     {
-                        Dict_seglist_free(&merged[id][j][k]);
+                        for (int k = 0; k < cf_area[index]->nbNodes; k++)
+                        {
+                            Dict_seglist_free(&merged[id][j][k]);
+                        }
+                        free(merged[id][j]);
                     }
-                    free(merged[id][j]);
+                    free(merged[id]);
                 }
-                free(merged[id]);
+
+                for (int j = 0 ; j <= SEG_MAX ; j++) {
+                    for (int k = 0; k < cf_area[i]->nbNodes; k++)
+                    {
+                        Dict_seglist_free(&final[j][k]);
+                    }
+                    free(final[j]);
+                }
+                free(final);
+
             }
 
-            for (int j = 0 ; j <= SEG_MAX ; j++) {
-                for (int k = 0; k < cf_area[i]->nbNodes; k++)
-                {
-                    Dict_seglist_free(&final[j][k]);
-                }
-                free(final[j]);
+            if (!opt.analyse) {
+                RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
             }
-            free(final);
 
-        }
-
-        if (!opt.analyse) {
-            RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
-        }
-
-        for (int i = 0; i < opt.nb_areas - 1; i++)
-        {
-            for (int id = 1; id < 3; id++)
+            for (int i = 0; i < opt.nb_areas - 1; i++)
             {
-                index = (id - 1) * opt.nb_areas + i;
-                Compact_free(cf_area[index]);
+                for (int id = 1; id < 3; id++)
+                {
+                    index = (id - 1) * opt.nb_areas + i;
+                    Compact_free(cf_area[index]);
+                }
             }
-        }
 
-        for (int i = 0; i < opt.nb_areas; i++)
-        {
-            Topology_free(areas[i]);
-            SrGraph_free(sr_areas[i]);
-        }
+            for (int i = 0; i < opt.nb_areas; i++)
+            {
+                Topology_free(areas[i]);
+                SrGraph_free(sr_areas[i]);
+            }
 
-        free(cf_area);
-        free(times_area);
-        free(sl_areas);
+            free(cf_area);
+            free(times_area);
+            free(sl_areas);
+        } else {
+            run_acc_cartesian_product(areas, sr_areas, output);
+        }
     }
     else
     {
@@ -758,4 +764,253 @@ void main_display_distances(FILE* out, Dict_t **dist, int iter, int nbNodes, int
             }
         }
     }
+}
+
+
+
+int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* output)
+{
+    // this structure holds the segment lists for all the 
+    struct segment_list ****sl_areas;
+    compact_front **cf_area;
+    int area_src;
+    int iter;
+    int src  = -1;
+    compact_front **cf_acc[2];
+    Pfront_t **pfront;
+    Dict_t **pf;
+    Dict_seglist_t **merged[2];
+    Dict_seglist_t ****merged_acc;
+    Dict_seglist_t **final = NULL;
+    Dict_seglist_t ***final_acc;
+    int index = 0;
+    int index2 = 0;
+    int area_src2 = 0;
+
+
+    cf_area = calloc(opt.nb_areas * 2, sizeof(compact_front *));
+    ASSERT(cf_area, EXIT_FAILURE, opt.nb_areas * 2);
+
+    sl_areas = calloc(opt.nb_areas * 2, sizeof(struct segment_list ***));
+    ASSERT(sl_areas, EXIT_FAILURE, opt.nb_areas * 2);
+
+    cf_acc[0] = calloc(opt.nb_areas, sizeof(compact_front**));
+    cf_acc[1] = calloc(opt.nb_areas, sizeof(compact_front**));
+
+    merged_acc = calloc(opt.nb_areas, sizeof(Dict_seglist_t***));
+    for (int i = 0 ; i < opt.nb_areas ; i++) {
+        merged_acc[i] = calloc(2, sizeof(Dict_seglist_t**));
+    }
+
+    final_acc = calloc(opt.nb_areas, sizeof(Dict_seglist_t**));
+
+
+/***********************************************************************************
+ ******************* Start of computation *****************************************
+***********************************************************************************/
+
+    for (int i = 0; i < opt.nb_areas; i++)
+    {
+        for (int id = 0; id < 2; id++)
+        {
+            int index = (id)*opt.nb_areas + i;
+            pf = NULL;
+            pfront = NULL;
+            if (i)
+            {
+                // Search for the required ABR
+                area_src = Topology_search_abr_id(areas[i], 0, i, id);
+            }
+            else
+            {   
+                // Set the source to city-ABR0.area.id
+                area_src = Topology_search_abr_id(areas[i], 0, opt.nb_areas - 1, id);
+                if (src == -1) {
+                    src = area_src;
+                }
+            }
+
+            /* first do the BEST2COP on each areas */
+            iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, 1001, false, NULL);
+
+            /* then retreive the paths using the pareto front */
+            sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[i], iter, area_src);
+
+            /* finally, tranform the tab into a list (emulate packet formation) */
+            cf_area[index] = compact_to_array_2D(pfront, pf, iter, sr_areas[i]->nbNode, sl_areas[index]);
+
+
+            for (int j = 0; j <= SEG_MAX; j++)
+            {
+                for (int k = 0; k < sr_areas[i]->nbNode; k++)
+                {
+                    Pfront_free(&pfront[j][k]);
+                    Dict_free(&pf[j][k]);
+                }
+                free(pfront[j]);
+                free(pf[j]);
+            }
+            free(pfront);
+            free(pf);
+            segment_list_free(sl_areas[index], iter, sr_areas[i]->nbNode);
+        }
+    }
+    
+
+/******* NOW LET US DO THE CARTESIANS PRODUCTS *************/
+
+    for (int i = 1; i < opt.nb_areas - 1; i++)
+    {
+        // for the first ABR of area 0.
+        for (int id = 0; id < 2; id++)
+        {
+            merged[id] = NULL;
+            index = (id)*opt.nb_areas + i;
+            index2 = ((id+1)%2) * opt.nb_areas + i;
+
+            // search the first ABR id
+            area_src = Topology_search_abr_id(areas[0], 0, i, id);
+
+            // Search the other ABR id
+            area_src2 = Topology_search_abr_id(areas[0], 0, i, (id+1)%2);
+
+            // Search for the source
+            src = Topology_search_abr_id(areas[0], 0, opt.nb_areas - 1, 0);
+
+            // Then do the cartesian product
+            merged[id] = cart(cf_area[0], cf_area[index], 
+            cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src);
+        }
+
+        // Transform the cartesian products results into a pareto front  
+        final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
+        cf_acc[0][i] = dict_seglist_to_compact(NULL, final, SEG_MAX, areas[i]->nbNode);
+
+        // Macro to free 3D arrays
+        FREE_3D(2, (SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
+
+        FREE_2D(SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
+        free(final);
+
+        for (int id = 0; id < 2; id++)
+        {
+            merged[id] = NULL;
+            index = (id)*opt.nb_areas + i;
+            index2 = ((id+1)%2) * opt.nb_areas + i;
+
+            // search the first ABR id
+            area_src = Topology_search_abr_id(areas[0], 0, i, id);
+
+            // Search the other ABR id
+            area_src2 = Topology_search_abr_id(areas[0], 0, i, (id+1)%2);
+
+            // Search for the source
+            src = Topology_search_abr_id(areas[0], 0, opt.nb_areas - 1, 1);
+
+            // Then do the cartesian product
+            merged[id] = cart(cf_area[opt.nb_areas], cf_area[index], 
+            cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src);
+        }
+       
+        // Transform the cartesian products results into a pareto front
+        final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
+        cf_acc[1][i] = dict_seglist_to_compact(NULL, final, SEG_MAX, areas[i]->nbNode);
+
+        
+        FREE_3D(2, (SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
+
+        FREE_2D(SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
+        free(final);
+    }
+    struct segment_list*** sl_acc;
+    compact_front *cf_acc_acc;
+
+    // Find the required ACC router.
+    src = Topology_search_acc_id(areas[opt.nb_areas - 1], opt.nb_areas - 1, 1, 1);
+
+    // Do the BEST2COP on the ACC router area
+    iter = Best2cop(&pfront, &pf, sr_areas[opt.nb_areas - 1], src, opt.cstr1, opt.cstr2, 1001, false, NULL);
+    
+    /* then retreive the paths using the pareto front */
+    sl_acc = Segment_list_retreive_paths(pf, sr_areas[opt.nb_areas - 1], iter, src);
+    
+    /* finally, tranform the tab     into a list (emulate packet formation) */
+    cf_acc_acc = compact_to_array_2D(pfront, pf, iter, sr_areas[opt.nb_areas - 1]->nbNode, sl_acc);
+
+
+    for (int i = 1 ; i < opt.nb_areas - 1 ; i++) {
+        for (int id = 0 ; id < 2 ; id++) {
+
+            // search the first ABR of the area.
+            area_src = Topology_search_abr_id(areas[opt.nb_areas - 1], 0, opt.nb_areas - 1, id);
+
+            // Serach the second ABR of the area
+            area_src2 = Topology_search_abr_id(areas[opt.nb_areas - 1], 0, opt.nb_areas - 1, (id+1)%2);
+
+            // Then do the cartesian product toward each dest of each areas.
+            merged_acc[i][id] = cart(cf_acc_acc, cf_acc[id][i], cf_acc[(id+1)%2][i], opt.cstr1,
+                area_src, area_src2, sr_areas[opt.nb_areas - 1], areas[opt.nb_areas - 1], areas[i], src);
+
+
+
+
+#ifdef DEBUG_ALL
+            for (int j = 0 ; j <= SEG_MAX ; j++) {
+                for (int k = 0; k < areas[i]->nbNode; k++){
+                    for (int y = 0 ; y < merged_acc[i][id][j][k].size ; y++) {
+                        if (merged_acc[i][id][j][k].paths[y] != INF) {
+                                    fprintf(output, "%s %s %d %d %d", LabelTable_get_name(areas[opt.nb_areas-1]->labels, src), 
+                                            LabelTable_get_name(areas[i]->labels, k), j, y, merged_acc[i][id][j][k].paths[y]);
+                                    Segment_list_print(output, &merged_acc[i][id][j][k].seg_list[y], areas[opt.nb_areas-1], areas[i]);
+                                    //Segment_list_print_id(output, &final[j][k].seg_list[y]);
+                                    fprintf(output, "\n");
+                        }
+                    }
+                }
+            }
+#else
+    UNUSED(output);
+#endif
+
+
+        }
+    }
+
+    for (int i = 1 ; i < opt.nb_areas - 1 ; i++) {
+
+        // Compute the Segment list from ACC to other destinations.
+        final_acc[i] = compact_pareto_front_ify_3D(merged_acc[i], areas[i]->nbNode);
+
+        // Display the results using the right analysis type.
+        Segment_list_print_analyse(output, final_acc[i], areas[i]->nbNode, SEG_MAX, opt.analyse, areas[i]);
+
+        FREE_3D(2, (SEG_MAX + 1), cf_area[i]->nbNodes, merged_acc[i], Dict_seglist_free, mer);
+
+        FREE_2D(SEG_MAX, cf_area[i]->nbNodes, final_acc[i], Dict_seglist_free, fin);
+        free(final_acc[i]);
+        free(merged_acc[i]);
+    }
+
+    free(merged_acc);
+    free(final_acc);
+
+
+
+    for (int i = 0; i < opt.nb_areas - 1; i++)
+    {
+        for (int id = 1; id < 3; id++)
+        {
+            index = (id - 1) * opt.nb_areas + i;
+            Compact_free(cf_area[index]);
+        }
+    }
+    for (int i = 0; i < opt.nb_areas; i++)
+    {
+        Topology_free(areas[i]);
+        SrGraph_free(sr_areas[i]);
+    }
+    free(cf_area);
+    free(sl_areas);
+
+    return EXIT_SUCCESS;
 }

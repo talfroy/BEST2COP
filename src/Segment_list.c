@@ -10,7 +10,7 @@ void Dict_seglist_free(Dict_seglist_t* dic)
 
 void Dict_seglist_init(Dict_seglist_t* dic, int size)
 {
-    dic->paths = malloc(size * sizeof(int));
+    dic->paths = malloc(size * sizeof(my_m2));
     ASSERT(dic->paths, , size);
 
     dic->seg_list = malloc(size * sizeof(struct segment_list));
@@ -38,7 +38,16 @@ void Dict_reset(Dict_t* d)
     }
 }
 
-
+void Dict_sl_print(Dict_seglist_t* dic)
+{
+    printf("Dict : ");
+    for (my_m1 i = 0 ; i < MAX_SIZE ; i++) {
+        if (dic->paths[i] != INF) {
+            printf("(%d ; %d) ", i, dic->paths[i]);
+        }
+    }
+    printf("\n\n\n");
+}
 
 void Segment_list_print(FILE* stream, struct segment_list* sl, Topology_t* topo1, Topology_t* topo2)
 {

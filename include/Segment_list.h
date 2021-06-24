@@ -85,4 +85,6 @@ extern void segment_list_invert(struct segment_list *sl);
 
 extern void Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes, int nbIters, char analyse, Topology_t* topo_area);
 
+extern void Dict_sl_print(Dict_seglist_t* dic);
+
 #endif
