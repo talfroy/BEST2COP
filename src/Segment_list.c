@@ -129,8 +129,8 @@ struct segment_list*** Segment_list_retreive_paths(Dict_t** d, SrGraph_t* sr, in
         }
     }
     short pred = 0;
-    struct segment_list* stack[10];
-    memset(stack, 0, 10 * sizeof(struct segment_list*));
+    struct segment_list* stack[SSTACK_SIZE];
+    memset(stack, 0, SSTACK_SIZE * sizeof(struct segment_list*));
     int  stacksize = -1;
     int curr_iter = -1;
     my_m1 n_d1 = 0;
@@ -160,11 +160,10 @@ struct segment_list*** Segment_list_retreive_paths(Dict_t** d, SrGraph_t* sr, in
                 n_d2 = d[iter][v].paths[dist];
                 curr_iter = iter;
                 stacksize = 0;
-                memset(stack, 0, 10 * sizeof(struct segment_list*));
+                memset(stack, 0, SSTACK_SIZE * sizeof(struct segment_list*));
                 short p_pred = 0;
                 my_m2 p_n_d1 = 0;
                 my_m2 p_n_d2 = 0;
-
                 while (pred != src) {
                     if (!sl[curr_iter][pred][n_d1].size) {
                         stack[stacksize++] = &sl[curr_iter][pred][n_d1];

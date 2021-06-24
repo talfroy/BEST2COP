@@ -5,6 +5,7 @@
 #include "Topology.h"
 #include "SrGraph.h"
 
+#define SSTACK_SIZE         100
 
 /**
  * @brief Structure that represents a list of segments 
@@ -12,8 +13,8 @@
  */
 
 struct segment_list {
-    short seg[10];
-    char seg_type[10];
+    short seg[SSTACK_SIZE];
+    char seg_type[SSTACK_SIZE];
     int size;
     int abr_index;
 };

@@ -139,7 +139,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     free(nextextendable);
     free(minIgp);
 
-    return nbIter;
+    return nbIter - 1;
 }
 
 

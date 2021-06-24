@@ -382,14 +382,20 @@ static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct 
 	return sl3;
 }
 
-Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t *topo_bb, Topology_t *topo_area, int src)
+Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, 
+			int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t *topo_bb, 
+			Topology_t *topo_area, int src, bool cop)
 {
 	// pf1 = dist to ABR
 	Dict_seglist_t **pf3 = NULL;
-	pf3 = calloc(11, sizeof(Dict_t *));
-	ASSERT(pf3, NULL, 11);
+	int maxIter = SEG_MAX;
+	if (cop) {
+		maxIter = 10 * SEG_MAX;
+	}
+	pf3 = calloc(maxIter + 1, sizeof(Dict_t *));
+	ASSERT(pf3, NULL, maxIter+1);
 
-	for (int i = 0; i <= 10; i++)
+	for (int i = 0; i <= maxIter; i++)
 	{
 		pf3[i] = malloc(pf2->nbNodes * sizeof(Dict_t));
 		ASSERT(pf3[i], NULL, pf2->nbNodes);
@@ -417,7 +423,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 				for (int s2_index = 0; pf2->paths[out_node][s2_index]; s2_index++)
 				{
 					// break if above MSD
-					if (s1_index + s2_index > 11)
+					if ((s1_index + s2_index > 11) && !cop)
 					{
 						break;
 					}
@@ -440,7 +446,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 												 pf2->paths[out_node][s2_index][d2_index].sl, pf2,
 												 pf2bis, sr_bb, other_ABR, topo_bb, topo_area, src);
 
-						if (sl3.size > 10)
+						if ((sl3.size > 10) && !cop)
 						{
 							continue;
 						}
@@ -456,19 +462,23 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 	return pf3;
 }
 
-Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes)
+Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes, bool analyse)
 {
 	Dict_seglist_t **pf3 = NULL;
 	Dict_t *dist = malloc(nbNodes * sizeof(Dict_t));
 	ASSERT(dist, NULL, nbNodes);
+	int maxIter = SEG_MAX;
+	if (analyse) {
+		maxIter = 10 * SEG_MAX;
+	}
 
 	for (int i = 0; i < nbNodes; i++)
 	{
 		Dict_init(&dist[i], 1000);
 	}
 
-	pf3 = malloc((SEG_MAX + 1) * sizeof(Dict_seglist_t *));
-	for (int i = 0; i <= SEG_MAX; i++)
+	pf3 = malloc((maxIter + 1) * sizeof(Dict_seglist_t *));
+	for (int i = 0; i <= maxIter; i++)
 	{
 		pf3[i] = malloc(nbNodes * sizeof(Dict_seglist_t));
 		ASSERT(pf3[i], NULL, nbNodes);
@@ -484,7 +494,7 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 	Dict_t pfcand;
 	Dict_init(&pfcand, 1000);
 
-	for (int i = 0; i <= 10; i++)
+	for (int i = 0; i <= maxIter; i++)
 	{
 		for (int j = 0; j < nbNodes; j++)
 		{
@@ -542,19 +552,24 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 }
 
 
-Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNodes)
+Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNodes, bool analyse)
 {
 	Dict_seglist_t **pf3 = NULL;
 	Dict_t *dist = malloc(nbNodes * sizeof(Dict_t));
 	ASSERT(dist, NULL, nbNodes);
+	int maxIter = SEG_MAX;
+
+	if (analyse) {
+		maxIter = 10 * SEG_MAX;
+	}
 
 	for (int i = 0; i < nbNodes; i++)
 	{
 		Dict_init(&dist[i], 1000);
 	}
 
-	pf3 = malloc((SEG_MAX + 1) * sizeof(Dict_seglist_t *));
-	for (int i = 0; i <= SEG_MAX; i++)
+	pf3 = malloc((maxIter + 1) * sizeof(Dict_seglist_t *));
+	for (int i = 0; i <= maxIter; i++)
 	{
 		pf3[i] = malloc(nbNodes * sizeof(Dict_seglist_t));
 		ASSERT(pf3[i], NULL, nbNodes);
@@ -569,7 +584,7 @@ Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNod
 	my_m2 min = INF;
 	Dict_t pfcand;
 	Dict_init(&pfcand, 1000);
-	for (int i = 0; i <= 10; i++)
+	for (int i = 0; i <= maxIter; i++)
 	{
 		for (int j = 0; j < nbNodes; j++)
 		{

@@ -475,7 +475,7 @@ int main(int argc, char **argv)
 
                     gettimeofday(&start, NULL);
                     merged[id] = cart(cf_area[0], cf_area[index], 
-                    cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src);
+                    cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src, opt.analyse);
                     gettimeofday(&stop, NULL);
                     size++;
                     //RESULTS("For index %d -> %ld us\n", index, (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
@@ -484,7 +484,7 @@ int main(int argc, char **argv)
 
             
                 
-                final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
+                final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes, opt.analyse);
 
     #ifdef DEBUG_ALL          
 
@@ -804,13 +804,14 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
 
     final_acc = calloc(opt.nb_areas, sizeof(Dict_seglist_t**));
 
-
+    INFO("Start Analysis computation\n");
 /***********************************************************************************
  ******************* Start of computation *****************************************
 ***********************************************************************************/
 
     for (int i = 0; i < opt.nb_areas; i++)
     {
+        INFO("Area %d\n", i);
         for (int id = 0; id < 2; id++)
         {
             int index = (id)*opt.nb_areas + i;
@@ -831,16 +832,21 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
             }
 
             /* first do the BEST2COP on each areas */
-            iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, 1001, false, NULL);
-
+            //INFO("Start best2cop\n");
+            iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, 1001, opt.analyse, NULL);
+            //INFO("End BEST2cop\n");
             /* then retreive the paths using the pareto front */
+            //INFO("Start Retreive\n");
             sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[i], iter, area_src);
+            //INFO("End Retreive\n");
 
             /* finally, tranform the tab into a list (emulate packet formation) */
+            //INFO("start conversion\n");
             cf_area[index] = compact_to_array_2D(pfront, pf, iter, sr_areas[i]->nbNode, sl_areas[index]);
+            //INFO("End conversion\n");
 
 
-            for (int j = 0; j <= SEG_MAX; j++)
+            for (int j = 0; j <= 10 * SEG_MAX; j++)
             {
                 for (int k = 0; k < sr_areas[i]->nbNode; k++)
                 {
@@ -856,7 +862,7 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
         }
     }
     
-
+    INFO("Start cartésian Product\n");
 /******* NOW LET US DO THE CARTESIANS PRODUCTS *************/
 
     for (int i = 1; i < opt.nb_areas - 1; i++)
@@ -879,17 +885,17 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
 
             // Then do the cartesian product
             merged[id] = cart(cf_area[0], cf_area[index], 
-            cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src);
+            cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src, opt.analyse);
         }
 
         // Transform the cartesian products results into a pareto front  
-        final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
+        final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes, opt.analyse);
         cf_acc[0][i] = dict_seglist_to_compact(NULL, final, SEG_MAX, areas[i]->nbNode);
 
         // Macro to free 3D arrays
-        FREE_3D(2, (SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
+        FREE_3D(2, (10 * SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
 
-        FREE_2D(SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
+        FREE_2D(10 * SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
         free(final);
 
         for (int id = 0; id < 2; id++)
@@ -909,17 +915,17 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
 
             // Then do the cartesian product
             merged[id] = cart(cf_area[opt.nb_areas], cf_area[index], 
-            cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src);
+            cf_area[index2], opt.cstr1, area_src, area_src2, sr_areas[0], areas[0], areas[i], src, opt.analyse);
         }
        
         // Transform the cartesian products results into a pareto front
-        final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes);
+        final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes, opt.analyse);
         cf_acc[1][i] = dict_seglist_to_compact(NULL, final, SEG_MAX, areas[i]->nbNode);
 
         
-        FREE_3D(2, (SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
+        FREE_3D(2, (10 * SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
 
-        FREE_2D(SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
+        FREE_2D(10 * SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
         free(final);
     }
     struct segment_list*** sl_acc;
@@ -949,7 +955,7 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
 
             // Then do the cartesian product toward each dest of each areas.
             merged_acc[i][id] = cart(cf_acc_acc, cf_acc[id][i], cf_acc[(id+1)%2][i], opt.cstr1,
-                area_src, area_src2, sr_areas[opt.nb_areas - 1], areas[opt.nb_areas - 1], areas[i], src);
+                area_src, area_src2, sr_areas[opt.nb_areas - 1], areas[opt.nb_areas - 1], areas[i], src, opt.analyse);
 
 
 
@@ -979,12 +985,12 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
     for (int i = 1 ; i < opt.nb_areas - 1 ; i++) {
 
         // Compute the Segment list from ACC to other destinations.
-        final_acc[i] = compact_pareto_front_ify_3D(merged_acc[i], areas[i]->nbNode);
+        final_acc[i] = compact_pareto_front_ify_3D(merged_acc[i], areas[i]->nbNode, opt.analyse);
 
         // Display the results using the right analysis type.
-        Segment_list_print_analyse(output, final_acc[i], areas[i]->nbNode, SEG_MAX, opt.analyse, areas[i]);
+        Segment_list_print_analyse(output, final_acc[i], areas[i]->nbNode, 10 * SEG_MAX, opt.analyse, areas[i]);
 
-        FREE_3D(2, (SEG_MAX + 1), cf_area[i]->nbNodes, merged_acc[i], Dict_seglist_free, mer);
+        FREE_3D(2, (10 * SEG_MAX + 1), cf_area[i]->nbNodes, merged_acc[i], Dict_seglist_free, mer);
 
         FREE_2D(SEG_MAX, cf_area[i]->nbNodes, final_acc[i], Dict_seglist_free, fin);
         free(final_acc[i]);

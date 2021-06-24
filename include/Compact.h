@@ -66,15 +66,17 @@ void print_compact_array_2D(compact_front *compact_pf);
 
 compact_front* compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int nbNodes, struct segment_list ***sl);
 
-Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t* topo_bb, Topology_t* topo_area, int src);
+Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, int c1, 
+				int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t* topo_bb, Topology_t* topo_area, 
+				int src, bool analyse);
 
 extern void Compact_free(compact_front* cp);
 
-extern Dict_seglist_t** compact_pareto_front_ify(Dict_seglist_t** merged[2], int nbNodes);
+extern Dict_seglist_t** compact_pareto_front_ify(Dict_seglist_t** merged[2], int nbNodes, bool analyse);
 
 extern compact_front *dict_seglist_to_compact(Pfront_t **pf, Dict_seglist_t **dist, int iter, int nbNodes);
 
-extern Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNodes);
+extern Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNodes, bool analyse);
 
 
 #endif
