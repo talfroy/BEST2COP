@@ -57,6 +57,10 @@ void Pfront_sort(Pfront_t* bp);
 void Pfront_print(Pfront_t* pf, FILE* out);
 
 
+/**
+ * @brief Unused for now
+ */
+
 Pfront_t* Pfront_merge_sort(Pfront_t* pfront, Pfront_t* pfcand);
 
 

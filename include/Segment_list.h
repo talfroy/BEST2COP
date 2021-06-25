@@ -78,13 +78,48 @@ extern void Segment_list_print_id(FILE* stream, struct segment_list *sl);
 
 extern void segment_list_free(struct segment_list*** sl, int maxiter, int nbNodes);
 
-extern struct segment_list*** Segment_list_retreive_paths(Dict_t** dist, SrGraph_t* sr, int maxiter, short src);
+
+/**
+ * @brief Uses the SrGraph and the distance dictionnary to retreive
+ * the path and create the segments list for each computed distances
+ * 
+ * @param dist                  distance dictionnary
+ * @param sr                    Segment routing Graph
+ * @param maxIter               number max of iterations found by
+ * best2cop
+ * @param src                   source node of the distances
+ * 
+ * @return Returns the corresponding segment list
+ */
+
+extern struct segment_list*** Segment_list_retreive_paths(Dict_t** dist, SrGraph_t* sr, int maxiter, 
+                                                short src);
+
+
+/**
+ * @brief Used for debug
+ */
 
 extern void print_segment_list(struct segment_list*** sl, int maxiter, int nbNodes);
 
+
+/**
+ * @brief Used for debug
+ */
+
 extern void segment_list_invert(struct segment_list *sl);
 
+
+/**
+ * @brief Used for debug
+ */
+
 extern void Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes, int nbIters, char analyse, Topology_t* topo_area);
+
+
+/**
+ * @brief Used for debug
+ */
 
 extern void Dict_sl_print(Dict_seglist_t* dic);
 

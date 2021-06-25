@@ -331,8 +331,6 @@ int main(int argc, char **argv)
             RESULTS("Execution takes %ld us\n", time);
         }
 
-        //Main_display_results(output, pf, sr->nbNode, pfront, iter);
-        //Main_display_all_paths(output, dist, sr->nbNode, iter);
 
         if (opt.analyse)
         {
@@ -342,15 +340,10 @@ int main(int argc, char **argv)
         {
             maxIter = SEG_MAX + 1;
         }
-        //return 0;
+        
         struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
         main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);    
-        //print_segment_list(sl, iter, sr->nbNode);
-        // return 0;
-        //int* nb_paths = get_nb_paths_per_dest(pf, sr->nbNode, iter);
 
-        //compact_front compact_pf = compact_to_array_2D(pfront, pf, iter, sr->nbNode, sl);
-        //print_compact_array_2D(compact_pf);
 
         for (int j = 0; j < maxIter; j++)
         {
@@ -468,10 +461,6 @@ int main(int argc, char **argv)
                     area_src = Topology_search_abr_id(areas[0], 0, i, id);
                     area_src2 = Topology_search_abr_id(areas[0], 0, i, (id+1)%2);
 
-                    
-
-                    // printf("SRC  = %s %d\n", areas[0]->labels->node[src].name, src);
-                    // printf("Area src2 = %s\n", areas[0]->labels->node[area_src2].name);
 
                     gettimeofday(&start, NULL);
                     merged[id] = cart(cf_area[0], cf_area[index], 

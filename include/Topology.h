@@ -202,7 +202,19 @@ extern Topology_t* Topology_create_random_quentin(int size, int v_delay[], int v
 extern int Topology_search_abr_id(Topology_t* topo, int area1, int area2, int id);
 
 
-extern int Topology_search_acc_id(Topology_t* topo, int area1, int aggGroup, int id);
+/**
+ * @brief Get the id of th required ABR (note that the name of the node must
+ * be on the good format)
+ * 
+ * @param topo              Area in which we search
+ * @param area              ACC area number
+ * @param aggGroup          Aggregation Group of the acces router
+ * @param id                Acces router ID
+ * 
+ * @return Returns the id of the required ABR if it exists, -1 if not
+ */
+
+extern int Topology_search_acc_id(Topology_t* topo, int area, int aggGroup, int id);
 
 
 #endif
