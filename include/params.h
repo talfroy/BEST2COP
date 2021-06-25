@@ -41,3 +41,5 @@ typedef int my_m1;
 #define LINUX                   1
 #define MACOS                   2
 #define OS_TYPE                 MACOS
+
+#define SEG_MULT                3

@@ -30,6 +30,7 @@ int Option_command_parser (int argc, char** argv) {
         {"save-sr-bin",    required_argument, NULL,       'S'},
         {"areas",    required_argument, NULL,       'A'},
         {"src-lab",     required_argument,      NULL,       'B'},
+        {"quentin",     no_argument,            NULL,   'Q'},
         {0,0,0,0}
     };
 
@@ -57,11 +58,18 @@ int Option_command_parser (int argc, char** argv) {
     while ((optValue = getopt_long(argc, argv, optString, long_options, NULL)) != -1) {
         switch(optValue)
         {
+            case 'Q' :
+                opt.analyse = ANALYSE_QUENTIN;
+                break;
+                
             case 'B' :
                 opt.src_lab = optarg;
                 break;
 
             case 'A' :
+                if (opt.loadingMode != -1) {
+                    WARNING("You are going to overide file loading mode with option --areas %s\n", optarg);
+                }
                 opt.loadingMode = LOAD_TOPO_AREAS;
                 opt.nb_areas = atoi(optarg);
                 break;
@@ -74,7 +82,7 @@ int Option_command_parser (int argc, char** argv) {
                 opt.flex = true;
                 break;
 
-            case 'h' :
+            case 'h' :  
                 return -1;
                 break;
 
@@ -242,29 +250,29 @@ void usage(char* name)
     printf ("Usage:\n");
 	printf ("\t%s [options] --file input_file --loading_mode --execution_mode\n", name);
 
-    printf("\nLoading mode :\n" \
-           "\t--topo\t\t\tUsed to specifie that the loaded file represents the topology\n" \
-           "\t--sr\t\t\tUsed to specifie that the loaded file represents the Segment Routing Graph\n" \
-           "\t--sr-bin\t\tUsed to specifie that the loaded file represents the Segment Routing Graph in binary format\n" \
-           "\t--areas [nb_areas]\tUsed to specify that the topology is decomposed into areas\n" \
-           "\t--id\t\t\tSpecify that the topology nodes are represented by id \n" \
+    printf("\nLoading mode :\n"                                                                                             \
+           "\t--topo\t\t\tUsed to specifie that the loaded file represents the topology\n"                                  \
+           "\t--sr\t\t\tUsed to specifie that the loaded file represents the Segment Routing Graph\n"                       \
+           "\t--sr-bin\t\tUsed to specifie that the loaded file represents the Segment Routing Graph in binary format\n"    \
+           "\t--areas [nb_areas]\tUsed to specify that the topology is decomposed into areas\n"                             \
+           "\t--id\t\t\tSpecify that the topology nodes are represented by id \n"                                           \
            "\t--labels\t\tSpecify that the topology nodes are represented by labels\n");
 
-    printf("\nExecution mode : \n" \
-           "\t--src [node]\t\tUsed to specify the source node (time evaluation)\n" \
-           "\t--src_lab\t\tUsed to specify the label of the source node\n" \
-           "\t--all-nodes\t\tRun best2cop with all nodes as source\n" \
-           "\t--2COP\t\t\tRun best2cop and returns the results in term of number of segments following 2COP\n" \
+    printf("\nExecution mode : \n"                                                                                          \
+           "\t--src [node]\t\tUsed to specify the source node (time evaluation)\n"                                          \
+           "\t--src_lab\t\tUsed to specify the label of the source node\n"                                                  \
+           "\t--all-nodes\t\tRun best2cop with all nodes as source\n"                                                       \
+           "\t--2COP\t\t\tRun best2cop and returns the results in term of number of segments following 2COP\n"              \
            "\t--DCLC\t\t\tRun best2cop and returns the results in term of number of segments following DCLC\n");
 
-    printf("\nOptions :\n"           \
-    "\t--accu [value]\t\tSet the accuracy of delay to value. By default this parameter is 1 (0.1ms)\n"   \
-    "\t--output [file]\t\tThe results are printed in output_file. The file is created if it doesn't exists\n" \
-    "\t--bi_dir\t\tIf this option is activated, the link represented in input file are bi_directionals\n" \
-    "\t--cstr1 [value]\t\tPut the first constraint to value\n" \
-    "\t--cstr2 [value]\t\tPut the second constraint to value\n" \
-    "\t--interface\t\tLauch the interactive mode\n" \
-    "\t--threads [nb]\t\tSet the required number of threads\n" \
-    "\t--flex\t\t\tUses flex algo (both delay and IGP segments\n" \
+    printf("\nOptions :\n"                                                                                                  \
+    "\t--accu [value]\t\tSet the accuracy of delay to value. By default this parameter is 1 (0.1ms)\n"                      \
+    "\t--output [file]\t\tThe results are printed in output_file. The file is created if it doesn't exists\n"               \
+    "\t--bi_dir\t\tIf this option is activated, the link represented in input file are bi_directionals\n"                   \
+    "\t--cstr1 [value]\t\tPut the first constraint to value\n"                                                              \
+    "\t--cstr2 [value]\t\tPut the second constraint to value\n"                                                             \
+    "\t--interface\t\tLauch the interactive mode\n"                                                                         \
+    "\t--threads [nb]\t\tSet the required number of threads\n"                                                              \
+    "\t--flex\t\t\tUses flex algo (both delay and IGP segments\n"                                                           \
     "\t--pretty\t\tDisplays loading bars and other nice stuffs !\n");
 }

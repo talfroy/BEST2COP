@@ -835,7 +835,7 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
             //INFO("End conversion\n");
 
 
-            for (int j = 0; j <= 10 * SEG_MAX; j++)
+            for (int j = 0; j <= SEG_MULT * SEG_MAX; j++)
             {
                 for (int k = 0; k < sr_areas[i]->nbNode; k++)
                 {
@@ -879,12 +879,12 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
 
         // Transform the cartesian products results into a pareto front  
         final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes, opt.analyse);
-        cf_acc[0][i] = dict_seglist_to_compact(NULL, final, SEG_MAX, areas[i]->nbNode);
+        cf_acc[0][i] = dict_seglist_to_compact(NULL, final, SEG_MULT * SEG_MAX, areas[i]->nbNode);
 
         // Macro to free 3D arrays
-        FREE_3D(2, (10 * SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
+        FREE_3D(2, (SEG_MULT * SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
 
-        FREE_2D(10 * SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
+        FREE_2D(SEG_MULT * SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
         free(final);
 
         for (int id = 0; id < 2; id++)
@@ -909,12 +909,12 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
        
         // Transform the cartesian products results into a pareto front
         final = compact_pareto_front_ify(merged, cf_area[i]->nbNodes, opt.analyse);
-        cf_acc[1][i] = dict_seglist_to_compact(NULL, final, SEG_MAX, areas[i]->nbNode);
+        cf_acc[1][i] = dict_seglist_to_compact(NULL, final, SEG_MULT * SEG_MAX, areas[i]->nbNode);
 
         
-        FREE_3D(2, (10 * SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
+        FREE_3D(2, (SEG_MULT * SEG_MAX + 1), cf_area[i]->nbNodes, merged, Dict_seglist_free, mer);
 
-        FREE_2D(10 * SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
+        FREE_2D(SEG_MULT * SEG_MAX, cf_area[i]->nbNodes, final, Dict_seglist_free, fin);
         free(final);
     }
     struct segment_list*** sl_acc;
@@ -977,9 +977,9 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
         final_acc[i] = compact_pareto_front_ify_3D(merged_acc[i], areas[i]->nbNode, opt.analyse);
 
         // Display the results using the right analysis type.
-        Segment_list_print_analyse(output, final_acc[i], areas[i]->nbNode, 10 * SEG_MAX, opt.analyse, areas[i]);
+        Segment_list_print_analyse(output, final_acc[i], areas[i]->nbNode, SEG_MULT * SEG_MAX, opt.analyse, areas[i]);
 
-        FREE_3D(2, (10 * SEG_MAX + 1), cf_area[i]->nbNodes, merged_acc[i], Dict_seglist_free, mer);
+        FREE_3D(2, (SEG_MULT * SEG_MAX + 1), cf_area[i]->nbNodes, merged_acc[i], Dict_seglist_free, mer);
 
         FREE_2D(SEG_MAX, cf_area[i]->nbNodes, final_acc[i], Dict_seglist_free, fin);
         free(final_acc[i]);

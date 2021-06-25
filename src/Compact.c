@@ -447,7 +447,7 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 	ASSERT(dist, NULL, nbNodes);
 	int maxIter = SEG_MAX;
 	if (analyse) {
-		maxIter = 10 * SEG_MAX;
+		maxIter = SEG_MULT * SEG_MAX;
 	}
 
 	for (int i = 0; i < nbNodes; i++)
@@ -530,7 +530,7 @@ Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNod
 	int maxIter = SEG_MAX;
 
 	if (analyse) {
-		maxIter = 10 * SEG_MAX;
+		maxIter = SEG_MULT * SEG_MAX;
 	}
 
 	for (int i = 0; i < nbNodes; i++)

@@ -260,6 +260,17 @@ void Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNode
 
             fprintf(stream, "%s %s %d\n", opt.src_lab, LabelTable_get_name(topo_area->labels, node), nb_seg_min_igp);
         }
+    } else if (analyse == ANALYSE_QUENTIN) {
+        for (int node = 0 ; node < nbNodes ; node++) {
+
+            for (int iter = 0 ; iter < nbIters ; iter++) {
+                for (my_m1 delay = 0 ; delay < final[iter][node].size ; delay++) {
+                    if (final[iter][node].paths[delay] != INF) {
+                        fprintf(stream, "%s %s %d\n", opt.src_lab, LabelTable_get_name(topo_area->labels, node), iter);
+                    }
+                }
+            }       
+        }
     }
 }
 

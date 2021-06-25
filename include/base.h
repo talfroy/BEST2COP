@@ -38,6 +38,7 @@ typedef char bool;
 
 #define ANALYSE_DCLC            1
 #define ANALYSE_2COP            2
+#define ANALYSE_QUENTIN         3
 
 
 
