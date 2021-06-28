@@ -5,7 +5,7 @@
 #include "Topology.h"
 #include "SrGraph.h"
 
-#define SSTACK_SIZE         100
+#define SSTACK_SIZE         30
 
 /**
  * @brief Structure that represents a list of segments 
@@ -114,7 +114,7 @@ extern void segment_list_invert(struct segment_list *sl);
  * @brief Used for debug
  */
 
-extern void Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes, int nbIters, char analyse, Topology_t* topo_area);
+extern int Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes, int nbIters, char analyse, Topology_t* topo_area);
 
 
 /**

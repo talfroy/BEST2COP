@@ -225,7 +225,7 @@ void print_segment_list(struct segment_list*** sl, int maxiter, int nbNodes)
 
 
 
-void Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes, int nbIters, char analyse, Topology_t* topo_area)
+int Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes, int nbIters, char analyse, Topology_t* topo_area)
 {
     my_m2 min_igp;
     int nb_seg_min_igp;
@@ -261,16 +261,21 @@ void Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNode
             fprintf(stream, "%s %s %d\n", opt.src_lab, LabelTable_get_name(topo_area->labels, node), nb_seg_min_igp);
         }
     } else if (analyse == ANALYSE_QUENTIN) {
+        int nb_path = 0;
         for (int node = 0 ; node < nbNodes ; node++) {
 
             for (int iter = 0 ; iter < nbIters ; iter++) {
                 for (my_m1 delay = 0 ; delay < final[iter][node].size ; delay++) {
                     if (final[iter][node].paths[delay] != INF) {
+                        nb_path++;
                         fprintf(stream, "%s %s %d\n", opt.src_lab, LabelTable_get_name(topo_area->labels, node), iter);
                     }
                 }
             }       
         }
+        return nb_path;
     }
+
+    return 0;
 }
 

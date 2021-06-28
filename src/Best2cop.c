@@ -10,7 +10,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     my_m2* minIgp = malloc(graph->nbNode * sizeof(my_m2));
 
     if (analyse) {
-        maxIter = MAX(maxIter, 10 * SEG_MAX);
+        maxIter = MAX(maxIter, SEG_MULT * SEG_MAX);
     }
 
     int nbIter = 1;

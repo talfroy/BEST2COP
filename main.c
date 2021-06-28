@@ -971,19 +971,27 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
         }
     }
 
+    float nb_dist = 0;
+    float nb_nodes = 0;
+
     for (int i = 1 ; i < opt.nb_areas - 1 ; i++) {
 
         // Compute the Segment list from ACC to other destinations.
         final_acc[i] = compact_pareto_front_ify_3D(merged_acc[i], areas[i]->nbNode, opt.analyse);
 
         // Display the results using the right analysis type.
-        Segment_list_print_analyse(output, final_acc[i], areas[i]->nbNode, SEG_MULT * SEG_MAX, opt.analyse, areas[i]);
+        nb_dist += Segment_list_print_analyse(output, final_acc[i], areas[i]->nbNode, SEG_MULT * SEG_MAX, opt.analyse, areas[i]);
+        nb_nodes += areas[i]->nbNode;
 
         FREE_3D(2, (SEG_MULT * SEG_MAX + 1), cf_area[i]->nbNodes, merged_acc[i], Dict_seglist_free, mer);
 
-        FREE_2D(SEG_MAX, cf_area[i]->nbNodes, final_acc[i], Dict_seglist_free, fin);
+        FREE_2D(SEG_MULT * SEG_MAX, cf_area[i]->nbNodes, final_acc[i], Dict_seglist_free, fin);
         free(final_acc[i]);
         free(merged_acc[i]);
+    }
+
+    if (nb_dist) {
+        RESULTS("Mean dist to node : %f (%f / %f)\n", nb_dist / nb_nodes, nb_dist, nb_nodes);
     }
 
     free(merged_acc);
