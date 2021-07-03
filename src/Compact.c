@@ -386,6 +386,9 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 		}
 	}
 
+#pragma omp parallel for 
+for (int out_node = 0; out_node < pf2->nbNodes; out_node++){
+			
 	// all nb seg to ABR (s1_index = nbseg I thing)
 	for (int s1_index = 0; pf1->paths[ABR][s1_index]; s1_index++)
 	{
@@ -396,8 +399,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 			int delay1 = pf1->paths[ABR][s1_index][d1_index].delay;
 
 			// all other nodes
-			for (int out_node = 0; out_node < pf2->nbNodes; out_node++)
-			{
+			
 				// all nb seg to other node
 				for (int s2_index = 0; pf2->paths[out_node][s2_index]; s2_index++)
 				{
