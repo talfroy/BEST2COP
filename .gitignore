@@ -15,6 +15,7 @@ NBSEG/*
 !lFlat.res
 !lSep.res
 !topoFR10.isp
+!topoEU328.isp
 *.sr
 #generate_random.c
 #genTopoNonAlign.c
