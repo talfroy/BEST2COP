@@ -386,7 +386,7 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 		}
 	}
 
-#pragma omp parallel for 
+#pragma omp parallel for schedule(dynamic)
 for (int out_node = 0; out_node < pf2->nbNodes; out_node++){
 			
 	// all nb seg to ABR (s1_index = nbseg I thing)

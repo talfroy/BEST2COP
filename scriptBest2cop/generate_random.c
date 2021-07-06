@@ -52,13 +52,6 @@ int main() {
             topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
             sr = SrGraph_create_from_topology_best_m2(topo);
 
-            while (!SrGraph_is_connex(sr)) {
-                INFO("There is a replay\n");
-                Topology_free(topo);
-                topo = Topology_create_random_quentin(1000, v_delay, v_igp, 10);
-                SrGraph_free(sr);
-                sr = SrGraph_create_from_topology_best_m2(topo);
-            }
 
             INFO("Topology %d with spread %d is loaded\n", n + 1, spread);
             int** iters2cop = malloc(1000 * sizeof(int*));
@@ -70,24 +63,24 @@ int main() {
                 dist = NULL;
                 pfront = NULL;
 
-                iters[i][n][j] = Best2cop(&pfront, &dist, sr, j, 1000, INF, 1000, ANALYSE_2COP, &iters2cop[j]);
-                iters[i][n][j]--;
+                //iters[i][n][j] = Best2cop(&pfront, &dist, sr, j, 1000, INF, 1000, ANALYSE_2COP, &iters2cop[j]);
+                //iters[i][n][j]--;
                 //INFO("nb max iters = %d\n", iters[i][n][j]);
 
                 for (int l = 0 ; l <= 100 ; l++) {
                     for (int k = 0 ; k < sr->nbNode ; k++) {
-                        Pfront_free(&pfront[l][k]);
-                        ParetoFront_free(dist[l][k]);
+                        //Pfront_free(&pfront[l][k]);
+                        //ParetoFront_free(dist[l][k]);
                     }
-                    free(pfront[l]);
-                    free(dist[l]);
+                    //free(pfront[l]);
+                    //free(dist[l]);
                 }
 
                 // for (int m = 0 ; m < 1000 ; m++) {
                 //     printf("%d %d %d %d\n", spread, j, m, iters2cop[j][m]);
                 // }
-                free(pfront);
-                free(dist);
+                //free(pfront);
+                //free(dist);
             }
 
             SrGraph_print_in_file(sr, stdout);
@@ -104,7 +97,7 @@ int main() {
 
 
         //printf("%d %f\n", spread, get_mean(iters[i], 10, 100));
-        RESULTS("%d -> %f\n", spread, get_mean(iters[i], 10, 100));
+        //RESULTS("%d -> %f\n", spread, get_mean(iters[i], 10, 100));
         
     }
 

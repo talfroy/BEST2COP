@@ -342,7 +342,7 @@ int main(int argc, char **argv)
         }
         
         struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);    
+        //main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);    
 
 
         for (int j = 0; j < maxIter; j++)
@@ -444,15 +444,16 @@ int main(int argc, char **argv)
             }
             main_display_area_time_mean(times_area, opt.nb_areas);
             long int tot_time_areas = 0;
-            Dict_seglist_t **merged[2];
-            Dict_seglist_t **final;
             int size = 0;
             int index = 0;
             int index2 = 0;
             int area_src2 = 0;
 
+            //#pragma omp parallel for
             for (int i = 1; i < opt.nb_areas - 1; i++)
             {
+                Dict_seglist_t **merged[2];
+                Dict_seglist_t **final;
                 for (int id = 0; id < 2; id++)
                 {
                     merged[id] = NULL;
