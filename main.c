@@ -800,7 +800,6 @@ int run_acc_cartesian_product(Topology_t** areas, SrGraph_t **sr_areas, FILE* ou
 
     for (int i = 0; i < opt.nb_areas; i++)
     {
-        INFO("Area %d\n", i);
         for (int id = 0; id < 2; id++)
         {
             int index = (id)*opt.nb_areas + i;
