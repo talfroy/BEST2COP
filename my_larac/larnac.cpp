@@ -33319,18 +33319,18 @@ int main()
     std::list<uint> path;
   bool res;
   struct timeval start, stop;
+      gettimeofday(&start, NULL);
   for(int delay = 1; delay <= 1000; delay++)
   {     
-      gettimeofday(&start, NULL);
       res = larac(g, 0, 1, w, d, delay, path);
-      gettimeofday(&stop, NULL);
-      std::cout << "Takes : " << (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec << " us\n";
 	  if (res)
 	  {
 		//std::cout << "max delay: " << delay << ", path_d is best path:";
 		//dump_path(g, path, 0);
 	  }
   }
+      gettimeofday(&stop, NULL);
+      std::cout << "Takes : " << (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec << " us\n";
  
   return 0;
 }
