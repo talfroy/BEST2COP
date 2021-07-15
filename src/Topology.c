@@ -18,6 +18,7 @@ Topology_t* Topology_init(int nbNode)
     }
 
     topo->nbNode = nbNode;
+    topo->labels = NULL;
 
     return topo;
 }
@@ -251,7 +252,9 @@ void Topology_free(Topology_t* topo)
 
     free(topo->succ);
     free(topo->pred);
-    LabelTable_free(topo->labels);
+    if (topo->labels) {
+        LabelTable_free(topo->labels);
+    }
     free(topo->labels);
 
     free(topo);

@@ -50,10 +50,10 @@ scriptCstr : $(OBJ) scriptCstr.o
 	@echo ${info} "Constraint script succesfully compiled"
 
 worstSprint : $(OBJ) worstSprint.o
-	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)	
 	@echo ${info} "Worst sprint succesfully compiled"
 
-genRandom : $(OBJ) genRandom.o
+genRandom : $(OBJ) genTopoNonAlign.o
 	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
 	@echo ${info} "Worst sprint succesfully compiled"
 

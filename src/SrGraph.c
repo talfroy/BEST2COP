@@ -376,7 +376,9 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output)
                 continue;
             }
             for (Edge_t* edge = sr->pred[i][j] ; edge != NULL ; edge = edge->next) {
+                //printf("Avant le frpintf\n");
                 fprintf(output, "%d %d %d %d\n", i, j, edge->m1, edge->m2);
+                //printf("Après le frpintf\n");
             }
         }
     }
@@ -490,12 +492,12 @@ my_m1 SrGraph_get_max_spread(SrGraph_t* sr)
         }
     }
 
-    INFO("There are %d adjacencies\n", nbEdge- (sr->nbNode) * (sr->nbNode - 1));
-    RESULTS("Max delay : %d\n", max);
-    RESULTS("Min delay : %d\n", minM1);
-    RESULTS("Max igp : %d\n", maxM2);
-    RESULTS("Min igp : %d\n", minM2);
-    RESULTS("NB edges with 0 : %d\n", nbzero);
+    // INFO("There are %d adjacencies\n", nbEdge- (sr->nbNode) * (sr->nbNode - 1));
+    // RESULTS("Max delay : %d\n", max);
+    // RESULTS("Min delay : %d\n", minM1);
+    // RESULTS("Max igp : %d\n", maxM2);
+    // RESULTS("Min igp : %d\n", minM2);
+    // RESULTS("NB edges with 0 : %d\n", nbzero);
     return max;
 }
 
