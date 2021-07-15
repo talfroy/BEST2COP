@@ -156,8 +156,10 @@ void Compact_free(compact_front *cp)
 			free(cp->paths[i][j]);
 		}
 		free(cp->paths[i]);
+		free(cp->nb_path[i]);
 	}
 	free(cp->paths);
+	free(cp->nb_path);
 	free(cp);
 }
 
@@ -298,8 +300,9 @@ static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct 
 	UNUSED(topo_bb);
 	UNUSED(topo_area);
 	struct segment_list sl3;
+	memset(&sl3, 0, sizeof(struct segment_list));
 	sl3.size = sl1.size + sl2.size;
-	int i;
+	int i = 0;
 	for (i = sl1.size - 1; i >= 0; i--)
 	{
 		sl3.seg[sl1.size - i - 1] = sl1.seg[i];
@@ -320,7 +323,7 @@ static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct 
 
 	short abr1 = sl3.seg[sl1.size - 1];
 	short af_abr = sl3.seg[sl1.size];
-	short bf_abr;
+	short bf_abr = 0;
 	if (sl1.size < 2)
 	{
 		bf_abr = src;

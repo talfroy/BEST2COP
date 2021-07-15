@@ -372,7 +372,7 @@ int main(int argc, char **argv)
     else if (opt.nb_areas > 0)
     {
         if (!opt.analyse)
-        {
+        {   
             struct segment_list ****sl_areas = calloc(opt.nb_areas * 2, sizeof(struct segment_list ***));
             ASSERT(sl_areas, EXIT_FAILURE, opt.nb_areas * 2);
 
@@ -529,7 +529,7 @@ int main(int argc, char **argv)
                 RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
             }
 
-            for (int i = 0; i < opt.nb_areas - 1; i++)
+            for (int i = 0; i < opt.nb_areas ; i++)
             {
                 for (int id = 1; id < 3; id++)
                 {
@@ -1212,7 +1212,7 @@ void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
         RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
     }
 
-    for (int i = 0; i < opt.nb_areas - 1; i++)
+    for (int i = 1; i < opt.nb_areas ; i++)
     {
         for (int id = 1; id < 3; id++)
         {
