@@ -108,14 +108,6 @@ clean:
 	@rm -rf unitFlex
 	@rm -rf unitFlex.o
 	@rm -rf unitBinHeap
-	@rm -rf BinHeap.o
-	@rm -rf genRandom.o
-	@rm -rf genRandom
-	@rm -rf randomTopo.o
-	@rm -rf randomTopo
-	@rm -rf randomSpread.o
-	@rm -rf randomSpread
-	@rm -rf scriptCstr.o
 	@rm -rf scriptCstr
 	@rm -rf worstRandom.o
 	@rm -rf worstRandom
@@ -132,10 +124,7 @@ ct_nodesdirs:
 CT_NODES: crashTest ct_nodesdirs
 	@echo ${eval} "Start eval for Ct_nodes"
 	@echo "NB_NODES NB_PL NB_THREADS TIME" > CT_NODES/results.txt
-	@for i in 100 200 300 400 500 600 700 800 900 1000 ; do \
-		./eval $$i 2 1000 1 >> CT_NODES/results.txt ; \
-		./eval $$i 2 1000 4 >> CT_NODES/results.txt ; \
-		./eval $$i 2 1000 8 >> CT_NODES/results.txt ; \
+	@for i in 100 200 300 400 500 600 700 800 900 1000 ; do \git commit -m "fix segfault on gen random"
 		./eval $$i 2 1000 12 >> CT_NODES/results.txt ; \
 	done;
 	@echo ${eval} "Eval for Ct_nodes completed"

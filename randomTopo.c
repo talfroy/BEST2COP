@@ -33,6 +33,7 @@ int main (int argc, char**argv)
     Pfront_t** pfront = NULL;
     long int* times;
     long int means[NB_FILE];
+    memset(means, 0, NB_FILE * sizeof(long int));
     int nbIter;
     char fileName[128];
     char worstFile[128];
@@ -41,32 +42,35 @@ int main (int argc, char**argv)
     FILE* worstTopo = NULL;
     my_m1 dictSize = MIN(1000, maxSpread * SEG_MAX);
 
+    omp_set_num_threads(omp_get_max_threads());
+
     for (int i = 100 ; i <= 1000 ; i += 100) {
         memset(worstFile, 0, 128);
         sprintf(worstFile, "RND/resultsSpread%s/worstTopo%d.isp", argv[1], i);
+        times = malloc(i / 10 * sizeof(long int));
 
         for (int j = 0 ; j < NB_FILE ; j++) {
+            //printf("Start of the loop\n");
             memset(fileName, 0, 128);
             sprintf(fileName, "RND/resultsSpread%s/topo%d/sr_topo%d.isp", argv[1], i, j);
             sr[j] = SrGraph_load_with_id(fileName, i, 0, 0);
             memset(timeFile, 0, 128);
             sprintf(timeFile, "RND/resultsSpread%s/resultsTime%d/timeTopo%d.res", argv[1], i, j);
             fileRes = fopen(timeFile, "w");
-
-            times = malloc(i / 10 * sizeof(long int));
-
-            omp_set_num_threads(omp_get_max_threads());
+            //printf("End of the initialization\n");
 
             for (int k = 0 ; k < i / 10 ; k++) {
                 
                 dist = NULL;
                 pfront = NULL;
+                //printf("Avant best2cop %d %d\n", j, k);
 
                 gettimeofday(&start, NULL);
 
-                nbIter = Best2cop(&pfront, &dist, sr[j], k, 1000, INF, dictSize, 0, NULL);
+                nbIter = Best2cop(&pfront, &dist, sr[j], k, 1000, INF, dictSize+1, 0, NULL);
 
                 gettimeofday(&stop, NULL);
+                //printf("Après best2cop %d %d\n", j, k);
 
                 if (nbIter == 0) {
                     printf("y a un soucis\n");
@@ -87,16 +91,15 @@ int main (int argc, char**argv)
 
                 free(pfront);
                 free(dist);
+                //printf("Topo %d successfully computed, iter %d\n", j, k);
             }
 
             fclose(fileRes);
 
             means[j] = Main_get_mean(times, i / 10);
-
-            free(times);
-
-            omp_set_num_threads(1);
+            //printf("Mean = %ld\n", means[j]);
         }
+
 
         int indexWorst = Main_get_worst(means, NB_FILE);
         printf("For topo of size %d the worst is %d\n", i, indexWorst);
@@ -109,6 +112,8 @@ int main (int argc, char**argv)
             SrGraph_free(sr[j]);
         }
     }
+
+    free(times);
 }
 
 

@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
             INFO("Start compute or spread %d %d nodes sample %d\n", max_m1, i, j);
             topo[j] = Topology_create_random_quentin(i, v_delay, v_igp, 10);
             sr[j] = SrGraph_create_from_topology_best_m2(topo[j]);
-            while (SrGraph_get_max_spread(sr[j]) == INF) {
+            while (SrGraph_get_max_spread(sr[j]) == -1) {
                 INFO("There is a replay\n");
                 Topology_free(topo[j]);
                 topo[j] = Topology_create_random_quentin(i, v_delay, v_igp, 10);

@@ -73,8 +73,9 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         }
         (*iters)[src] = 0;
     }
+
     while (extendable != NULL && nbIter <= maxIter) {
-        #pragma omp parallel for
+        //#pragma omp parallel for
         for (int dst = 0 ; dst < graph->nbNode ; dst++) {
 
             if (dst == src) {
@@ -165,6 +166,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
 
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v, edgeSrc);
+
                     if (pf_cand->paths[d1v] == INF) {
                         Pfront_insert_key(pfcandlist, d1v);
                         *t = *t + 1;

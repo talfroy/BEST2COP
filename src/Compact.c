@@ -251,12 +251,12 @@ compact_front *dict_seglist_to_compact(Pfront_t **pf, Dict_seglist_t **dist, int
 	cf->iter = iter;
 	cf->paths = compact_pf;
 
-	// for (int i = 0; i < nbNodes; i++)
-	// {
-	// 	free(nb_paths_per_segments[i]);
-	// }
+	for (int i = 0; i < nbNodes; i++)
+	{
+		free(nb_paths_per_segments[i]);
+	}
 
-	// free(nb_paths_per_segments);
+	free(nb_paths_per_segments);
 	return cf;
 }
 
