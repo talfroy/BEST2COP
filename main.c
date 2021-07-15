@@ -33,6 +33,9 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
 
 int run_acc_cartesian_product(Topology_t **areas, SrGraph_t **sr_areas, FILE *output);
 
+void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas,
+                              FILE *output, int abr_area, int abr_id);
+
 int main(int argc, char **argv)
 {
 
@@ -226,7 +229,7 @@ int main(int argc, char **argv)
     Pfront_t **pfront = NULL;
     int maxIter = 0;
 
-    if (opt.allNodes)
+    if (opt.allNodes && !opt.nb_areas)
     {
         long int *times = malloc(sr->nbNode * sizeof(long int));
         int **iters = malloc(sr->nbNode * sizeof(int *));
@@ -371,8 +374,8 @@ int main(int argc, char **argv)
     /* If the topology is decomposed into many areas */
     else if (opt.nb_areas > 0)
     {
-        if (!opt.analyse)
-        {   
+        if (!opt.analyse && !opt.allNodes)
+        {
             struct segment_list ****sl_areas = calloc(opt.nb_areas * 2, sizeof(struct segment_list ***));
             ASSERT(sl_areas, EXIT_FAILURE, opt.nb_areas * 2);
 
@@ -451,7 +454,7 @@ int main(int argc, char **argv)
             int area_src2 = 0;
 
             //#pragma omp parallel for
-            for (int i = 1; i < opt.nb_areas ; i++)
+            for (int i = 1; i < opt.nb_areas; i++)
             {
                 Dict_seglist_t **merged[2];
                 Dict_seglist_t **final;
@@ -529,7 +532,7 @@ int main(int argc, char **argv)
                 RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
             }
 
-            for (int i = 0; i < opt.nb_areas ; i++)
+            for (int i = 0; i < opt.nb_areas; i++)
             {
                 for (int id = 1; id < 3; id++)
                 {
@@ -547,12 +550,27 @@ int main(int argc, char **argv)
             free(cf_area);
             free(times_area);
             free(sl_areas);
-            free(areas);
-            free(sr_areas);
         }
-        else
+        else if (opt.analyse)
         {
             run_acc_cartesian_product(areas, sr_areas, output);
+        }
+        else if (opt.allNodes)
+        {
+            fprintf(output, "SRC_ABR MEAN_AREA SQUARE_AREA CART\n");
+            for (int it1 = 1; it1 < opt.nb_areas; it1++)
+            {
+                for (int it2 = 0; it2 < 2; it2++)
+                {
+                    run_cart_on_specific_ABR(areas, sr_areas, output, it1, it2);
+                }
+            }
+
+            for (int i = 0; i < opt.nb_areas; i++)
+            {
+                Topology_free(areas[i]);
+                SrGraph_free(sr_areas[i]);
+            }
         }
     }
     else
@@ -1025,6 +1043,45 @@ int run_acc_cartesian_product(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
     return EXIT_SUCCESS;
 }
 
+void main_display_results_for_all_abrs(long int *times, int nb_areas, long int tot_time, char *abr, FILE *output, int abr_area)
+{
+    long int tot, mean, square;
+    tot = 0;
+    for (int i = 1; i < nb_areas; i++)
+    {
+        if (i == abr_area)
+        {
+            continue;
+        }
+        for (int id = 0; id < 2; id++)
+        {
+            int index = (id)*nb_areas + i;
+            tot += times[index];
+        }
+    }
+
+    mean = tot / ((nb_areas - 2) * 2);
+
+    tot = 0;
+    for (int i = 1; i < nb_areas; i++)
+    {
+        if (i == abr_area)
+        {
+            continue;
+        }
+        for (int id = 0; id < 2; id++)
+        {
+            int index = (id)*nb_areas + i;
+            tot += (mean - times[index]) * (mean - times[index]);
+            //RESULTS("Value is %ld\n", times[index]);
+        }
+    }
+    square = tot / ((nb_areas - 2) * 2);
+    square = sqrt(square);
+
+    fprintf(output, "%s %ld %ld %ld\n", abr, mean, 2 * square, tot_time);
+}
+
 void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *output, int abr_area, int abr_id)
 {
     struct timeval stop, start;
@@ -1074,6 +1131,21 @@ void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
 
                 gettimeofday(&stop, NULL);
                 times_area[index] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+
+                for (int j = 0; j < maxIter; j++)
+                {
+                    for (int k = 0; k < sr_areas[i]->nbNode; k++)
+                    {
+                        Pfront_free(&pfront[j][k]);
+                        Dict_free(&pf[j][k]);
+                    }
+                    free(pfront[j]);
+                    free(pf[j]);
+                }
+
+                free(pfront);
+                free(pf);
+                segment_list_free(sl_areas[index], iter, sr_areas[i]->nbNode);
             }
             else
             {
@@ -1102,25 +1174,25 @@ void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
 
                 gettimeofday(&stop, NULL);
                 times_area[index] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
-            }
 
-            for (int j = 0; j < maxIter; j++)
-            {
-                for (int k = 0; k < sr_areas[i]->nbNode; k++)
+                for (int j = 0; j < maxIter; j++)
                 {
-                    Pfront_free(&pfront[j][k]);
-                    Dict_free(&pf[j][k]);
+                    for (int k = 0; k < sr_areas[0]->nbNode; k++)
+                    {
+                        Pfront_free(&pfront[j][k]);
+                        Dict_free(&pf[j][k]);
+                    }
+                    free(pfront[j]);
+                    free(pf[j]);
                 }
-                free(pfront[j]);
-                free(pf[j]);
-            }
 
-            free(pfront);
-            free(pf);
-            segment_list_free(sl_areas[index], iter, sr_areas[i]->nbNode);
+                free(pfront);
+                free(pf);
+                segment_list_free(sl_areas[index], iter, sr_areas[0]->nbNode);
+            }
         }
     }
-    main_display_area_time_mean(times_area, opt.nb_areas);
+    //main_display_area_time_mean(times_area, opt.nb_areas);
     long int tot_time_areas = 0;
     int size = 0;
     int index = 0;
@@ -1129,9 +1201,10 @@ void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
     int index_computed = abr_id * opt.nb_areas + abr_area;
 
     //#pragma omp parallel for
-    for (int i = 1; i < opt.nb_areas ; i++)
+    for (int i = 1; i < opt.nb_areas; i++)
     {
-        if (i == abr_area) {
+        if (i == abr_area)
+        {
             continue;
         }
 
@@ -1177,10 +1250,6 @@ void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
             }
         }
 #endif
-        if (opt.analyse)
-        {
-            Segment_list_print_analyse(output, final, areas[i]->nbNode, SEG_MAX, opt.analyse, areas[i]);
-        }
 
         for (int id = 0; id < 2; id++)
         {
@@ -1209,22 +1278,21 @@ void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
 
     if (!opt.analyse)
     {
-        RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
+        //RESULTS("Total computation (%d cartesian products) takes %ld us\n", size, tot_time_areas);
     }
 
-    for (int i = 1; i < opt.nb_areas ; i++)
+    main_display_results_for_all_abrs(times_area, opt.nb_areas, tot_time_areas,
+                                      LabelTable_get_name(areas[0]->labels, Topology_search_abr_id(areas[0], 0,
+                                                                                                   abr_area, abr_id)),
+                                      output, abr_area);
+
+    for (int i = 1; i < opt.nb_areas; i++)
     {
         for (int id = 1; id < 3; id++)
         {
             index = (id - 1) * opt.nb_areas + i;
             Compact_free(cf_area[index]);
         }
-    }
-
-    for (int i = 0; i < opt.nb_areas; i++)
-    {
-        Topology_free(areas[i]);
-        SrGraph_free(sr_areas[i]);
     }
 
     free(cf_area);

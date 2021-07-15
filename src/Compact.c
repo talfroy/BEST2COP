@@ -75,8 +75,6 @@ static int **get_nb_paths_per_segments(Dict_t **dist, int nbNodes, int iter)
 	return nb_paths;
 }
 
-
-
 static int **get_nb_paths_per_segments_list(Dict_seglist_t **dist, int nbNodes, int iter)
 {
 	int **nb_paths = calloc(nbNodes, sizeof(int *));
@@ -210,8 +208,6 @@ compact_front *compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 	return cf;
 }
 
-
-
 compact_front *dict_seglist_to_compact(Pfront_t **pf, Dict_seglist_t **dist, int iter, int nbNodes)
 {
 	compact_front *cf = calloc(1, sizeof(compact_front));
@@ -262,7 +258,6 @@ compact_front *dict_seglist_to_compact(Pfront_t **pf, Dict_seglist_t **dist, int
 	return cf;
 }
 
-
 // Put all paths to a given node in an array
 path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, struct segment_list ***sl)
 {
@@ -294,8 +289,8 @@ path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, 
 }
 
 static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2,
-										 compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb,
-										 int other_abr, Topology_t *topo_bb, Topology_t *topo_area, int src)
+												compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb,
+												int other_abr, Topology_t *topo_bb, Topology_t *topo_area, int src)
 {
 	UNUSED(topo_bb);
 	UNUSED(topo_area);
@@ -350,7 +345,6 @@ static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct 
 	int delay_via_abr1 = delay_bf_abr1 + delay_af_abr1;
 	int delay_via_abr2 = delay_bf_abr2 + delay_af_abr2;
 
-
 	if ((cost_via_abr1 < cost_via_abr2) || (cost_via_abr1 == cost_via_abr2 && delay_via_abr1 == delay_via_abr2))
 	{
 		for (int i = sl3.abr_index; i < sl3.size - 1; i++)
@@ -365,18 +359,19 @@ static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct 
 	return sl3;
 }
 
-Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, 
-			int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t *topo_bb, 
-			Topology_t *topo_area, int src, bool cop)
+Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis,
+					  int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t *topo_bb,
+					  Topology_t *topo_area, int src, bool cop)
 {
 	// pf1 = dist to ABR
 	Dict_seglist_t **pf3 = NULL;
 	int maxIter = SEG_MAX;
-	if (cop) {
+	if (cop)
+	{
 		maxIter = 10 * SEG_MAX;
 	}
 	pf3 = calloc(maxIter + 1, sizeof(Dict_t *));
-	ASSERT(pf3, NULL, maxIter+1);
+	ASSERT(pf3, NULL, maxIter + 1);
 
 	for (int i = 0; i <= maxIter; i++)
 	{
@@ -389,20 +384,21 @@ Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2
 		}
 	}
 
-#pragma omp parallel for schedule(dynamic)
-for (int out_node = 0; out_node < pf2->nbNodes; out_node++){
-			
-	// all nb seg to ABR (s1_index = nbseg I thing)
-	for (int s1_index = 0; pf1->paths[ABR][s1_index]; s1_index++)
+	#pragma omp parallel for schedule(dynamic)
+	for (int out_node = 0; out_node < pf2->nbNodes; out_node++)
 	{
-		//printf("s1_index = %d\n", s1_index);
-		// all delay to ABR
-		for (int d1_index = 0; pf1->paths[ABR][s1_index][d1_index].cost != -1; d1_index++)
-		{
-			int delay1 = pf1->paths[ABR][s1_index][d1_index].delay;
 
-			// all other nodes
-			
+		// all nb seg to ABR (s1_index = nbseg I thing)
+		for (int s1_index = 0; pf1->paths[ABR][s1_index]; s1_index++)
+		{
+			//printf("s1_index = %d\n", s1_index);
+			// all delay to ABR
+			for (int d1_index = 0; pf1->paths[ABR][s1_index][d1_index].cost != -1; d1_index++)
+			{
+				int delay1 = pf1->paths[ABR][s1_index][d1_index].delay;
+
+				// all other nodes
+
 				// all nb seg to other node
 				for (int s2_index = 0; pf2->paths[out_node][s2_index]; s2_index++)
 				{
@@ -451,7 +447,8 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 	Dict_t *dist = malloc(nbNodes * sizeof(Dict_t));
 	ASSERT(dist, NULL, nbNodes);
 	int maxIter = SEG_MAX;
-	if (analyse) {
+	if (analyse)
+	{
 		maxIter = SEG_MULT * SEG_MAX;
 	}
 
@@ -523,9 +520,10 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 
 	free(dist);
 
+	Dict_free(&pfcand);
+
 	return pf3;
 }
-
 
 Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNodes, bool analyse)
 {
@@ -534,7 +532,8 @@ Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNod
 	ASSERT(dist, NULL, nbNodes);
 	int maxIter = SEG_MAX;
 
-	if (analyse) {
+	if (analyse)
+	{
 		maxIter = SEG_MULT * SEG_MAX;
 	}
 
@@ -566,7 +565,7 @@ Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNod
 			last_m2 = INF;
 
 			Dict_reset(&pfcand);
-			for (int k = 0; k < merged[0][i][j].size ; k++)
+			for (int k = 0; k < merged[0][i][j].size; k++)
 			{
 				//Min IGP via both ABR
 				min = MIN(merged[0][i][j].paths[k], merged[1][i][j].paths[k]);
@@ -577,7 +576,7 @@ Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNod
 				}
 			}
 
-			for (int k = 0; k < merged[0][i][j].size ; k++)
+			for (int k = 0; k < merged[0][i][j].size; k++)
 			{
 				if (dist[j].paths[k] < last_m2)
 				{

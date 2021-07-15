@@ -15,7 +15,7 @@ CC ?= gcc-11
 
 ## for gcc
 LIBS := -lm -fopenmp
-FLAGS := -Wall -Wextra -Werror -O3 -fopenmp
+FLAGS := -Wall -Wextra -Werror -O3 -fopenmp -g
 
 
 
