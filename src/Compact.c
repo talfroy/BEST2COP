@@ -471,8 +471,8 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 
 	my_m2 last_m2 = INF;
 	my_m2 min = INF;
-	Dict_t pfcand;
-	Dict_init(&pfcand, 1000);
+	my_m2 pfcand[1000];
+	//Dict_init(&pfcand, 1000);
 
 	for (int i = 0; i <= maxIter; i++)
 	{
@@ -480,14 +480,16 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 		{
 			last_m2 = INF;
 
-			Dict_reset(&pfcand);
+			//Dict_reset(&pfcand);
+			memset(pfcand, 0xff, 1000 * sizeof(my_m2));
 			for (int k = 0; k < 1000; k++)
 			{
 				//Min IGP via both ABR
 				min = MIN(merged[0][i][j].paths[k], merged[1][i][j].paths[k]);
 				if (min < dist[j].paths[k])
 				{
-					Dict_add(&pfcand, k, min, 0);
+					//Dict_add(&pfcand, k, min, 0);
+					pfcand[k] = min;
 					Dict_add(&dist[j], k, min, 0);
 				}
 			}
@@ -497,7 +499,7 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 				if (dist[j].paths[k] < last_m2)
 				{
 					last_m2 = dist[j].paths[k];
-					if (pfcand.paths[k] != INF)
+					if (pfcand[k] != INF)
 					{
 						if (dist[j].paths[k] == merged[0][i][j].paths[k])
 						{
@@ -520,10 +522,95 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 
 	free(dist);
 
-	Dict_free(&pfcand);
+	//Dict_free(&pfcand);
 
 	return pf3;
 }
+
+
+// Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNodes, bool analyse)
+// {
+// 	Dict_seglist_t **pf3 = NULL;
+// 	Dict_t *dist = malloc(nbNodes * sizeof(Dict_t));
+// 	ASSERT(dist, NULL, nbNodes);
+// 	int maxIter = SEG_MAX;
+// 	if (analyse)
+// 	{
+// 		maxIter = SEG_MULT * SEG_MAX;
+// 	}
+
+// 	for (int i = 0; i < nbNodes; i++)
+// 	{
+// 		Dict_init(&dist[i], 1000);
+// 	}
+
+// 	pf3 = malloc((maxIter + 1) * sizeof(Dict_seglist_t *));
+// 	for (int i = 0; i <= maxIter; i++)
+// 	{
+// 		pf3[i] = malloc(nbNodes * sizeof(Dict_seglist_t));
+// 		ASSERT(pf3[i], NULL, nbNodes);
+
+// 		for (int j = 0; j < nbNodes; j++)
+// 		{
+// 			Dict_seglist_init(pf3[i] + j, 1000);
+// 		}
+// 	}
+
+// 	my_m2 last_m2 = INF;
+// 	my_m2 min = INF;
+// 	Dict_t pfcand;
+// 	Dict_init(&pfcand, 1000);
+
+// 	for (int i = 0; i <= maxIter; i++)
+// 	{
+// 		for (int j = 0; j < nbNodes; j++)
+// 		{
+// 			last_m2 = INF;
+
+// 			Dict_reset(&pfcand);
+// 			for (int k = 0; k < 1000; k++)
+// 			{
+// 				//Min IGP via both ABR
+// 				min = MIN(merged[0][i][j].paths[k], merged[1][i][j].paths[k]);
+// 				if (min < dist[j].paths[k])
+// 				{
+// 					Dict_add(&pfcand, k, min, 0);
+// 					Dict_add(&dist[j], k, min, 0);
+// 				}
+// 			}
+
+// 			for (int k = 0; k < 1000; k++)
+// 			{
+// 				if (dist[j].paths[k] < last_m2)
+// 				{
+// 					last_m2 = dist[j].paths[k];
+// 					if (pfcand.paths[k] != INF)
+// 					{
+// 						if (dist[j].paths[k] == merged[0][i][j].paths[k])
+// 						{
+// 							Dict_seglist_add(&pf3[i][j], k, dist[j].paths[k], merged[0][i][j].seg_list[k]);
+// 						}
+// 						else
+// 						{
+// 							Dict_seglist_add(&pf3[i][j], k, dist[j].paths[k], merged[1][i][j].seg_list[k]);
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
+
+// 	for (int i = 0; i < nbNodes; i++)
+// 	{
+// 		Dict_free(&dist[i]);
+// 	}
+
+// 	free(dist);
+
+// 	Dict_free(&pfcand);
+
+// 	return pf3;
+// }
 
 Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNodes, bool analyse)
 {
