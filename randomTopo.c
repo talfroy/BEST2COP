@@ -44,7 +44,7 @@ int main (int argc, char**argv)
 
     omp_set_num_threads(omp_get_max_threads());
 
-    for (int i = 100 ; i <= 1000 ; i += 100) {
+    for (int i = 1000 ; i <= 80000 ; i += 1000) {
         memset(worstFile, 0, 128);
         sprintf(worstFile, "RND/resultsSpread%s/worstTopo%d.isp", argv[1], i);
         times = malloc(i / 10 * sizeof(long int));

@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     omp_set_num_threads(omp_get_max_threads());
     
 
-    for (int i = 100 ; i <= 1000 ; i += 100) {
+    for (int i = 1000 ; i <= 80000 ; i += 1000) {
         #pragma omp parallel for
         for (int j = 0 ; j < nb_sample ; j++) {
             topo[j] = NULL;
