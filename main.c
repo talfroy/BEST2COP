@@ -346,6 +346,7 @@ int main(int argc, char **argv)
 
         struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
         //main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
+        //Main_display_results()
 
         for (int j = 0; j < maxIter; j++)
         {
@@ -764,6 +765,8 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
                             Topology_t *topo, struct segment_list ***sl)
 {
     UNUSED(sl);
+    UNUSED(topo);
+    UNUSED(src);
     for (int i = 0; i < iter; i++)
     {
         for (int j = 0; j < nbNodes; j++)
@@ -772,12 +775,13 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
             {
                 if (dist[i][j].paths[k] != INF)
                 {
-                    fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
-                            LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
-                    segment_list_invert(&sl[i][j][k]);
-                    Segment_list_print(out, &sl[i][j][k], topo, NULL);
+                    //fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
+                            //LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
+                    //segment_list_invert(&sl[i][j][k]);
+                    //Segment_list_print(out, &sl[i][j][k], topo, NULL);
                     //Segment_list_print_id(out, &sl[i][j][k]);
-                    fprintf(out, "\n");
+                    //fprintf(out, "\n");
+                    fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
                 }
             }
         }
