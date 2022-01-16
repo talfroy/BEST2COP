@@ -1,6 +1,6 @@
 
 //number max of segments
-#define SEG_MAX                 10
+#define SEG_MAX                 3
 
 //max spread of the weight in SR graph
 #define MAX_SPREAD              1000

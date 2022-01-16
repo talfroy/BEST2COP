@@ -345,7 +345,7 @@ int main(int argc, char **argv)
         }
 
         struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-        //main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
+        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
         //Main_display_results()
 
         for (int j = 0; j < maxIter; j++)
