@@ -10,7 +10,7 @@
 #include "include/Best2cop.h"
 
 #define NB_NODE     1000
-#define NB_FILE     30
+#define NB_FILE     10
 #define NB_OUTPUT   10
 
 
@@ -44,7 +44,7 @@ int main (int argc, char**argv)
 
     omp_set_num_threads(omp_get_max_threads());
 
-    for (int i = 1000 ; i <= 80000 ; i += 1000) {
+    for (int i = 100 ; i <= 1000 ; i += 100) {
         memset(worstFile, 0, 128);
         sprintf(worstFile, "RND/resultsSpread%s/worstTopo%d.isp", argv[1], i);
         times = malloc(i / 10 * sizeof(long int));
@@ -52,10 +52,10 @@ int main (int argc, char**argv)
         for (int j = 0 ; j < NB_FILE ; j++) {
             //printf("Start of the loop\n");
             memset(fileName, 0, 128);
-            sprintf(fileName, "RND/resultsSpread%s/topo%d/sr_topo%d.isp", argv[1], i, j);
+            sprintf(fileName, "RND/resultsSpread%s/topo%d/topoSR%d.isp", argv[1], i, j);
             sr[j] = SrGraph_load_with_id(fileName, i, 0, 0);
             memset(timeFile, 0, 128);
-            sprintf(timeFile, "RND/resultsSpread%s/resultsTime%d/timeTopo%d.res", argv[1], i, j);
+            sprintf(timeFile, "RND/resultsSpread%s/resultsTime%d/timeTopoSR%d.res", argv[1], i, j);
             fileRes = fopen(timeFile, "w");
             //printf("End of the initialization\n");
 

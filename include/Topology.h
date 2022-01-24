@@ -47,7 +47,8 @@ extern Topology_t* Topology_init(int nbNode);
  * @return return the corresponding Topology
  */
 
-extern Topology_t* Topology_load_from_file(const char* filename, int precision, char bi_dir);
+extern Topology_t* Topology_load_from_file_labels(const char* filename, int precision, char bi_dir);
+extern Topology_t* Topology_load_from_file_ids(const char* filename, int precision, char bi_dir);
 
 
 /**

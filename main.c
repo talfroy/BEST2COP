@@ -72,7 +72,11 @@ int main(int argc, char **argv)
 
     if (opt.loadingMode == LOAD_TOPO)
     {
-        topo = Topology_load_from_file(opt.filename, opt.accuracy, opt.biDir);
+        if (opt.labelsOrId == LOAD_LABELS) 
+            topo = Topology_load_from_file_labels(opt.filename, opt.accuracy, opt.biDir);
+        else 
+            topo = Topology_load_from_file_ids(opt.filename, opt.accuracy, opt.biDir);
+
 
         if (topo == NULL)
         {
@@ -252,7 +256,9 @@ int main(int argc, char **argv)
             gettimeofday(&stop, NULL);
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
             //RESULTS("Iter max : %d\n", iterMax[i]);
-
+           // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iterMax[i], i);
+			//main_display_distances(output, pf, iterMax[i], sr->nbNode, i, topo, sl);
+			//segment_list_free(sl, iter, sr->nbNode);
             //printf("\r");
 
             if (opt.analyse)
@@ -297,8 +303,10 @@ int main(int argc, char **argv)
             free(pfront);
             free(pf);
         }
+       // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
+        
 
-        max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible, opt);
+        //max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible, opt);
         for (int i = 0; i < sr->nbNode; i++)
         {
             free(iters[i]);
