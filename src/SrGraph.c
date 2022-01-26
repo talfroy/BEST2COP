@@ -206,16 +206,17 @@ SrGraph_t* SrGraph_load_with_id(char* filename, int nbNodes, int accuracy, char 
     char line[1024];
     double m1;
     int nbLine = 1;
+    int type;
 
     while (fgets(line, 1024,  file))
     {
-        if (sscanf(line, "%d %d %lf %d\n", &src, &dst, &m1, &m2)) {
+        if (sscanf(line, "%d %d %lf %d %d\n", &src, &dst, &m1, &m2, &type)) {
             m1 *= my_pow(10, accuracy);
-            sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2, NODE_SEGMENT);
+            sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2, type);
             sr->nbNode = MAX(sr->nbNode, src + 1);
             sr->nbNode = MAX(sr->nbNode, dst + 1);
             if (bi_dir) {
-                sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2, NODE_SEGMENT);
+                sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2, type);
             }
         } else {
             ERROR("Can't load line %d : your file might not have the good format : \n\t[source_node]  [destination_node]  [delay]  [IGP_weight]\n", nbLine);
@@ -377,7 +378,7 @@ void SrGraph_print_in_file(SrGraph_t* sr, FILE* output)
             }
             for (Edge_t* edge = sr->pred[i][j] ; edge != NULL ; edge = edge->next) {
                 //printf("Avant le frpintf\n");
-                fprintf(output, "%d %d %d %d\n", i, j, edge->m1, edge->m2);
+                fprintf(output, "%d %d %d %d %d\n", i, j, edge->m1, edge->m2, edge->seg_type);
                 //printf("Après le frpintf\n");
             }
         }

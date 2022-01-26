@@ -607,7 +607,7 @@ Topology_t *Topology_create_random_quentin(int size, int v_delay[], int v_igp[],
             {
                 continue;
             }
-            if (RAND(0, size) > exist)
+            if (RAND(0, 100) > exist)
             {
                 continue;
             }
