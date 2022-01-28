@@ -408,18 +408,21 @@ void SrGraph_save_bin(SrGraph_t* sr, char* filename)
     if(out == NULL){
         ERROR("Unable to open the Binary file <%s>\n", filename);
     }
-    printf("%d nodes\n", sr->nbNode);
     fwrite(&(sr->nbNode), sizeof(sr->nbNode), 1, out);
+
+    const Edge_t emptyEdge = {.m1=-1};
+
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {
             if (i == j) {
                 continue;
             }
             for (Edge_t* edge = sr->pred[i][j] ; edge != NULL ; edge = edge->next) {
-                fwrite(edge, sizeof(edge->m1)+sizeof(edge->m2), 1, out);
+                fwrite(&edge->m1, sizeof(edge->m1), 1, out);
+                fwrite(&edge->m2, sizeof(edge->m2), 1, out);
+                fwrite(&edge->seg_type, sizeof(edge->seg_type), 1, out);
             }
-            Edge_t emptyEdge = {.m1=-1, .m2=-1};
-            fwrite(&emptyEdge, sizeof(emptyEdge.m1)+sizeof(emptyEdge.m2), 1, out);
+            fwrite(&emptyEdge.m1, sizeof(emptyEdge.m1), 1, out);
         }
     }
 }
@@ -438,8 +441,6 @@ SrGraph_t* SrGraph_load_bin(char* filename)
     {
         ERROR("Unable to read nbNode\n");
     }
-    printf("%d nodes\n", nbNode);
-
     SrGraph_t* sr = SrGraph_init(nbNode);
     if(sr == NULL) return NULL;
 
@@ -450,14 +451,26 @@ SrGraph_t* SrGraph_load_bin(char* filename)
             }
             Edge_t edge = {.id=1, .m1=0, .m2=0};
 
-            if(fread(&edge, sizeof(edge.m1)+sizeof(edge.m2), 1, in) == 0)
+            if(fread(&edge.m1, sizeof(edge.m1), 1, in) == 0)
             {
                 ERROR("Unable to read edge %d %d\n",i,j);
             }
-            while(edge.m1 != -1 || edge.m2 != -1)
+
+            while(edge.m1 != -1)
             {
-                sr->pred[i][j] = Edge_add(sr->pred[i][j], edge.m1, edge.m2, NODE_SEGMENT);
-                if(fread(&edge, sizeof(edge.m1)+sizeof(edge.m2), 1, in) == 0)
+                
+                if(fread(&edge.m2, sizeof(edge.m2), 1, in) == 0)
+                {
+                    ERROR("Unable to read edge %d %d\n",i,j);
+                }
+                if(fread(&edge.seg_type, sizeof(edge.seg_type), 1, in) == 0)
+                {
+                    ERROR("Unable to read edge %d %d\n",i,j);
+                }
+
+                sr->pred[i][j] = Edge_add(sr->pred[i][j], edge.m1, edge.m2, edge.seg_type);
+                
+                if(fread(&edge.m1, sizeof(edge.m1), 1, in) == 0)
                 {
                     ERROR("Unable to read edge %d %d\n",i,j);
                 }

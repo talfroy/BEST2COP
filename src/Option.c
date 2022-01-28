@@ -274,5 +274,7 @@ void usage(char* name)
     "\t--interface\t\tLauch the interactive mode\n"                                                                         \
     "\t--threads [nb]\t\tSet the required number of threads\n"                                                              \
     "\t--flex\t\t\tUses flex algo (both delay and IGP segments\n"                                                           \
-    "\t--pretty\t\tDisplays loading bars and other nice stuffs !\n");
+    "\t--pretty\t\tDisplays loading bars and other nice stuffs !\n"
+    "\t--save-sr-bin [file]\tSave the SR graph in the given file\n"
+    );
 }

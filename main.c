@@ -306,7 +306,7 @@ int main(int argc, char **argv)
        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
         
 
-        //max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible, opt);
+        max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible, opt);
         for (int i = 0; i < sr->nbNode; i++)
         {
             free(iters[i]);
