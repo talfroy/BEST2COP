@@ -240,7 +240,7 @@ int main(int argc, char **argv)
         int *iterMax = malloc(sr->nbNode * sizeof(int));
         int **isFeasible = malloc(sr->nbNode * sizeof(int *));
 
-        for (int i = 0; i < sr->nbNode; i++)
+        for (int i = 0; i < 50; i++)
         {
             //printf("Iter %d\n", i);
             times[i] = 0;
@@ -352,8 +352,8 @@ int main(int argc, char **argv)
             maxIter = SEG_MAX + 1;
         }
 
-        struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
+       // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
+       // main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
         //Main_display_results()
 
         for (int j = 0; j < maxIter; j++)
@@ -375,7 +375,7 @@ int main(int argc, char **argv)
             }
         }
 
-        segment_list_free(sl, iter, sr->nbNode);
+       // segment_list_free(sl, iter, sr->nbNode);
         free(pfront);
         free(pf);
         free(itersSolo);
@@ -660,7 +660,7 @@ void max_of_tab(FILE *output, long int *tab, int **tabIter, int size, char full,
     else
     {
         fprintf(output, "NODE_ID C2 NB_THREADS TIME\n");
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < 50; i++)
         {
             fprintf(output, "%d %d %d %ld\n", i, opt.cstr1, opt.nbThreads, tab[i]);
         }
