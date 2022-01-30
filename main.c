@@ -233,6 +233,10 @@ int main(int argc, char **argv)
     Pfront_t **pfront = NULL;
     int maxIter = 0;
 
+    if (opt.allNodes != NULL) {
+        opt.allNodes = MIN(opt.allNodes, sr->nbNode);
+    }
+
     if (opt.allNodes && !opt.nb_areas)
     {
         long int *times = malloc(sr->nbNode * sizeof(long int));
