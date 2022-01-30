@@ -241,13 +241,13 @@ int main(int argc, char **argv)
     {
         long int *times = malloc(opt.allNodes * sizeof(long int));
         int **iters = malloc(opt.allNodes * sizeof(int *));
-        int *iterMax = malloc(opt.allNodes * sizeof(int));
+        int *iterMax = calloc(opt.allNodes, sizeof(int));
         int **isFeasible = malloc(opt.allNodes * sizeof(int *));
 
         for (int i = 0; i < opt.allNodes; i++)
         {
             times[i] = 0;
-            iters[i] = malloc(sr->nbNode * sizeof(int));
+            iters[i] = calloc(sr->nbNode, sizeof(int));
             isFeasible[i] = malloc(sr->nbNode * sizeof(int));
             pf = NULL;
             pfront = NULL;
