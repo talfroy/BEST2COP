@@ -5,7 +5,7 @@ struct Options opt;
 int Option_command_parser(int argc, char **argv)
 {
     int optValue = 0;
-    const char *optString = "f:a:o:b:1:2:tslui";
+    const char *optString = "f:a:o:b:1:2:e::tslui";
     const struct option long_options[] = {
         {"file", required_argument, NULL, 'f'},
         {"topo", no_argument, NULL, 't'},
@@ -19,9 +19,9 @@ int Option_command_parser(int argc, char **argv)
         {"bi-dir", no_argument, NULL, 'b'},
         {"cstr1", required_argument, NULL, '1'},
         {"cstr2", required_argument, NULL, '2'},
+        {"all-nodes", optional_argument, NULL, 'e'},
         {"src", required_argument, NULL, 'c'},
         {"interface", no_argument, NULL, 'd'},
-        {"all-nodes", no_argument, NULL, 'e'},
         {"help", no_argument, NULL, 'h'},
         {"threads", required_argument, NULL, 'j'},
         {"flex", no_argument, NULL, 'r'},
@@ -88,7 +88,7 @@ int Option_command_parser(int argc, char **argv)
 
         case 'e':
             //the computation will be done on all nodes
-            if (optarg)
+            if ((optarg && *optarg))
             {
                 opt.allNodes = atoi(optarg);
             }

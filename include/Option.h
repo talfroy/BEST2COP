@@ -23,7 +23,7 @@ struct Options {
     char biDir;             /**< define if the links are uni-directionals or bi */
     char analyse;              /**< use to put SEG_MAX to INF*/
     int src;                /**< source node */
-    char allNodes;          /**< define if we need to mesure on all nodes */
+    int allNodes;          /**< define if we need to mesure on all nodes */
     char interface;         /**< activate the interactive mode */
     char nbThreads;         /**< set the number of threads to use (max_thread by default) */
     char randomTopo;            

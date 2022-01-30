@@ -233,31 +233,31 @@ int main(int argc, char **argv)
     Pfront_t **pfront = NULL;
     int maxIter = 0;
 
-    if (opt.allNodes != NULL) {
+    if (opt.allNodes) {
         opt.allNodes = MIN(opt.allNodes, sr->nbNode);
     }
 
     if (opt.allNodes && !opt.nb_areas)
     {
-        long int *times = malloc(sr->nbNode * sizeof(long int));
-        int **iters = malloc(sr->nbNode * sizeof(int *));
-        int *iterMax = malloc(sr->nbNode * sizeof(int));
-        int **isFeasible = malloc(sr->nbNode * sizeof(int *));
+        long int *times = malloc(opt.allNodes * sizeof(long int));
+        int **iters = malloc(opt.allNodes * sizeof(int *));
+        int *iterMax = malloc(opt.allNodes * sizeof(int));
+        int **isFeasible = malloc(opt.allNodes * sizeof(int *));
 
         for (int i = 0; i < opt.allNodes; i++)
         {
-            //printf("Iter %d\n", i);
             times[i] = 0;
             iters[i] = malloc(sr->nbNode * sizeof(int));
             isFeasible[i] = malloc(sr->nbNode * sizeof(int));
             pf = NULL;
             pfront = NULL;
-
+            int iteri = 0;
             gettimeofday(&start, NULL);
 
-            iterMax[i] = Best2cop(&pfront, &pf, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
+            iteri = Best2cop(&pfront, &pf, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
 
             gettimeofday(&stop, NULL);
+            iterMax[i] = MAX(iteri, iterMax[i]);
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
             //RESULTS("Iter max : %d\n", iterMax[i]);
            // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iterMax[i], i);
@@ -310,8 +310,8 @@ int main(int argc, char **argv)
        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
         
 
-        max_of_tab(output, times, iters, opt.allNodes, opt.analyse, isFeasible, opt);
-        for (int i = 0; i < sr->nbNode; i++)
+        max_of_tab(output, times, &iterMax, opt.allNodes, opt.analyse, isFeasible, opt);
+        for (int i = 0; i < opt.allNodes; i++)
         {
             free(iters[i]);
             free(isFeasible[i]);
@@ -663,10 +663,10 @@ void max_of_tab(FILE *output, long int *tab, int **tabIter, int size, char full,
     }
     else
     {
-        fprintf(output, "NODE_ID C2 NB_THREADS TIME\n");
-        for (int i = 0; i < 50; i++)
+        fprintf(output, "NODE_ID C2 NB_THREADS TIME ITER\n");
+        for (int i = 0; i < size; i++)
         {
-            fprintf(output, "%d %d %d %ld\n", i, opt.cstr1, opt.nbThreads, tab[i]);
+            fprintf(output, "%d %d %d %ld %d\n", i, opt.cstr1, opt.nbThreads, tab[i], *tabIter[i]);
         }
     }
 }
