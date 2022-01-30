@@ -88,7 +88,7 @@ int Option_command_parser (int argc, char** argv) {
 
             case 'e' :
                 //the computation will be done on all nodes
-                opt.allNodes = 1;
+                opt.allNodes = atoi(optarg);
                 break;
 
             case 'd' :

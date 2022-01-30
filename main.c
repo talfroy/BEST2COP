@@ -240,7 +240,7 @@ int main(int argc, char **argv)
         int *iterMax = malloc(sr->nbNode * sizeof(int));
         int **isFeasible = malloc(sr->nbNode * sizeof(int *));
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < opt.allNodes; i++)
         {
             //printf("Iter %d\n", i);
             times[i] = 0;
@@ -306,7 +306,7 @@ int main(int argc, char **argv)
        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
         
 
-        max_of_tab(output, times, iters, sr->nbNode, opt.analyse, isFeasible, opt);
+        max_of_tab(output, times, iters, opt.allNodes, opt.analyse, isFeasible, opt);
         for (int i = 0; i < sr->nbNode; i++)
         {
             free(iters[i]);
@@ -352,8 +352,8 @@ int main(int argc, char **argv)
             maxIter = SEG_MAX + 1;
         }
 
-       // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-       // main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
+        struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
+        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
         //Main_display_results()
 
         for (int j = 0; j < maxIter; j++)
