@@ -243,6 +243,8 @@ int main(int argc, char **argv)
         int **iters = malloc(opt.allNodes * sizeof(int *));
         int *iterMax = calloc(opt.allNodes, sizeof(int));
         int **isFeasible = malloc(opt.allNodes * sizeof(int *));
+        Best2cop(&pfront, &pf, sr, 0, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[0]);
+
 
         for (int i = 0; i < opt.allNodes; i++)
         {
@@ -330,6 +332,10 @@ int main(int argc, char **argv)
         pf = NULL;
         pfront = NULL;
         int *itersSolo = malloc(sr->nbNode * sizeof(int));
+        Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL);
+        pf = NULL;
+        pfront = NULL;
+
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
