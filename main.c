@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        omp_set_num_threads(omp_get_max_threads());
+        omp_set_num_threads(1);
     }
 
     Topology_t *topo = NULL;
@@ -666,7 +666,7 @@ void max_of_tab(FILE *output, long int *tab, int **tabIter, int size, char full,
         fprintf(output, "NODE_ID C2 NB_THREADS TIME ITER\n");
         for (int i = 0; i < size; i++)
         {
-            fprintf(output, "%d %d %d %ld %d\n", i, opt.cstr1, opt.nbThreads, tab[i], *tabIter[i]);
+            fprintf(output, "%d %d %d %ld %d\n", i, opt.cstr1, opt.nbThreads, tab[i], (*tabIter)[i]) ;
         }
     }
 }
