@@ -243,7 +243,7 @@ int main(int argc, char **argv)
         int **iters = malloc(opt.allNodes * sizeof(int *));
         int *iterMax = calloc(opt.allNodes, sizeof(int));
         int **isFeasible = malloc(opt.allNodes * sizeof(int *));
-        Best2cop(&pfront, &pf, sr, 0, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[0]);
+        Best2cop(&pfront, &pf, sr, 0, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, NULL);
 
 
         for (int i = 0; i < opt.allNodes; i++)
