@@ -620,7 +620,9 @@ int main(int argc, char **argv)
         free(areas);
         free(sr_areas);
     }
-    fclose(resFile);
+    if(resFile) {
+        fclose(resFile);
+    }
     return 0;
 }
 
