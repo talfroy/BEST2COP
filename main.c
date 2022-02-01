@@ -267,7 +267,8 @@ int main(int argc, char **argv)
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
             //RESULTS("Iter max : %d\n", iterMax[i]);
            // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iterMax[i], i);
-			main_display_distances(resFile, pf, iterMax[i], sr->nbNode, i, topo, NULL);
+            if (resFile)
+				main_display_distances(resFile, pf, iterMax[i], sr->nbNode, i, topo, NULL);
 			//segment_list_free(sl, iter, sr->nbNode);
             //printf("\r");
 
@@ -347,6 +348,8 @@ int main(int argc, char **argv)
 
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+         if (resFile)
+				main_display_distances(resFile, pf, iter, sr->nbNode, opt.src, topo, NULL);
 
         if (opt.analyse)
         {
@@ -366,9 +369,10 @@ int main(int argc, char **argv)
             maxIter = SEG_MAX + 1;
         }
 
-        struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
+       // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
+       // main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
         //Main_display_results()
+       
 
         for (int j = 0; j < maxIter; j++)
         {
