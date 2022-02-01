@@ -5,7 +5,7 @@ struct Options opt;
 int Option_command_parser(int argc, char **argv)
 {
     int optValue = 0;
-    const char *optString = "f:a:o:b:1:2:e::tslui";
+    const char *optString = "f:a:o:b:1:2:R:e::tslui";
     const struct option long_options[] = {
         {"file", required_argument, NULL, 'f'},
         {"topo", no_argument, NULL, 't'},
@@ -25,6 +25,7 @@ int Option_command_parser(int argc, char **argv)
         {"help", no_argument, NULL, 'h'},
         {"threads", required_argument, NULL, 'j'},
         {"flex", no_argument, NULL, 'r'},
+        {"results", required_argument, NULL, 'R'},
         {"pretty", no_argument, NULL, 'p'},
         {"sr-bin", no_argument, NULL, 'L'},
         {"save-sr-bin", required_argument, NULL, 'S'},
@@ -52,6 +53,7 @@ int Option_command_parser(int argc, char **argv)
     opt.pretty = false;
     opt.nb_areas = 0;
     opt.src_lab = NULL;
+    opt.resFile = NULL;
 
     while ((optValue = getopt_long(argc, argv, optString, long_options, NULL)) != -1)
     {
@@ -84,6 +86,10 @@ int Option_command_parser(int argc, char **argv)
 
         case 'h':
             return -1;
+            break;
+
+        case 'R':
+            opt.resFile = optarg;
             break;
 
         case 'e':

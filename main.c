@@ -59,6 +59,10 @@ int main(int argc, char **argv)
     SrGraph_t *sr = NULL;
     SrGraph_t **sr_areas = NULL;
     FILE *output = stdout;
+    FILE* resFile = NULL;
+    if (opt.resFile) {
+        resFile = fopen(opt.resFile, "w");
+    }
     struct timeval start, stop;
 
 #if OS_TYPE == LINUX
@@ -263,7 +267,7 @@ int main(int argc, char **argv)
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
             //RESULTS("Iter max : %d\n", iterMax[i]);
            // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iterMax[i], i);
-			//main_display_distances(output, pf, iterMax[i], sr->nbNode, i, topo, sl);
+			main_display_distances(resFile, pf, iterMax[i], sr->nbNode, i, topo, NULL);
 			//segment_list_free(sl, iter, sr->nbNode);
             //printf("\r");
 
@@ -612,6 +616,7 @@ int main(int argc, char **argv)
         free(areas);
         free(sr_areas);
     }
+    fclose(resFile);
     return 0;
 }
 

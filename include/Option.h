@@ -31,6 +31,7 @@ struct Options {
     bool pretty;
     unsigned short nb_areas;
     char *src_lab;
+    char* resFile;
 };
 
 extern struct Options opt;
