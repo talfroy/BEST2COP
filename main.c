@@ -59,8 +59,9 @@ int main(int argc, char **argv)
     SrGraph_t *sr = NULL;
     SrGraph_t **sr_areas = NULL;
     FILE *output = stdout;
-    FILE* resFile = NULL;
-    if (opt.resFile) {
+    FILE *resFile = NULL;
+    if (opt.resFile)
+    {
         resFile = fopen(opt.resFile, "w");
     }
     struct timeval start, stop;
@@ -76,11 +77,10 @@ int main(int argc, char **argv)
 
     if (opt.loadingMode == LOAD_TOPO)
     {
-        if (opt.labelsOrId == LOAD_LABELS) 
+        if (opt.labelsOrId == LOAD_LABELS)
             topo = Topology_load_from_file_labels(opt.filename, opt.accuracy, opt.biDir);
-        else 
+        else
             topo = Topology_load_from_file_ids(opt.filename, opt.accuracy, opt.biDir);
-
 
         if (topo == NULL)
         {
@@ -237,7 +237,8 @@ int main(int argc, char **argv)
     Pfront_t **pfront = NULL;
     int maxIter = 0;
 
-    if (opt.allNodes) {
+    if (opt.allNodes)
+    {
         opt.allNodes = MIN(opt.allNodes, sr->nbNode);
     }
 
@@ -248,7 +249,19 @@ int main(int argc, char **argv)
         int *iterMax = calloc(opt.allNodes, sizeof(int));
         int **isFeasible = malloc(opt.allNodes * sizeof(int *));
         Best2cop(&pfront, &pf, sr, 0, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, NULL);
+        for (int j = 0; j <= 10; j++)
+            {
+                for (int k = 0; k < sr->nbNode; k++)
+                {
+                    Pfront_free(&pfront[j][k]);
+                    Dict_free(&pf[j][k]);
+                }
+                free(pfront[j]);
+                free(pf[j]);
+            }
 
+            free(pfront);
+            free(pf);
 
         for (int i = 0; i < opt.allNodes; i++)
         {
@@ -266,10 +279,10 @@ int main(int argc, char **argv)
             iterMax[i] = MAX(iteri, iterMax[i]);
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
             //RESULTS("Iter max : %d\n", iterMax[i]);
-           // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iterMax[i], i);
+            // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iterMax[i], i);
             if (resFile)
-				main_display_distances(resFile, pf, iterMax[i], sr->nbNode, i, topo, NULL);
-			//segment_list_free(sl, iter, sr->nbNode);
+                main_display_distances(resFile, pf, iterMax[i], sr->nbNode, i, topo, NULL);
+            //segment_list_free(sl, iter, sr->nbNode);
             //printf("\r");
 
             if (opt.analyse)
@@ -314,8 +327,7 @@ int main(int argc, char **argv)
             free(pfront);
             free(pf);
         }
-       // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-        
+        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
 
         max_of_tab(output, times, &iterMax, opt.allNodes, opt.analyse, isFeasible, opt);
         for (int i = 0; i < opt.allNodes; i++)
@@ -348,8 +360,8 @@ int main(int argc, char **argv)
 
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
-         if (resFile)
-				main_display_distances(resFile, pf, iter, sr->nbNode, opt.src, topo, NULL);
+        if (resFile)
+            main_display_distances(resFile, pf, iter, sr->nbNode, opt.src, topo, NULL);
 
         if (opt.analyse)
         {
@@ -369,10 +381,9 @@ int main(int argc, char **argv)
             maxIter = SEG_MAX + 1;
         }
 
-       // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-       // main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
+        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
+        // main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
         //Main_display_results()
-       
 
         for (int j = 0; j < maxIter; j++)
         {
@@ -393,7 +404,7 @@ int main(int argc, char **argv)
             }
         }
 
-       // segment_list_free(sl, iter, sr->nbNode);
+        // segment_list_free(sl, iter, sr->nbNode);
         free(pfront);
         free(pf);
         free(itersSolo);
@@ -620,7 +631,8 @@ int main(int argc, char **argv)
         free(areas);
         free(sr_areas);
     }
-    if(resFile) {
+    if (resFile)
+    {
         fclose(resFile);
     }
     return 0;
@@ -683,7 +695,7 @@ void max_of_tab(FILE *output, long int *tab, int **tabIter, int size, char full,
         fprintf(output, "NODE_ID C2 NB_THREADS TIME ITER\n");
         for (int i = 0; i < size; i++)
         {
-            fprintf(output, "%d %d %d %ld %d\n", i, opt.cstr1, opt.nbThreads, tab[i], (*tabIter)[i]) ;
+            fprintf(output, "%d %d %d %ld %d\n", i, opt.cstr1, opt.nbThreads, tab[i], (*tabIter)[i]);
         }
     }
 }
@@ -805,7 +817,7 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
                 if (dist[i][j].paths[k] != INF)
                 {
                     //fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
-                            //LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
+                    //LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
                     //segment_list_invert(&sl[i][j][k]);
                     //Segment_list_print(out, &sl[i][j][k], topo, NULL);
                     //Segment_list_print_id(out, &sl[i][j][k]);

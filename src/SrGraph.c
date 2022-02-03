@@ -477,6 +477,7 @@ SrGraph_t* SrGraph_load_bin(char* filename)
             }
         }
     }
+    fclose(in);
     return sr;
 }
 
