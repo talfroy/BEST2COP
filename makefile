@@ -7,15 +7,23 @@ PG ?= -g
 # -pg 
 # -p -g on mac
 
-CC ?= gcc-11
+#CC ?= gcc-11
+
+# For M1 
+# After brew install llvm libomp
+CC ?= /usr/local/opt/llvm/bin/clang
+
+## for M1
+LIBS := -L/opt/homebrew/lib -lomp 
+FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude
 
 ## for clang
-#LIBS := -lm -lomp # -fopenmp
-#FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp $(PG)
+#LIB := -lm -lomp
+#FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor - fopenmp -Iinclude $(PG)
 
 ## for gcc
-LIBS := -lm -fopenmp
-FLAGS := -Wall -Wextra -Werror -O3 -fopenmp
+#LIBS := -lm -fopenmp
+#FLAGS := -Wall -Wextra -Werror -O3 -fopenmp
 
 
 
@@ -88,10 +96,10 @@ best2cop : $(OBJ) main.o
 	@echo ${info} "Best2cop succesfully compiled"
 
 %.o: %.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^
+	$(CC) $(FLAGS) -o $@ -c $^
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.c
-	$(CC) $(FLAGS) -Iinclude -o $@ -c $^
+	$(CC) $(FLAGS) -o $@ -c $^
 
 
 objects:
