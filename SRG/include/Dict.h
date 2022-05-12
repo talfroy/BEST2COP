@@ -44,7 +44,7 @@ extern Dict_t* Dict_new();
 
 extern void Dict_init(Dict_t* dic, int size);
 
-
+void Dict_zeroize(Dict_t* dic, int size);
 
 /**
  * @brief add a new path in a Dictionary

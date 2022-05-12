@@ -30,6 +30,7 @@ struct Pfront_s {
  */
 
 void Pfront_init(Pfront_t* bp, int size);
+void Pfront_zeroize(Pfront_t* bp, int size);
 
 
 /**

@@ -4,7 +4,7 @@
 #include "SrGraph.h"
 #include "ParetoFront.h"
 #include "Segment_list.h"
-
+#include "Llist.h"
 
 /**
  * @brief ALGORITHME BEST2COP (Best Exact Segment Track for 2-Constrained Optimal Paths)
@@ -28,7 +28,7 @@
  * @return return the number of iteration (between 1 and SEGMAX)
  */
 
-extern int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
+extern int Best2cop(Pfront_t*** pfront, Dict_t*** pf, Topology_t* graph, SrGraph_t* sr, int src, my_m1 cstrM1, 
             my_m2 cstrM2, my_m1 dictSize, char full, int** iters);
 
 
@@ -51,8 +51,7 @@ extern int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src,
  * @param c2                constraint on igp weight
  */
 
-extern void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, Pfront_t* pfcandlist, 
-                            Dict_t* dist_v, SrGraph_t* graph, int* t, my_m1* imax, my_m1 c1, my_m2 c2);
+void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, Pfront_t* pfcandlist,  Dict_t* dist_v, Topology_t* graph, SrGraph_t* sr_conv, int* t, my_m1* imax, my_m1 c1, my_m2 c2);
 
 
 /**

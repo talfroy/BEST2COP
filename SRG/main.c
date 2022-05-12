@@ -381,9 +381,9 @@ int main(int argc, char **argv)
             maxIter = SEG_MAX + 1;
         }
 
-        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-        // main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
-        //Main_display_results()
+        // TO PRINT RESULTS
+        struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
+        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
 
         for (int j = 0; j < maxIter; j++)
         {

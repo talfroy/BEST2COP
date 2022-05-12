@@ -17,6 +17,18 @@ void Dict_init(Dict_t* dic, int size)
     dic->nb_add = 0;
 }
 
+void Dict_zeroize(Dict_t* dic, int size)
+{
+    
+    for (int i = 0 ; i < size ; i++) {
+        dic->paths[i] = INF;
+    }
+
+    memset(dic->preds, 0, size*sizeof(short));
+
+    dic->nb_add = 0;
+}
+
 
 void Dict_add(Dict_t* dic, my_m1 key, my_m2 value, short pred)
 {

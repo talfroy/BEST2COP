@@ -17,6 +17,12 @@ void Pfront_init(Pfront_t* bp, int size)
     bp->maxSize = size;
 }
 
+void Pfront_zeroize(Pfront_t* bp, int size)
+{
+    bp->heapSize = 0;
+    memset(bp->keys, 0, size*sizeof(my_m1));
+}
+
 
 void Pfront_insert_key(Pfront_t* bp, my_m1 key)
 {
@@ -68,6 +74,7 @@ Pfront_t* Pfront_merge_sort(Pfront_t* pfront, Pfront_t* pfcand)
             pfcandIndex++;
         } else {
             Pfront_insert_key(ret, pfcand->keys[pfcandIndex]);
+            //Pfront_insert_key(ret, pfront->keys[pfrontIndex]);
             pfcandIndex++;
             pfrontIndex++;
         }

@@ -4,15 +4,21 @@
 
 void Dict_init(Dict_t* dic, int size, int msd)
 {
-    dic->paths = malloc(size * sizeof(int));
-    ASSERT(dic->paths, , size);
+    dic->paths = malloc(msd * sizeof(int*));
+    ASSERT(dic->paths, , msd);
 
-    dic->preds = malloc(size * sizeof(short));
-    ASSERT(dic->preds, , size);
+    dic->preds = malloc(msd * sizeof(short*));
+    ASSERT(dic->preds, , msd);
     
-    for (int i = 0 ; i < size ; i++) {
-        dic->paths[i] = INF;
+    
+    for (int i = 0 ; i < msd ; i++) {
+        dic->paths[i] = malloc(size * sizeof(int));
     }
+    for (int i = 0 ; i < msd ; i++) {
+        dic->paths[i] = malloc(size * sizeof(short));
+    }
+
+    
     dic->max_m1 = size;
     dic->max_m0 = msd;
     dic->nb_add = 0;

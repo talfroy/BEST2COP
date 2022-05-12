@@ -11,17 +11,20 @@ int cmp(const void* a, const void* b)
 
 void Pfront_init(Pfront_t* bp, int size)
 {
-    bp->heapSize = 0;
+    bp->heapSize = malloc(SEG_MAX * sizeof(int));
+    ASSERT(bp->heapSize, , SEG_MAX);
+    bp->keys = malloc(SEG_MAX * sizeof(my_m1*));
+    ASSERT(bp->keys, , SEG_MAX);
     bp->keys = malloc(size * sizeof(my_m1));
     ASSERT(bp->keys, , size);
     bp->maxSize = size;
 }
 
 
-void Pfront_insert_key(Pfront_t* bp, my_m1 key)
+void Pfront_insert_key(Pfront_t* bp, my_m1 key_m1, my_m0 key_m0)
 {
-    if (bp->heapSize < bp->maxSize) {
-        bp->keys[bp->heapSize] = key;
+    if (bp->heapSize[key_m0] < bp->maxSize) {
+        bp->keys[key_m0][bp->heapSize[key_m0]] = key_m1;
         bp->heapSize++;
     }
 }
@@ -33,14 +36,14 @@ void Pfront_sort(Pfront_t* bp)
 }
 
 
-int Pfront_union(Pfront_t* pfront, Pfront_t* pfcand)
+/*int Pfront_union(Pfront_t* pfront, Pfront_t* pfcand)
 {
     if (pfront->heapSize + pfcand->heapSize > pfront->maxSize) {
         return pfront->maxSize;
     } else {
         return pfront->heapSize + pfcand->heapSize;
     }
-}
+}*/
 
 
 void Pfront_print(Pfront_t* pf, FILE* out)
@@ -50,7 +53,7 @@ void Pfront_print(Pfront_t* pf, FILE* out)
     }
     printf("\n");
 }
-
+/*
 Pfront_t* Pfront_merge_sort(Pfront_t* pfront, Pfront_t* pfcand)
 {
     Pfront_t* ret = malloc(sizeof(Pfront_t));
@@ -86,7 +89,7 @@ Pfront_t* Pfront_merge_sort(Pfront_t* pfront, Pfront_t* pfcand)
     }
 
     return ret;
-}
+}*/
 
 void Pfront_free(Pfront_t* bh)
 {

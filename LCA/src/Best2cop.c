@@ -6,7 +6,8 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, Topology_t* graph, SrGraph_t* sr,
             my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters)
 {
     //Start of init
-    printf("T\n");
+    // printf("T\n");
+    UNUSED(pfront);
     int maxIter = SEG_MAX;
     my_m2* minIgp = malloc(graph->nbNode * sizeof(my_m2));
 
@@ -19,22 +20,22 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, Topology_t* graph, SrGraph_t* sr,
     (*pfront) = malloc((maxIter + 1) * sizeof(Pfront_t*));
     ASSERT(pfront, -1, (maxIter + 1));
 
-    for (int i = 0 ; i <= maxIter ; i++) {
-        (*pfront)[i] = malloc(graph->nbNode * sizeof(Pfront_t));
-        ASSERT((*pfront)[i], -1, graph->nbNode);
+    // for (int i = 0 ; i <= maxIter ; i++) {
+    //     (*pfront)[i] = malloc(graph->nbNode * sizeof(Pfront_t));
+    //     ASSERT((*pfront)[i], -1, graph->nbNode);
 
-        for (int j = 0 ; j < graph->nbNode ; j++) {
-            Pfront_init(&(*pfront)[i][j], dictSize);
-        }
-    }
+    //     for (int j = 0 ; j < graph->nbNode ; j++) {
+    //         Pfront_init(&(*pfront)[i][j], dictSize);
+    //     }
+    // }
 
-    Pfront_insert_key(&(*pfront)[0][src], 0);
+    // Pfront_insert_key(&(*pfront)[0][src], 0);
 
     Dict_t* dist = malloc(graph->nbNode * sizeof(Dict_t));
     ASSERT(dist, -1, graph->nbNode);
 
     for (int i = 0 ; i < graph->nbNode ; i++) {
-        Dict_init(&dist[i], dictSize);
+        Dict_init(&dist[i], dictSize, SEG_MAX);
     }
 
     Dict_add(&dist[src], 0, 0, 0, 0, NODE_SEGMENT, src);
@@ -84,7 +85,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, Topology_t* graph, SrGraph_t* sr,
             }
 
             Dict_t pf_cand;
-            Dict_init(&pf_cand, dictSize);
+            Dict_init(&pf_cand, dictSize, SEG_MAX);
             Pfront_t pfcandlist;
             Pfront_init(&pfcandlist, dictSize);
             int t = 0;
@@ -197,13 +198,12 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                 path->infos.lastSegment = addNecessarySegments(sr_conv, &currDag, edgeSrc, dst, &edge->infos, &d0v, lastSegment);
 
                 // TODO: remettre les déchets (plus ou moins , mais peut être pas nécessaire)
-                if (d1v < c1 && d2v < c2 && d0v <= SEG_MAX) {
-                    
-
+                // TODO: Opti ?
+                if (d1v < c1 && d2v < c2 && d0v <= SEG_MAX) {     
                     Dict_add(dist_v, d0v, d1v, d2v, currDag, lastSegment, edgeSrc);
 
-                    if (pf_cand->paths[d0v][d1v] == INF) {
-                        Pfront_insert_key(pfcandlist, d1v);
+                    if (pf_cand->paths[d0v][d1v].m2 == INF) {
+                        Pfront_insert_key(pfcandlist, d1v, d0v);
                         *t = *t + 1;
                     }
 
@@ -269,11 +269,13 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
 
     for (my_m0 i1 = 0 ; i1 < dist_v->max_m0 ; i1++) {
         for (my_m1 j1 = 0 ; j1 < dist_v->max_m1 ; j1++) {
+            char isDominated = 0;
             for (my_m0 i2 = 0 ; i2 <= i1 ; i2++) {
                 for (my_m1 j2 = 0 ; j2 < j1 ; j2++) {
                     
                 }
             }
+
         }
     }
 
