@@ -187,7 +187,7 @@ compact_front *compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 			compact_pf[i][seg] = calloc((nb_paths + 1), sizeof(path));
 			path end = {.cost = -1};
 			int index = 0;
-			for (int delay = 0; delay < dist[seg][i].size; delay++)
+			for (int delay = 0; delay < dist[seg][i].size ; delay++)
 			{
 				if (dist[seg][i].paths[delay] != INF)
 				{
@@ -289,7 +289,7 @@ path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, 
 }
 
 static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct segment_list sl2,
-												compact_front *pf_area_abr1, compact_front *pf_area_abr2, Latrix_t *sr_bb,
+												compact_front *pf_area_abr1, compact_front *pf_area_abr2, SrGraph_t *sr_bb,
 												int other_abr, Topology_t *topo_bb, Topology_t *topo_area, int src)
 {
 	UNUSED(topo_bb);
@@ -360,7 +360,7 @@ static struct segment_list merge_and_correct_sl(struct segment_list sl1, struct 
 }
 
 Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis,
-					  int c1, int ABR, int other_ABR, Latrix_t *sr_bb, Topology_t *topo_bb,
+					  int c1, int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t *topo_bb,
 					  Topology_t *topo_area, int src, bool cop)
 {
 	// pf1 = dist to ABR

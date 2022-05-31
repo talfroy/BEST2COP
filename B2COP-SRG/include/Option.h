@@ -26,7 +26,8 @@ struct Options {
     int allNodes;          /**< define if we need to mesure on all nodes */
     char interface;         /**< activate the interactive mode */
     char nbThreads;         /**< set the number of threads to use (max_thread by default) */
-    char randomTopo;            
+    char randomTopo;  
+    int bascule;          
     bool flex;              /**< enable flex algo (disble by default) */
     bool pretty;
     unsigned short nb_areas;

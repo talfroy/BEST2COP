@@ -11,11 +11,14 @@ PG ?= -g
 
 # For M1 
 # After brew install llvm libomp
-CC ?= /usr/local/opt/llvm/bin/clang
+CC ?= /usr/local/opt/llvm/bin/clang 
 
 ## for M1
 LIBS := -L/opt/homebrew/lib -lomp 
-FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude
+FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude 
+
+# for address sanitizer
+# -g -fsanitize=address -fno-omit-frame-pointer
 
 ## for clang
 #LIB := -lm -lomp

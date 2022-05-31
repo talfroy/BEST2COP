@@ -11,6 +11,7 @@
 #include "include/Compact.h"
 #include "include/Segment_list.h"
 #include "include/my_printf.h"
+#include "include/Pfront.h"
 
 //struct Options opt;
 
@@ -75,6 +76,9 @@ int main(int argc, char **argv)
         Main_get_all_infos(&opt);
     }
 
+    LabelTable_t labels;
+    LabelTable_init(&labels);
+
     if (opt.loadingMode == LOAD_TOPO)
     {
         if (opt.labelsOrId == LOAD_LABELS)
@@ -127,7 +131,7 @@ int main(int argc, char **argv)
         }
         else if (opt.labelsOrId == LOAD_LABELS)
         {
-            sr = SrGraph_load_with_label(opt.filename, opt.accuracy, opt.biDir);
+            sr = SrGraph_load_with_label(opt.filename, opt.accuracy, opt.biDir, &labels);
 
             if (sr == NULL)
             {
@@ -248,7 +252,7 @@ int main(int argc, char **argv)
         int **iters = malloc(opt.allNodes * sizeof(int *));
         int *iterMax = calloc(opt.allNodes, sizeof(int));
         int **isFeasible = malloc(opt.allNodes * sizeof(int *));
-        Best2cop(&pfront, &pf, sr, 0, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, NULL);
+        Best2cop(&pfront, &pf, sr, 0, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, NULL, opt.bascule);
         for (int j = 0; j <= 10; j++)
             {
                 for (int k = 0; k < sr->nbNode; k++)
@@ -273,7 +277,7 @@ int main(int argc, char **argv)
             int iteri = 0;
             gettimeofday(&start, NULL);
 
-            iteri = Best2cop(&pfront, &pf, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i]);
+            iteri = Best2cop(&pfront, &pf, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i], opt.bascule);
 
             gettimeofday(&stop, NULL);
             iterMax[i] = MAX(iteri, iterMax[i]);
@@ -349,14 +353,14 @@ int main(int argc, char **argv)
         pf = NULL;
         pfront = NULL;
         int *itersSolo = malloc(sr->nbNode * sizeof(int));
-        Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL);
+        Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule);
         pf = NULL;
         pfront = NULL;
 
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
-        int iter = Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo);
+        int iter = Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo, opt.bascule);
 
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
@@ -369,7 +373,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            RESULTS("Execution takes %ld us\n", time);
+            RESULTS("! Execution takes %ld us\n", time);
         }
 
         if (opt.analyse)
@@ -382,10 +386,9 @@ int main(int argc, char **argv)
         }
 
         // TO PRINT RESULTS
-        struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
-
-        for (int j = 0; j < maxIter; j++)
+       // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
+        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, NULL);
+        for (int j = 0; j < iter; j++)
         {
             for (int k = 0; k < sr->nbNode; k++)
             {
@@ -395,7 +398,6 @@ int main(int argc, char **argv)
             free(pfront[j]);
             free(pf[j]);
         }
-
         if (opt.analyse)
         {
             for (int i = 0; i < sr->nbNode; i++)
@@ -448,7 +450,7 @@ int main(int argc, char **argv)
 
                     gettimeofday(&start, NULL);
                     /* first do the BEST2COP on each areas */
-                    iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL);
+                    iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL, opt.bascule);
 
                     /* then retreive the paths using the pareto front */
                     sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[i], iter, area_src);
@@ -669,7 +671,7 @@ void Main_display_all_paths(FILE *output, ParetoFront_t ***dist, int nbNodes, in
             {
                 for (ParetoFront_t *tmp = dist[j][i]; tmp != NULL; tmp = tmp->next)
                 {
-                    fprintf(output, "%d %d %d\n", i, tmp->m1, tmp->m2);
+                    fprintf(output, "%d %d\n", tmp->m1, tmp->m2);
                 }
                 break;
             }
@@ -822,7 +824,8 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
                     //Segment_list_print(out, &sl[i][j][k], topo, NULL);
                     //Segment_list_print_id(out, &sl[i][j][k]);
                     //fprintf(out, "\n");
-                    fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
+                    //fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
+                    fprintf(out, "%d %d %d\n", j, k, dist[i][j].paths[k]);
                 }
             }
         }
@@ -894,7 +897,7 @@ int run_acc_cartesian_product(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
 
             /* first do the BEST2COP on each areas */
             //INFO("Start best2cop\n");
-            iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, 1001, opt.analyse, NULL);
+            iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, 1001, opt.analyse, NULL, opt.bascule);
             //INFO("End BEST2cop\n");
             /* then retreive the paths using the pareto front */
             //INFO("Start Retreive\n");
@@ -994,7 +997,7 @@ int run_acc_cartesian_product(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
     src = Topology_search_acc_id(areas[opt.nb_areas - 1], opt.nb_areas - 1, 1, 1);
 
     // Do the BEST2COP on the ACC router area
-    iter = Best2cop(&pfront, &pf, sr_areas[opt.nb_areas - 1], src, opt.cstr1, opt.cstr2, 1001, false, NULL);
+    iter = Best2cop(&pfront, &pf, sr_areas[opt.nb_areas - 1], src, opt.cstr1, opt.cstr2, 1001, false, NULL, opt.bascule);
 
     /* then retreive the paths using the pareto front */
     sl_acc = Segment_list_retreive_paths(pf, sr_areas[opt.nb_areas - 1], iter, src);
@@ -1159,7 +1162,7 @@ void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
 
                 gettimeofday(&start, NULL);
                 /* first do the BEST2COP on each areas */
-                iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL);
+                iter = Best2cop(&pfront, &pf, sr_areas[i], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL, opt.bascule);
 
                 /* then retreive the paths using the pareto front */
                 sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[i], iter, area_src);
@@ -1202,7 +1205,7 @@ void run_cart_on_specific_ABR(Topology_t **areas, SrGraph_t **sr_areas, FILE *ou
 
                 gettimeofday(&start, NULL);
                 /* first do the BEST2COP on each areas */
-                iter = Best2cop(&pfront, &pf, sr_areas[0], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL);
+                iter = Best2cop(&pfront, &pf, sr_areas[0], area_src, opt.cstr1, opt.cstr2, max_dict_size + 1, false, NULL, opt.bascule);
 
                 /* then retreive the paths using the pareto front */
                 sl_areas[index] = Segment_list_retreive_paths(pf, sr_areas[0], iter, area_src);

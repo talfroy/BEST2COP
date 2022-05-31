@@ -32,9 +32,11 @@ int Option_command_parser(int argc, char **argv)
         {"areas", required_argument, NULL, 'A'},
         {"src-lab", required_argument, NULL, 'B'},
         {"quentin", no_argument, NULL, 'Q'},
+        {"bascule", required_argument, NULL, 'g'},
         {0, 0, 0, 0}};
 
     opt.output = NULL;
+    opt.bascule = 0;
     opt.saveSrGraphBin = NULL;
     opt.biDir = UNI_DIRECTIANNAL;
     opt.filename = NULL;
@@ -62,7 +64,10 @@ int Option_command_parser(int argc, char **argv)
         case 'Q':
             opt.analyse = ANALYSE_QUENTIN;
             break;
-
+        case 'g':
+            opt.bascule = atoi(optarg);
+            break;
+            
         case 'B':
             opt.src_lab = optarg;
             break;

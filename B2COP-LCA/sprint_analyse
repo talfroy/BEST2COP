@@ -1,0 +1,29 @@
+Usage:
+	./best2cop [options] --file input_file --loading_mode --execution_mode
+
+Loading mode :
+	--topo			Used to specifie that the loaded file represents the topology
+	--sr			Used to specifie that the loaded file represents the Segment Routing Graph
+	--sr-bin		Used to specifie that the loaded file represents the Segment Routing Graph in binary format
+	--areas [nb_areas]	Used to specify that the topology is decomposed into areas
+	--id			Specify that the topology nodes are represented by id 
+	--labels		Specify that the topology nodes are represented by labels
+
+Execution mode : 
+	--src [node]		Used to specify the source node (time evaluation)
+	--src_lab		Used to specify the label of the source node
+	--all-nodes		Run best2cop with all nodes as source
+	--2COP			Run best2cop and returns the results in term of number of segments following 2COP
+	--DCLC			Run best2cop and returns the results in term of number of segments following DCLC
+
+Options :
+	--accu [value]		Set the accuracy of delay to value. By default this parameter is 1 (0.1ms)
+	--output [file]		The results are printed in output_file. The file is created if it doesn't exists
+	--bi_dir		If this option is activated, the link represented in input file are bi_directionals
+	--cstr1 [value]		Put the first constraint to value
+	--cstr2 [value]		Put the second constraint to value
+	--interface		Lauch the interactive mode
+	--threads [nb]		Set the required number of threads
+	--flex			Uses flex algo (both delay and IGP segments
+	--pretty		Displays loading bars and other nice stuffs !
+	--save-sr-bin [file]	Save the SR graph in the given file

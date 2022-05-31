@@ -74,7 +74,6 @@ Pfront_t* Pfront_merge_sort(Pfront_t* pfront, Pfront_t* pfcand)
             pfcandIndex++;
         } else {
             Pfront_insert_key(ret, pfcand->keys[pfcandIndex]);
-            //Pfront_insert_key(ret, pfront->keys[pfrontIndex]);
             pfcandIndex++;
             pfrontIndex++;
         }

@@ -32,7 +32,8 @@ void Pfront_insert_key(Pfront_t* bp, my_m1 key_m1, my_m0 key_m0)
 
 void Pfront_sort(Pfront_t* bp)
 {
-    qsort(bp->keys, bp->heapSize, sizeof(my_m1), cmp);
+    (void) bp;
+    //qsort(bp->keys, bp->heapSize, sizeof(my_m1), cmp);
 }
 
 
@@ -48,9 +49,10 @@ void Pfront_sort(Pfront_t* bp)
 
 void Pfront_print(Pfront_t* pf, FILE* out)
 {
-    for (int i = 0 ; i < pf->heapSize ; i++) {
-        fprintf(out, " %d ", pf->keys[i]);
-    }
+    (void) pf; (void) out;
+    // for (int i = 0 ; i < pf->heapSize ; i++) {
+    //     fprintf(out, " %d ", pf->keys[i]);
+    // }
     printf("\n");
 }
 /*

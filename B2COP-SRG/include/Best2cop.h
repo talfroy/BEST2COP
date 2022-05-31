@@ -28,8 +28,8 @@
  * @return return the number of iteration (between 1 and SEGMAX)
  */
 
-extern int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
-            my_m2 cstrM2, my_m1 dictSize, char full, int** iters);
+int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
+            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule);
 
 
 /**
@@ -72,10 +72,9 @@ extern void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t*
  * @param pf                will contain all the non-domintaed paths
  */
 
-extern void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int t, int imax, int iter, int dst, Dict_t* pf);
-
-
+void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
+                                    Dict_t* pf_cand, Dict_t* dist_v, __attribute__ ((unused)) Pfront_t* pfcandlist, __attribute__ ((unused)) int t, 
+                                    int imax, int iter, int dst, Dict_t* pf, int bascule);
 /**
  * @brief Called if there are not a lot of paths added
  * 
@@ -86,7 +85,6 @@ extern void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_
 void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int iter, int dst, Dict_t* pf);
 
-
 /**
  * @brief Called if there are a lot of elements added ath the
  * current step
@@ -95,7 +93,7 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_
  * if there exists an element with a given index
  */
 
-extern void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
+void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, int imax, Dict_t* pf);
 
 

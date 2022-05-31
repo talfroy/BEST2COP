@@ -11,7 +11,6 @@
 #include "include/Compact.h"
 #include "include/Segment_list.h"
 #include "include/my_printf.h"
-#include "include/Pfront.h"
 
 //struct Options opt;
 
@@ -76,9 +75,6 @@ int main(int argc, char **argv)
         Main_get_all_infos(&opt);
     }
 
-    LabelTable_t labels;
-    LabelTable_init(&labels);
-
     if (opt.loadingMode == LOAD_TOPO)
     {
         if (opt.labelsOrId == LOAD_LABELS)
@@ -131,7 +127,7 @@ int main(int argc, char **argv)
         }
         else if (opt.labelsOrId == LOAD_LABELS)
         {
-            sr = SrGraph_load_with_label(opt.filename, opt.accuracy, opt.biDir, &labels);
+            sr = SrGraph_load_with_label(opt.filename, opt.accuracy, opt.biDir);
 
             if (sr == NULL)
             {
@@ -353,7 +349,7 @@ int main(int argc, char **argv)
         pf = NULL;
         pfront = NULL;
         int *itersSolo = malloc(sr->nbNode * sizeof(int));
-        //Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule);
+        Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule);
         pf = NULL;
         pfront = NULL;
 
@@ -373,7 +369,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            RESULTS("! Execution takes %ld us\n", time);
+            RESULTS("Execution takes %ld us\n", time);
         }
 
         if (opt.analyse)
@@ -387,7 +383,7 @@ int main(int argc, char **argv)
 
         // TO PRINT RESULTS
        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-        main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, NULL);
+       // main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, sl);
 
         for (int j = 0; j < maxIter; j++)
         {

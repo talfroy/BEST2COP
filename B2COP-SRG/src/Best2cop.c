@@ -6,8 +6,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
             my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule)
 {
     //Start of init
-    int maxIter = graph->nbNode
-    ;
+    int maxIter = SEG_MAX;
     my_m2* minIgp = malloc(graph->nbNode * sizeof(my_m2));
 
     if (analyse) {
@@ -39,29 +38,10 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
 
     Dict_add(&dist[src], 0, 0, src);
 
-    Extendable_list_t** extendable = malloc(graph->nbNode * sizeof(Extendable_list_t*));
+    Extendable_list_t* extendable = NULL;
 
-    ASSERT(extendable, -1, graph->nbNode);
-
-    IntList_t* succs = graph->nonEmptySlots[src];
-    int active_nodes[graph->nbNode];
-    int active_nodes_nb = 0;
-    while(succs != NULL)
-    {
-        int succ = succs->value;
-        if (succ == src)
-        {
-            continue;
-        }
-        if (extendable[succ] == NULL) {
-            extendable[succ] = Extendable_list_new(extendable[succ], src, NULL);
-            extendable[succ]->ext = Extendable_new(0, 0, NULL);
-        }
-        active_nodes[active_nodes_nb] = succ;
-        active_nodes_nb++;
-        succs = succs->next;
-    }
-   
+    extendable = Extendable_list_new(NULL, src, NULL);
+    extendable->ext = Extendable_new(0, 0, NULL);
 
     Extendable_t** nextextendable = malloc(graph->nbNode * sizeof(Extendable_t*));
     ASSERT(nextextendable, -1, graph->nbNode);
@@ -71,6 +51,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     }
 
     //my_m2 tmp_igp = 0;
+
 
     (*pf) = malloc((maxIter+ 1) * sizeof(Dict_t*));
     ASSERT((*pf), -1, (maxIter+ 1));
@@ -92,18 +73,11 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         }
         (*iters)[src] = 0;
     }
-    bool to_extend = true;
 
-
-    
-    
-
-
-    while (to_extend && nbIter <= maxIter) {
-        printf("Iteration %d\n", nbIter);
+   
+    while (extendable != NULL && nbIter <= maxIter) {
         #pragma omp parallel for
-        for (int idst = 0 ; idst < active_nodes_nb ; idst++) {
-            int dst = active_nodes[idst];
+        for (int dst = 0 ; dst < graph->nbNode ; dst++) {
 
             if (dst == src) {
                 continue;
@@ -119,84 +93,55 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
             my_m1 imax = 0;
 
             //extend paths
-            if(dst == 842) {
-                Extendable_print(extendable[dst]->ext);
-                printf("HERE");
-            }
-            Best2cop_extend_path(dst, extendable[dst], &pf_cand, &pfcandlist, dist + dst, graph, &t, &imax, cstrM1, cstrM2);
-
+            Best2cop_extend_path(dst, extendable, &pf_cand, &pfcandlist, dist + dst, graph, &t, &imax, cstrM1, cstrM2);
             nextextendable[dst] = NULL;
 
-            Best2cop_cpt_extendable_paths(nextextendable+dst, pfront, &pf_cand, dist + dst, &pfcandlist, t, imax, nbIter, dst, &(*pf)[nbIter][dst], bascule);
+            Best2cop_cpt_extendable_paths(nextextendable + dst, pfront, &pf_cand, dist + dst, &pfcandlist, t, imax, nbIter, dst, &(*pf)[nbIter][dst], bascule);
 
             Dict_free(&pf_cand);
             Pfront_free(&pfcandlist);
         }
 
-        for (int j = 0; j < graph->nbNode; j++) {
-            Extendable_list_free(extendable[j]);
-            extendable[j] = NULL;
+        Extendable_list_free(extendable);
+        extendable = NULL;
+
+        for (int i = 0 ; i < graph->nbNode ; i++) {
+            //printf("iter : %d -> node %d\n", nbIter, i);
+            if (nextextendable[i] != NULL) {
+            //     if (iters != NULL) {
+            //         if (analyse == ANALYSE_DCLC) {
+            //             //Extendable_print(nextextendable[i]);
+            //             tmp_igp = nextextendable[i]->infos.m2;
+            //             if (tmp_igp < minIgp[i]) {
+            //                 (*iters)[i] = nbIter;
+            //                 minIgp[i] = tmp_igp;
+            //             }
+                        
+            //         }
+
+            //         if (analyse == ANALYSE_2COP) {
+            //             (*iters)[i] = nbIter;
+            //         }
+            //     }
+                extendable = Extendable_list_new(extendable, i, NULL);
+                extendable->ext = Extendable_copy(nextextendable[i]);
+                Extendable_free(nextextendable[i]);
+            }
         }
 
-
-        // path were extended by/to i, must be extended by/to succs of i next time
-        to_extend = false;
-        active_nodes_nb = 0;
-        //memset(active_nodes, 0, )
-
-        IntList_t* succs;
-        for (int i = 0 ; i < graph->nbNode ; i++) {
-            if (nextextendable[i] != NULL) {
-                succs = graph->nonEmptySlots[i];
-                while(succs != NULL)
-                {
-                    int succ = succs->value;
-                    // if(i == 198){
-                    //     printf("succ : %d\n",succ);
-                    // } 
-
-                    if (succ == i)
-                    {
-                        continue;
-                    }
-                    if (extendable[succ] == NULL) {
-                        to_extend = true;
-                        extendable[succ] = Extendable_list_new(NULL, i, Extendable_copy(nextextendable[i]));
-                        active_nodes[active_nodes_nb] = succ;
-                        active_nodes_nb++;
-
-                    } else {
-                        extendable[succ] = Extendable_list_new(extendable[succ], i, Extendable_copy(nextextendable[i]));   
-                    }
-                    if(i == 198) {
-                        printf("HERE\n");
-                    Extendable_print(extendable[succ]->ext);
-                    }
-                    succs = succs ->next;
-                }
-
-               Extendable_free(nextextendable[i]);
-               nextextendable[i]=NULL;
-
-            }
-            if(extendable[842]) {
-                        printf("HERE\n");
-                    printf("%d-- %d",i, nbIter);
-                    Extendable_print(extendable[842]->ext);
-                    }
-        } 
         nbIter++;
     }
     
 
+    Extendable_list_free(extendable);
+
     for (int j = 0 ; j < graph->nbNode ; j++) {
         Dict_free(&dist[j]);
-        Extendable_list_free(extendable[j]);
     }
-    free(extendable);
     free(dist);
     free(nextextendable);
     free(minIgp);
+
     return nbIter - 1;
 }
 
@@ -215,15 +160,18 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
     *imax = 0;
     *t = 0;
    // int bag_counter[1000] = {0};
-    int count = 0;
+
     for (Extendable_list_t* d_list = extendable ; d_list != NULL ; d_list = d_list->next) {
         short edgeSrc = d_list->node;
         for (Extendable_t* path = d_list->ext ; path != NULL ; path = path->next) {
             for (Edge_t* edge = graph->pred[dst][edgeSrc] ; edge != NULL ; edge = edge->next) {
-                count ++;
                 my_m1 d1v = path->infos.m1 + edge->m1;
                 my_m2 d2v = path->infos.m2 + edge->m2;
-                printf("Extending from %d to %d :(%d,%d) + (%d,%d)\n", edgeSrc, dst, path->infos.m1, path->infos.m2, edge->m1, edge->m2);
+                // ANALYSIS FOR BAG
+                // if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] == d2v) {
+                //     bag_counter[d1v]++;
+                // }
+
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v, edgeSrc);
 
@@ -240,7 +188,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
             }
         }
     }
-    printf("Extending %d paths to %d \n", count, dst );
+
 
     // int final_bag_counter[1000] = {0};
     // my_m2 last_d2 = INF;
@@ -330,83 +278,83 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pf
 void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int iter, int dst, Dict_t* pf)
 {
-    // UNUSED(pf_cand);
-    // int pfrontIndex = 0;
-    // int pfcandIndex = 0;
-    // my_m2 last_d2 = INF;
-    // Pfront_t* pfront2 = &(*pfront)[iter-1][dst];
-    // Pfront_sort(pfcandlist);
-    // while (pfrontIndex < pfront2->heapSize && pfcandIndex < pfcandlist->heapSize) {
-    //     if (pfront2->keys[pfrontIndex] < pfcandlist->keys[pfcandIndex]) {
-    //         my_m1 d1 = pfront2->keys[pfrontIndex];
-    //         my_m2 d2 = dist_v->paths[d1];
-    //         if (d2 < last_d2) {
-    //             Pfront_insert_key(&(*pfront)[iter][dst], d1);
-    //             last_d2 = d2;
-    //         }
-    //         pfrontIndex++;
-    //     } else {
-    //         my_m1 d1 = pfcandlist->keys[pfcandIndex];
-    //         my_m2 d2 = dist_v->paths[d1];
-    //         if (d2 < last_d2) {
-    //             Pfront_insert_key(&(*pfront)[iter][dst], d1);
-    //             last_d2 = d2;
-    //            // if (pf_cand->paths[d1] != INF) {
-    //             Dict_add(pf, d1, d2, dist_v->preds[d1]);
-    //             (*nextextendable) = Extendable_new(d1, d2, (*nextextendable));
-    //             pf->nb_add++;
-    //            // }
-    //         }
-    //         pfcandIndex++;
-    //         if (pfront2->keys[pfrontIndex] == pfcandlist->keys[pfcandIndex]) {
-    //             pfrontIndex++;
-    //         }
-    //     }
-    // }
-
-    // while (pfrontIndex < pfront2->heapSize) {
-    //     my_m1 d1 = pfront2->keys[pfrontIndex];
-    //     my_m2 d2 = dist_v->paths[d1];
-    //     if (d2 < last_d2) {
-    //         Pfront_insert_key(&(*pfront)[iter][dst], d1);
-    //         last_d2 = d2;
-    //     }
-    //     pfrontIndex++;
-    // }
-
-    // while (pfcandIndex < pfcandlist->heapSize) {
-    //     my_m1 d1 = pfcandlist->keys[pfcandIndex];
-    //     my_m2 d2 = dist_v->paths[d1];
-    //     if (d2 < last_d2) {
-    //         Pfront_insert_key(&(*pfront)[iter][dst], d1);
-    //         last_d2 = d2;
-    //         Dict_add(pf, d1, d2, dist_v->preds[d1]);
-    //         (*nextextendable) = Extendable_new(d1, d2, (*nextextendable));
-    //         pf->nb_add++;
-    //     }
-    //     pfcandIndex++;
-    // }
-
-    Pfront_sort(pfcandlist);
-    Pfront_t* d1_it = Pfront_merge_sort(&(*pfront)[iter-1][dst], pfcandlist);
+    UNUSED(pf_cand);
+    int pfrontIndex = 0;
+    int pfcandIndex = 0;
     my_m2 last_d2 = INF;
-    for (int i = 0 ; i < d1_it->heapSize ; i++) {
-        my_m1 d1 = d1_it->keys[i];
-        my_m2 d2 = dist_v->paths[d1];
-        
-        if (d2 < last_d2) {
-            Pfront_insert_key(&(*pfront)[iter][dst], d1);
-            last_d2 = d2;
-            
-            if (pf_cand->paths[d1] != INF) {
+    Pfront_t* pfront2 = &(*pfront)[iter-1][dst];
+    Pfront_sort(pfcandlist);
+    while (pfrontIndex < pfront2->heapSize && pfcandIndex < pfcandlist->heapSize) {
+        if (pfront2->keys[pfrontIndex] < pfcandlist->keys[pfcandIndex]) {
+            my_m1 d1 = pfront2->keys[pfrontIndex];
+            my_m2 d2 = dist_v->paths[d1];
+            if (d2 < last_d2) {
+                Pfront_insert_key(&(*pfront)[iter][dst], d1);
+                last_d2 = d2;
+            }
+            pfrontIndex++;
+        } else {
+            my_m1 d1 = pfcandlist->keys[pfcandIndex];
+            my_m2 d2 = dist_v->paths[d1];
+            if (d2 < last_d2) {
+                Pfront_insert_key(&(*pfront)[iter][dst], d1);
+                last_d2 = d2;
+               // if (pf_cand->paths[d1] != INF) {
                 Dict_add(pf, d1, d2, dist_v->preds[d1]);
                 (*nextextendable) = Extendable_new(d1, d2, (*nextextendable));
-                 pf->nb_add++;
+                pf->nb_add++;
+               // }
+            }
+            pfcandIndex++;
+            if (pfront2->keys[pfrontIndex] == pfcandlist->keys[pfcandIndex]) {
+                pfrontIndex++;
             }
         }
     }
-   Pfront_free(d1_it);
-   free(d1_it);
+
+    while (pfrontIndex < pfront2->heapSize) {
+        my_m1 d1 = pfront2->keys[pfrontIndex];
+        my_m2 d2 = dist_v->paths[d1];
+        if (d2 < last_d2) {
+            Pfront_insert_key(&(*pfront)[iter][dst], d1);
+            last_d2 = d2;
+        }
+        pfrontIndex++;
+    }
+
+    while (pfcandIndex < pfcandlist->heapSize) {
+        my_m1 d1 = pfcandlist->keys[pfcandIndex];
+        my_m2 d2 = dist_v->paths[d1];
+        if (d2 < last_d2) {
+            Pfront_insert_key(&(*pfront)[iter][dst], d1);
+            last_d2 = d2;
+            Dict_add(pf, d1, d2, dist_v->preds[d1]);
+            (*nextextendable) = Extendable_new(d1, d2, (*nextextendable));
+            pf->nb_add++;
+        }
+        pfcandIndex++;
+    }
+
+//     Pfront_sort(pfcandlist);
+//     Pfront_t* d1_it = Pfront_merge_sort(&(*pfront)[iter-1][dst], pfcandlist);
+//     my_m2 last_d2 = INF;
+//     for (int i = 0 ; i < d1_it->heapSize ; i++) {
+//         my_m1 d1 = d1_it->keys[i];
+//         my_m2 d2 = dist_v->paths[d1];
+        
+//         if (d2 < last_d2) {
+//             Pfront_insert_key(&(*pfront)[iter][dst], d1);
+//             last_d2 = d2;
+            
+//             if (pf_cand->paths[d1] != INF) {
+//                 Dict_add(pf, d1, d2, dist_v->preds[d1]);
+//                 (*nextextendable) = Extendable_new(d1, d2, (*nextextendable));
+//                  pf->nb_add++;
+//             }
+//         }
+//     }
+//    Pfront_free(d1_it);
+//    free(d1_it);
 }
 
 void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
@@ -419,7 +367,6 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
             last_d2 = dist_v->paths[i];
             Pfront_insert_key(&(*pfront)[iter][dst], i);
             if (pf_cand->paths[i] != INF) {
-                printf("Keeping %d (%d;%d)\n", dst, i, last_d2);
                 Dict_add(pf, i, dist_v->paths[i], dist_v->preds[i]);
                 pf->nb_add++;
                 (*nextextendable) = Extendable_new(i, pf_cand->paths[i], (*nextextendable));

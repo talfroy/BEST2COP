@@ -1,6 +1,8 @@
+*vscode/*
 obj/*.o
 topo/*
 RND/*
+*.o
 RND
 obj
 geoSprint
@@ -10,6 +12,7 @@ glibx-connex
 *.isp
 RLT/*
 NBSEG/*
+*.xp
 *.res
 !test.isp
 !lFlat.res

@@ -72,7 +72,7 @@ void Extendable_add(Extendable_t* og, Extendable_t* to_add){
 
 Extendable_list_t* Extendable_list_new(Extendable_list_t* next, int node, Extendable_t* ext)
 {
-    Extendable_list_t* new_e = malloc(sizeof(Extendable_list_t));
+    Extendable_list_t* new_e = calloc(1,sizeof(Extendable_list_t));
     ASSERT(new_e, NULL, 1);
 
     new_e->node = node;

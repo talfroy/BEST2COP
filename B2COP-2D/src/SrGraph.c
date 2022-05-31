@@ -443,7 +443,6 @@ SrGraph_t *SrGraph_load_with_label(char *filename, int accuracy, char bi_dir, La
             sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2,NODE_SEGMENT);
             sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2,NODE_SEGMENT);
             IntListAdd(dst, &(sr->nonEmptySlots[src]));
-            printf("Adding %d to %d (%f,%d)\n", src, dst, m1, m2);
             if (bi_dir)
             {
                 sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2,NODE_SEGMENT);
