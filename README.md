@@ -1,3 +1,11 @@
+# 0) Folder Structure 
+
+SRG contains Best2cop as presented in Computer Network & NCA. This version of Best2cop relies on the SR Graph to compute DCLC-SR paths. The conversion to the SRG is done beforehand, before the algorithm itself is run. In this version, Best2cop explores the SR Graph itself.
+
+LCA contains a version of best2cop which does not explore the SR Graph itself, but rather relies on it to convert the paths it explores in their respective segment lists. 
+
+Finally, 2D contains a version of best2cop which does not consider Segment Routing at all. Thus, there is no SR Graph, nor any conversions. The goal of this version is to evaluation the performance of Best2cop as a constrained-path computation algorithm in a non-SR context. 
+
 # 1) Compilation
 
 ```
