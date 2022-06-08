@@ -1,0 +1,795 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-apple-darwin11.3.0
+ 
+
+# Make data base, printed on Mon Jun  6 10:37:00 2022
+
+# Variables
+
+# makefile (from `makefile', line 34)
+vertclair = \033[1;32m
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# makefile (from `makefile', line 4)
+OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
+ 
+# makefile (from `makefile', line 3)
+SRC := src/Best2cop.c src/BinHeap.c src/Compact.c src/CrashTest.c src/Dict.c src/Edge.c src/Extendable.c src/IntList.c src/LabelTable.c src/Latrix.c src/Llist.c src/Option.c src/ParetoFront.c src/Pfront.c src/ScopeStack.c src/Segment_list.c src/SrGraph.c src/Topology.c src/Zipf.c src/my_printf.c
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile (from `makefile', line 6)
+PG = -g
+# makefile
+CURDIR := /Users/jro/Documents/research/best2cop/best2cop/B2COP-2D
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/bin/make
+# makefile (from `makefile', line 1)
+MAKEFILE_LIST :=  makefile
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+__CFBundleIdentifier = com.microsoft.VSCode
+# environment
+INFOPATH = /opt/homebrew/share/info:
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /var/folders/gq/285j26d10tz182j_llz4drr00000gn/T/vscode-ipc-d5f3544f-eca0-4380-9958-82b4c13d733e.sock
+# environment
+VSCODE_CWD = /
+# environment
+PATH = /opt/homebrew/opt/llvm/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/Applications/Wireshark.app/Contents/MacOS
+# environment
+VSCODE_LOG_STACK = false
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# makefile (from `makefile', line 41)
+GBLX = glibx-connex
+# environment
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.4Zr6U2UGpB/Listeners
+# makefile (from `makefile', line 1)
+SRCDIR = src
+# automatic
+%F = $(notdir $%)
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /Users/jro/Documents/research/best2cop/best2cop/B2COP-2D
+# environment
+HOMEBREW_CELLAR = /opt/homebrew/Cellar
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+MANPATH = /opt/homebrew/share/man::
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /Users/jro
+# makefile (from `makefile', line 43)
+FRANCOIS = sprint-modif-zipf.isp
+# default
+MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/jro/Library/Application Support/Code/CachedData/c3511e6c69bb39013c4a4b7b9566ec1ca73fc4d5
+# environment
+LOGNAME = jro
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# makefile (from `makefile', line 35)
+neutre = \033[0;m
+# environment
+XPC_FLAGS = 0x0
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# makefile (from `makefile', line 46)
+REALISTIC_SPRINT = geoSprint
+# environment
+SHLVL = 1
+# makefile (from `makefile', line 14)
+CC = /usr/local/opt/llvm/bin/clang 
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = jro
+# makefile
+.DEFAULT_GOAL := all
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# makefile (from `makefile', line 39)
+eval = "[${cyanfonce}EVAL${neutre}]"
+# makefile (from `makefile', line 36)
+cyanfonce = \033[0;36m
+# default
+ 
+MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
+# makefile (from `makefile', line 44)
+WORST_SPRINT = sprint-modif-zipf.isp
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/gq/285j26d10tz182j_llz4drr00000gn/T/
+# automatic
+*F = $(notdir $*)
+# environment
+VSCODE_IPC_HOOK = /Users/jro/Library/Application Support/Code/1.67.2-main.sock
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.2610307.2610313
+# environment
+HOMEBREW_PREFIX = /opt/homebrew
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+HOMEBREW_REPOSITORY = /opt/homebrew
+# environment
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# makefile (from `makefile', line 2)
+OBJDIR = obj
+# environment
+LC_ALL = C
+# makefile (from `makefile', line 17)
+LIBS := -L/opt/homebrew/lib -lomp 
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# makefile (from `makefile', line 18)
+FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude 
+# environment
+MAKELEVEL := 0
+# environment
+LANG = C
+# environment
+VSCODE_PID = 37117
+# makefile (from `makefile', line 38)
+info = "[${vertclair}INFO${neutre}]"
+# variable set hash-table stats:
+# Load=83/1024=8%, Rehash=0, Collisions=14/157=9%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777232, inode 2467153): 17 files, no impossibilities.
+# src (device 16777232, inode 2467215): 24 files, no impossibilities.
+
+# 41 files, no impossibilities in 2 directories.
+
+# Implicit Rules
+
+%.o: %.c
+#  commands to execute (from `makefile', line 102):
+	$(CC) $(FLAGS) -o $@ -c $^
+ 
+	
+
+obj/%.o: src/%.c
+#  commands to execute (from `makefile', line 105):
+	$(CC) $(FLAGS) -o $@ -c $^
+	
+
+# 2 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+# Not a target:
+obj/LabelTable.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+allFigures: CT_NODES CT_THREADS RND RLT NBSEG
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+CT_NODES: crashTest ct_nodesdirs
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 136):
+	@echo ${eval} "Start eval for Ct_nodes"
+	@echo "NB_NODES NB_PL NB_THREADS TIME" > CT_NODES/results.txt
+	@for i in 100 200 300 400 500 600 700 800 900 1000 ; do \git commit -m "fix segfault on gen random"
+	./eval $$i 2 1000 12 >> CT_NODES/results.txt ; \
+	done;
+	@echo ${eval} "Eval for Ct_nodes completed"
+	
+
+crashTest: clean objects eval
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+ct_threadsclean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 161):
+	@rm -rf CT_THREADS
+	@rm -rf eval
+	@rm -rf eval.o
+	
+
+# Not a target:
+obj/SrGraph.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+objects:
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: `'
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := objects
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := 
+# automatic
+# | := 
+# automatic
+# < := 
+# automatic
+# ^ := 
+# automatic
+# ? := 
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/10=10%
+#  commands to execute (from `makefile', line 109):
+	@mkdir -p obj
+	
+
+all: objects best2cop
+#  Command-line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/2=0%
+
+NBSEG: nbsegdirs best2cop
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 211):
+	@echo ${eval} "Start eval for NBSEG"
+	@for i in 5 10 50 100 ; do \
+	echo -e ${eval} "Start eval for $$i"; \
+	./best2cop --file sr_topo21.isp --sr --id --cstr1 $$(($$i * 10)) --accu 0 --all-nodes --DCLC --output NBSEG/res_rand_dclc$$i.txt; \
+	./best2cop --file ${REALISTIC_SPRINT} --topo --labels --cstr1 $$i --all-nodes --DCLC --output NBSEG/res_sprint_dclc$$i.txt; \
+	done;
+	@echo ${eval} "Eval for NBSEG completed"
+	
+
+CT_THREADS: crashTest ct_threadsdirs
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 153):
+	@echo ${eval} "Start eval for Ct_threads"
+	@echo "NB_NODES NB_PL NB_THREADS TIME" > CT_THREADS/results.txt
+	@for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 ; do \
+	./eval 1000 2 1000 $$i >> CT_THREADS/results.txt ; \
+	done;
+	@echo ${eval} "Eval for Ct_threads completed"
+	
+
+# Not a target:
+BinHeap.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+obj/Llist.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+rndclean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 187):
+	@rm -rf RND
+	@rm -rf randomTopo
+	@rm -rf randomTopo.o
+	
+
+# Not a target:
+obj/ParetoFront.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+obj/ScopeStack.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+unitBinHeap: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o BinHeap.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 76):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Test unit bin heap succesfully compiled"
+	
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+RLT: best2cop rltdirs
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 195):
+	@echo ${eval} "Start eval for RLT"
+	@./best2cop --file topos/${WORST_SPRINT} --topo --labels --all-nodes --output RLT/worst_sprint_res.txt --threads 12
+	#@./best2cop --file topos/${FRANCOIS} --topo --labels --all-nodes --output --threads 12 RLT/topo_francois_res.txt
+	@./best2cop --file topos/${GBLX} --topo --labels --all-nodes --output RLT/gblx_res.txt --threads 12
+	@echo ${eval} "Eval for RLT completed"
+	
+
+ 
+rltclean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 202):
+	@rm -rf RLT
+	@rm -rf best2cop
+	@rm -rf main.o
+	
+
+rnddirsGen:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 173):
+	@for i in 100 500 1000 ; do \
+	for j in $$(seq 1 10) ; do \
+	mkdir -p RND/resultsSpread$$i/topo$$(($$j * 100)) ; \
+	done; \
+	done;
+	
+
+RND: rnddirs randomTopo
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 180):
+	@echo ${eval} "Start eval for RND"
+	@./randomTopo 100
+	@./randomTopo 500
+	@./randomTopo 1000
+	@echo ${eval} "Eval for RND completed"
+	
+
+# Not a target:
+obj/Best2cop.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-29 15:03:52
+#  File has been updated.
+#  Successfully updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+obj/Option.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+worstSprint.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+worstSprint: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o worstSprint.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 64):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)	
+	@echo ${info} "Worst sprint succesfully compiled"
+	
+
+ct_nodesdirs:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 133):
+	@mkdir -p CT_NODES
+	
+
+# Not a target:
+obj/Extendable.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+nbsegdirs:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 208):
+	@mkdir -p NBSEG
+	
+
+FOR_FRANCOIS: best2cop nbsegdirs scriptCstr rltdirs
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 220):
+	@echo ${eval} "Start eval for FRANCOIS"
+	@./best2cop --file topos/${FRANCOIS} --topo --labels --all-nodes --output RLT/topo_francois_res.txt --threads 12
+	@./scriptCstr topos/${FRANCOIS} NBSEG/topo_francois_res.txt
+	@echo ${eval} "Eval for FRANCOIS completed"
+	
+
+# Not a target:
+genTopoNonAlign.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+obj/IntList.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+testCart: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o test_prod_cart.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 56):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "testCart succesfully compiled"
+	
+
+# Not a target:
+obj/Compact.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+obj/my_printf.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+worstRandom: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o worstRandom.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 80):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Worst random succesfully compiled"
+	
+
+# Not a target:
+worstRandom.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+test_prod_cart.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+unitFlex.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+unitFlex: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o unitFlex.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 72):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Test unit flex succesfully compiled"
+	
+
+genRandom: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o genTopoNonAlign.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 68):
+ 
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Worst sprint succesfully compiled"
+	
+
+# Not a target:
+obj/Dict.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+obj/Zipf.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+eval: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o eval.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 94):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Crash test succesfully compiled"
+	
+
+# Not a target:
+eval.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 112):
+	@rm -rf obj/*.o
+	@rm -rf best2cop
+	@rm -rf main.o
+	@rm -rf eval
+	@rm -rf eval.o
+	@rm -rf gmon.out
+	@rm -rf profiler.txt
+	@rm -rf unitFlex
+	@rm -rf unitFlex.o
+	@rm -rf unitBinHeap
+	@rm -rf scriptCstr
+	@rm -rf worstRandom.o
+	@rm -rf worstRandom
+	@rm -rf worstSprint.o
+	@rm -rf worstSprint
+	@rm -rf test_prod_cart.o
+	@rm -rf testCart
+	@echo ${info} "Main program clean succesfully done"
+	
+
+randomSpread: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o randomSpread.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 88):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "randomSpread succesfully compiled"
+	
+
+rnddirs:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 166):
+	@for i in 100 500 1000 ; do \
+	for j in $$(seq 1 10) ; do \
+	mkdir -p RND/resultsSpread$$i/resultsTime$$(($$j * 100)) ; \
+	done; \
+	done;
+	
+
+# Not a target:
+randomSpread.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+ct_threadsdirs:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 150):
+	@mkdir -p CT_THREADS
+	
+
+# Not a target:
+obj/Pfront.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+best2cop: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o main.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 98):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Best2cop succesfully compiled"
+	
+
+cleanFigures: ct_nodesclean ct_threadsclean rndclean rltclean nbsegclean
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+obj/CrashTest.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+obj/Topology.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+obj/BinHeap.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+ct_nodesclean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 144):
+	@rm -rf CT_NODES
+	@rm -rf eval
+	@rm -rf eval.o
+	
+
+# Not a target:
+obj/Edge.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+main.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+randomTopo: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o randomTopo.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 84):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "randomTopo succesfully compiled"
+	
+
+# Not a target:
+obj/Segment_list.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+nbsegclean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 226):
+	@rm -rf NBSEG
+	@rm -rf main.o
+	@rm -rf best2cop
+	
+
+# Not a target:
+obj/Latrix.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+rltdirs:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 192):
+	@mkdir -p RLT
+	
+
+# Not a target:
+scriptCstr.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+scriptCstr: obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o scriptCstr.o
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  commands to execute (from `makefile', line 60):
+	$(CC) $(FLAGS) -o $@ $^ $(LIBS)
+	@echo ${info} "Constraint script succesfully compiled"
+	
+
+# Not a target:
+randomTopo.o:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# files hash-table stats:
+# Load=68/1024=7%, Rehash=0, Collisions=28/342=8%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 1
+# # of strcache buffers: 1
+# strcache size: total = 4096 / max = 4096 / min = 4096 / avg = 4096
+# strcache free: total = 4087 / max = 4087 / min = 4087 / avg = 4087
+
+# Finished Make data base on Mon Jun  6 10:37:00 2022
+
+ 

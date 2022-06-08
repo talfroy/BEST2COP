@@ -3,14 +3,16 @@
 
 
 
-Extendable_t* Extendable_new(my_m1 m1, my_m2 m2, Extendable_t* next)
+Extendable_t* Extendable_new(my_m0 m0, my_m1 m1, my_m2 m2, int curDag, int lastSegment, Extendable_t* next)
 {
-    Extendable_t* new = calloc(1,sizeof(Extendable_t));
-
+    Extendable_t* new = malloc(sizeof(Extendable_t));
+    // printf("in Extendable new: %d, %d, %d, %d\n", m0, m1, m2, curDag);
     ASSERT(new, NULL, 1);
-
+    new->infos.m0 = m0;
     new->infos.m1 = m1;
     new->infos.m2 = m2;
+    new->infos.lastSegment = lastSegment;
+    new->infos.currDag = curDag;
     new->next = next;
     return new;
 }
@@ -54,9 +56,11 @@ bool Extendable_is_empty(Extendable_t** ext, int nbNode)
 Extendable_t* Extendable_copy(Extendable_t* ext)
 {
     Extendable_t* newExt = NULL;
+
     for (Extendable_t* tmp = ext ; tmp != NULL ; tmp = tmp->next) {
-        newExt = Extendable_new(tmp->infos.m1, tmp->infos.m2, newExt);
+        newExt = Extendable_new(tmp->infos.m0, tmp->infos.m1, tmp->infos.m2, tmp->infos.currDag, tmp->infos.lastSegment, newExt);
     }
+
     return newExt;
 }
 

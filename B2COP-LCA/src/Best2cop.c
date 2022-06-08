@@ -8,7 +8,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, Topology_t* graph, SrGraph_t* sr,
     //Start of init
     // printf("T\n");
 
-    UNUSED(pfront);
     int maxIter = graph->nbNode-1;
     my_m2* minIgp = malloc(graph->nbNode * sizeof(my_m2));
 
@@ -20,17 +19,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, Topology_t* graph, SrGraph_t* sr,
 
     (*pfront) = malloc((maxIter + 1) * sizeof(Pfront_t*));
     ASSERT(pfront, -1, (maxIter + 1));
-
-    // for (int i = 0 ; i <= maxIter ; i++) {
-    //     (*pfront)[i] = malloc(graph->nbNode * sizeof(Pfront_t));
-    //     ASSERT((*pfront)[i], -1, graph->nbNode);
-
-    //     for (int j = 0 ; j < graph->nbNode ; j++) {
-    //         Pfront_init(&(*pfront)[i][j], dictSize);
-    //     }
-    // }
-
-    // Pfront_insert_key(&(*pfront)[0][src], 0);
 
     Dict_t* dist = malloc(graph->nbNode * sizeof(Dict_t));
     ASSERT(dist, -1, graph->nbNode);
@@ -278,13 +266,13 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
         for (my_m1 j = 0 ; j < dist_v->max_m1 ; j++) {
             if (dist_v->paths[i][j].m2 < last_d2) {
                 last_d2 = dist_v->paths[i][j].m2;
+
                 if (i < dist_v->max_m0 - 1 && dist_v->paths[i+1][j].m2 <= dist_v->paths[i][j].m2) {
                     dist_v->paths[i+1][j] = dist_v->paths[i][j];
                 }
                
-                
-                Pfront_insert_key(&(*pfront)[iter][dst], i,j);
                 if (pf_cand->paths[i][j].m2 != INF) {
+                    Pfront_insert_key(&(*pfront)[iter][dst], i,j);
                     Dict_add(pf, i,j, dist_v->paths[i][j].m2, dist_v->paths[i][j].currDag, dist_v->paths[i][j].lastSegment, 0);
                     pf->nb_add++;
                     (*nextextendable) = Extendable_new(i, j, pf_cand->paths[i][j].m2,dist_v->paths[i][j].currDag, dist_v->paths[i][j].lastSegment ,(*nextextendable));

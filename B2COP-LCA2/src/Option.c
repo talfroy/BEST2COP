@@ -33,11 +33,14 @@ int Option_command_parser(int argc, char **argv)
         {"src-lab", required_argument, NULL, 'B'},
         {"quentin", no_argument, NULL, 'Q'},
         {"bascule", required_argument, NULL, 'g'},
+        {"sr-conv", required_argument, NULL, 'C'},
+        {"sr-bin-conv", required_argument, NULL, 'D'},
         {0, 0, 0, 0}};
 
     opt.output = NULL;
     opt.bascule = 0;
     opt.saveSrGraphBin = NULL;
+    opt.srConv = NULL;
     opt.biDir = UNI_DIRECTIANNAL;
     opt.filename = NULL;
     opt.cstr1 = 100;
@@ -56,6 +59,7 @@ int Option_command_parser(int argc, char **argv)
     opt.nb_areas = 0;
     opt.src_lab = NULL;
     opt.resFile = NULL;
+    opt.srBinConv = NULL;
 
     while ((optValue = getopt_long(argc, argv, optString, long_options, NULL)) != -1)
     {
@@ -113,11 +117,20 @@ int Option_command_parser(int argc, char **argv)
             //activate the interactive mode
             opt.interface = 1;
             break;
+        
+        case 'C':
+            opt.srConv = optarg;
+            break;
+
+        case 'D':
+            opt.srBinConv = optarg;
+            break;
 
         case 'c':
             //set the source node
             opt.src = atoi(optarg);
             break;
+
 
         case 't':
             //we are going to load a topology

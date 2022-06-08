@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../B2COP-LCA"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"labeltable.h": "c"
+		}
+	}
+}

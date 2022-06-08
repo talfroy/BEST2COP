@@ -7,7 +7,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
 {
 
     //Start of init
-
     // No SR : V-1 iteration at most
     int maxIter = graph->nbNode - 1;
     my_m2* minIgp = malloc(graph->nbNode * sizeof(my_m2));
@@ -99,7 +98,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     bool to_extend = true;
 
     while (to_extend && nbIter <= maxIter) {
-       // #pragma omp parallel for
+       	#pragma omp parallel for schedule(dynamic)
         for (int idst = 0 ; idst < active_nodes_nb ; idst++) {
             int dst = active_nodes[idst];
 

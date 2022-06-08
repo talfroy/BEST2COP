@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../B2COP-LCA"
+		},
+		{
+			"path": "../../B2COP-LCA2"
+		},
+		{
+			"path": "../../../mysamcra/SAMCRA-LCA"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"labeltable.h": "c",
+			"__locale": "c"
+		}
+	}
+}

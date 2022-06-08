@@ -4,28 +4,23 @@
 
 void Dict_init(Dict_t* dic, int size, int msd)
 {
-    dic->paths = calloc(msd, sizeof(int**));
-    ASSERT(dic->paths, , msd);
 
-    dic->preds = calloc(msd, sizeof(short*));
-    ASSERT(dic->preds, , msd);
-    
-    
-    for (int i = 0 ; i < msd ; i++) {
-        dic->paths[i] = calloc(size, sizeof(int*));
+    dic->paths = calloc(msd, sizeof(Path*));
+    for (int i = 0 ; i < msd; i++) {
+        dic->paths[i] = calloc(size, sizeof(Path));
     }
 
     for (int i = 0 ; i < msd ; i++) {
         for (int j = 0 ; j < size ; j++) {
-            dic->paths[i][j].m2
+            dic->paths[i][j].m2 = INF;
         }
     }
 
+    dic->preds = calloc(msd, sizeof(short*));
+     for (int i = 0 ; i < msd; i++) {
+        dic->preds[i] = calloc(size, sizeof(short));
+    }
 
- 
-    
-
-    
     dic->max_m1 = size;
     dic->max_m0 = msd;
     dic->nb_add = 0;
@@ -47,14 +42,14 @@ void Dict_add(Dict_t* dic, my_m0 key_seg, my_m1 key_cost, my_m2 value, int currD
 
 void Dict_print(Dict_t* dic)
 {
-   (void) dic;
+    UNUSED(dic);
     // printf("Dict : ");
     // for (my_m1 i = 0 ; i < MAX_SIZE ; i++) {
-    //     if (dic->paths[i][j].m2 != INF) {
+    //     if (dic->paths[i] != INF) {
     //         printf("(%d ; %d) ", i, dic->paths[i]);
     //     }
     // }
-    printf("\n\n\n");
+    // printf("\n\n\n");
 }
 
 

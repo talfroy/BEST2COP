@@ -46,12 +46,12 @@ int main(int argc, char **argv)
         omp_set_num_threads(1);
     }
 
-    Topology_t *topo = NULL;
-    Topology_t **areas = NULL;
     SrGraph_t *sr = NULL;
-    SrGraph_t **sr_areas = NULL;
+    SrGraph_t *sr_conv = NULL;
+    Topology_t *topo = NULL;
     FILE *output = stdout;
     FILE *resFile = NULL;
+
     if (opt.resFile)
     {
         resFile = fopen(opt.resFile, "w");
@@ -67,88 +67,7 @@ int main(int argc, char **argv)
     LabelTable_t labels;
     LabelTable_init(&labels);
 
-    // if (opt.loadingMode == LOAD_TOPO)
-    // {
-    //     if (opt.labelsOrId == LOAD_LABELS)
-    //         topo = Topology_load_from_file_labels(opt.filename, opt.accuracy, opt.biDir);
-    //     else
-    //         topo = Topology_load_from_file_ids(opt.filename, opt.accuracy, opt.biDir);
-
-    //     if (topo == NULL)
-    //     {
-    //         ERROR("Topology can't be load\n");
-    //         return EXIT_FAILURE;
-    //     }
-
-    //     INFO("Topology succesfully loaded\n");
-
-    //     gettimeofday(&start, NULL);
-    //     if (opt.flex)
-    //     {
-    //         sr = SrGraph_create_flex_algo(topo);
-    //     }
-    //     else
-    //     {
-    //         sr = SrGraph_create_from_topology_best_m2(topo);
-    //     }
-    //     gettimeofday(&stop, NULL);
-
-    //     if (sr == NULL)
-    //     {
-    //         ERROR("The Segment Routing Graph can't be computed\n");
-    //         Topology_free(topo);
-    //         return EXIT_FAILURE;
-    //     }
-
-    //     INFO("Segment Routing Graph succesfully computed\n");
-    //     INFO("Tranformation takes %ld us\n", (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec);
-    // }
-    // else if (opt.loadingMode == LOAD_SR)
-    // {
-    if (opt.loadingMode == LOAD_SR)
-    {
-        if (opt.labelsOrId == LOAD_IDS)
-        {
-            sr = SrGraph_load_with_id(opt.filename, MAX_SR_GRAPH_SIZE, opt.accuracy, opt.biDir);
-
-            if (sr == NULL)
-            {
-                ERROR("The Segment Routing Graph can't be loaded\n");
-                return EXIT_FAILURE;
-            }
-
-            INFO("Segment Routing Graph succesfully loaded\n");
-        }
-        else if (opt.labelsOrId == LOAD_LABELS)
-        {
-            sr = SrGraph_load_with_label(opt.filename, opt.accuracy, opt.biDir, &labels);
-
-            if (sr == NULL)
-            {
-                ERROR("The Segment Routing Graph can't be loaded\n");
-                return EXIT_FAILURE;
-            }
-
-            INFO("Segment Routing Graph succesfully loaded\n");
-        }
-    }
-    else if (opt.loadingMode == LOAD_SR_BIN)
-    {
-        sr = SrGraph_load_bin(opt.filename);
-        if (sr == NULL)
-        {
-            ERROR("The Segment Routing Graph can't be loaded\n");
-            return EXIT_FAILURE;
-        }
-        INFO("Segment Routing Graph succesfully loaded\n");
-    }
-    else
-    {
-        ERROR("Please choose an available loading mode\n");
-    }
-
-
-    if(opt.output)
+     if (opt.output != NULL)
     {
         output = fopen(opt.output, "w");
         if (output == NULL)
@@ -161,16 +80,41 @@ int main(int argc, char **argv)
         }
     }
 
-    if (opt.saveSrGraphBin != NULL)
+    if (opt.labelsOrId == LOAD_LABELS)
     {
-        SrGraph_save_bin(sr, opt.saveSrGraphBin);
+        sr = SrGraph_load_with_label(opt.filename, opt.accuracy, opt.biDir, &labels);
+        if (opt.srConv)
+        {
+            if (opt.srBinConv)
+                sr_conv = SrGraph_load_bin(opt.srConv);
+            else
+                sr_conv = SrGraph_load_with_label(opt.filename, opt.accuracy, opt.biDir, &labels);
+        }
+        else
+        {
+            topo = Topology_load_from_file_labels(opt.filename, opt.accuracy, opt.biDir, &labels);
+            sr_conv = SrGraph_create_from_topology_best_m2(topo);
+        }
     }
 
-    my_m1 maxSpread = 100;
-    if (!opt.nb_areas)
+    else
     {
-        maxSpread = SrGraph_get_max_spread(sr);
+        topo = Topology_load_from_file_ids(opt.filename, opt.accuracy, opt.biDir);
+        sr = SrGraph_load_with_id(opt.filename, topo->nbNode, opt.accuracy, opt.biDir);
+        if (opt.srConv)
+        {
+            if (opt.srBinConv)
+                sr_conv = SrGraph_load_bin(opt.srConv);
+            else
+                sr_conv = SrGraph_load_with_id(opt.filename, topo->nbNode, opt.accuracy, opt.biDir);
+        }
+        else
+        {
+            sr_conv = SrGraph_create_from_topology_best_m2(topo);
+        }
     }
+
+    my_m1 maxSpread = SrGraph_get_max_spread(sr);
 
     if (maxSpread == -1)
     {
@@ -183,6 +127,10 @@ int main(int argc, char **argv)
     maxSpread *= SEG_MAX;
     opt.cstr1 *= my_pow(10, opt.accuracy);
     my_m1 max_dict_size = MIN(maxSpread, opt.cstr1);
+    if (opt.saveSrGraphBin != NULL)
+    {
+        SrGraph_save_bin(sr_conv, opt.saveSrGraphBin);
+    }
 
     if (max_dict_size >= DICT_LIMIT)
     {
@@ -191,11 +139,12 @@ int main(int argc, char **argv)
     }
     Dict_t **pf = NULL;
     Pfront_t **pfront = NULL;
-   // int maxIter = 0;
+
     if (opt.allNodes)
     {
         opt.allNodes = MIN(opt.allNodes, sr->nbNode);
     } 
+
     if (opt.allNodes && !opt.nb_areas)
     {
         long int *times = malloc(opt.allNodes * sizeof(long int));
@@ -203,20 +152,6 @@ int main(int argc, char **argv)
         int *iterMax = calloc(opt.allNodes, sizeof(int));
         int **isFeasible = malloc(opt.allNodes * sizeof(int *));
         
-        // Best2cop(&pfront, &pf, sr, 0, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, NULL, opt.bascule);
-        // for (int j = 0; j <= 10; j++)
-        // {
-        //     for (int k = 0; k < sr->nbNode; k++)
-        //     {
-        //         Pfront_free(&pfront[j][k]);
-        //         Dict_free(&pf[j][k]);
-        //     }
-        //     free(pfront[j]);
-        //     free(pf[j]);
-        // }
-
-        // free(pfront);
-        // free(pf);
 
         for (int i = 0; i < opt.allNodes; i++)
         {
@@ -227,7 +162,7 @@ int main(int argc, char **argv)
             pfront = NULL;
             int iteri = 0;
             gettimeofday(&start, NULL);
-            iteri = Best2cop(&pfront, &pf, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i], opt.bascule);
+            iteri = Best2cop(&pfront, &pf, sr, sr_conv, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i], opt.bascule);
 
             gettimeofday(&stop, NULL);
             iterMax[i] = MAX(iteri, iterMax[i]);
@@ -243,7 +178,7 @@ int main(int argc, char **argv)
             {
                 for (int k = 0; k < sr->nbNode; k++)
                 {
-                    Pfront_free(&pfront[j][k]);
+                    Pfront_free(&pfront[j][k], SEG_MAX);
                     Dict_free(&pf[j][k]);
                 }
                 free(pfront[j]);
@@ -269,19 +204,19 @@ int main(int argc, char **argv)
     {
         if (opt.src == -1)
         {
-            opt.src = LabelTable_get_id(topo->labels, opt.src_lab);
+            opt.src = LabelTable_get_id(&labels, opt.src_lab);
         }
         pf = NULL;
         pfront = NULL;
         int *itersSolo = malloc(sr->nbNode * sizeof(int));
-        Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule);
+        Best2cop(&pfront, &pf, sr, sr_conv, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule);
         pf = NULL;
         pfront = NULL;
 
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
         gettimeofday(&start, NULL);
 
-        int iter = Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo, opt.bascule);
+        int iter = Best2cop(&pfront, &pf, sr, sr_conv, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo, opt.bascule);
 
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
@@ -301,12 +236,12 @@ int main(int argc, char **argv)
 
         // TO PRINT RESULTS
        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-      //  main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, NULL);
+       main_display_distances(output, pf, iter, sr->nbNode, opt.src,topo, NULL);
         for (int j = 0; j < iter; j++)
         {
             for (int k = 0; k < sr->nbNode; k++)
             {
-                Pfront_free(&pfront[j][k]);
+                Pfront_free(&pfront[j][k], SEG_MAX);
                 Dict_free(&pf[j][k]);
             }
             free(pfront[j]);
@@ -338,13 +273,8 @@ int main(int argc, char **argv)
 
     if (!opt.nb_areas)
     {
-        Topology_free(topo);
         SrGraph_free(sr);
-    }
-    else
-    {
-        free(areas);
-        free(sr_areas);
+        SrGraph_free(sr_conv);
     }
     if (resFile)
     {
@@ -353,26 +283,6 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void Main_display_results(FILE *output, Dict_t **dist, int nbNodes, __attribute__((unused)) Pfront_t **heap, int iter)
-{
-    for (int i = 0; i < nbNodes; i++)
-    {
-        for (int k = 0; k < iter; k++)
-        {
-            // for (ParetoFront_t* tmp = dist[k][i] ; tmp != NULL ; tmp = tmp->next) {
-            //     fprintf(output, "%d %d %d %d\n", i, tmp->m1, tmp->m2, k);
-            // }
-
-            for (int j = 0; j < dist[k][i].size; j++)
-            {
-                if (dist[k][i].paths[j] != INF)
-                {
-                    fprintf(output, "%d %d %d %d\n", i, j, dist[k][i].paths[j], k);
-                }
-            }
-        }
-    }
-}
 
 void Main_display_all_paths(FILE *output, ParetoFront_t ***dist, int nbNodes, int iter)
 {
@@ -446,24 +356,28 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
     UNUSED(sl);
     UNUSED(topo);
     UNUSED(src);
-    for (int i = 0; i < iter; i++)
-    {
+    UNUSED(iter);
+    for (int i=0; i<2; i++){
         for (int j = 0; j < nbNodes; j++)
         {
-            for (int k = 0; k < dist[i][j].size; k++)
+            for (int k = 0; k < dist[i]->max_m0 ; k++)
             {
-                if (dist[i][j].paths[k] != INF)
+                for (int l = 0; l < dist[i]->max_m1 ; l++)
                 {
-                    //fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
-                    //LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
-                    //segment_list_invert(&sl[i][j][k]);
-                    //Segment_list_print(out, &sl[i][j][k], topo, NULL);
-                    //Segment_list_print_id(out, &sl[i][j][k]);
-                    //fprintf(out, "\n");
-                    //fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
-                    fprintf(out, "%d %d %d\n", j, k, dist[i][j].paths[k]);
+                    if (dist[i][j].paths[k][l].m2 != INF)
+                    {
+                        //fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
+                        //LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
+                        //segment_list_invert(&sl[i][j][k]);
+                        //Segment_list_print(out, &sl[i][j][k], topo, NULL);
+                        //Segment_list_print_id(out, &sl[i][j][k]);
+                        //fprintf(out, "\n");
+                        //fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
+                        fprintf(out, "%d %d %d %d\n", j, l, dist[i][j].paths[k][l].m2, k);
+                    }
                 }
             }
-        }
-    }
+        } 
+    }              
 }
+
