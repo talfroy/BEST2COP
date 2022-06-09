@@ -31,6 +31,7 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
 int main(int argc, char **argv)
 {
 
+
     if (Option_command_parser(argc, argv) == -1)
     {
         usage(argv[0]);
@@ -209,7 +210,7 @@ int main(int argc, char **argv)
         pf = NULL;
         pfront = NULL;
         int *itersSolo = malloc(sr->nbNode * sizeof(int));
-        Best2cop(&pfront, &pf, sr, sr_conv, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule);
+        // Best2cop(&pfront, &pf, sr, sr_conv, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule);
         pf = NULL;
         pfront = NULL;
 

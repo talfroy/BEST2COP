@@ -67,7 +67,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
         succs = succs->next;
     }
 
-
     Extendable_t** nextextendable = malloc(graph->nbNode * sizeof(Extendable_t*));
     ASSERT(nextextendable, -1, graph->nbNode);
 
@@ -105,6 +104,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
             if (dst == src) {
                 continue;
             }
+            
             Dict_t pf_cand;
             Dict_init(&pf_cand, dictSize, SEG_MAX);
             Pfront_t pfcandlist;
@@ -122,6 +122,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
             Pfront_free(&pfcandlist, SEG_MAX);
         }
 
+        
         for (int j = 0; j < graph->nbNode; j++) {
             Extendable_list_free(extendable[j]);
             extendable[j] = NULL;
@@ -130,35 +131,38 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
 
         // path were extended by/ƒmaxiƒto i, must be extended by/to succs of i next time
         to_extend = false;
-        active_nodes_nb = 0;
-
+        int next_active_nodes_nb = 0;
         IntList_t* succs;
-        for (int i = 0 ; i < graph->nbNode ; i++) {
-            if (nextextendable[i] != NULL) {
-                succs = graph->nonEmptySlots[i];
-                while(succs != NULL)
+        printf("%d\n", active_nodes_nb);
+        for (int i = 0 ; i < active_nodes_nb ; i++) {
+            int node = active_nodes[i];
+            printf("%d\n", node);
+            succs = graph->nonEmptySlots[node];
+            while(succs != NULL)
+            {
+                // printf("Path from %d can be extended to %d\n", i, succs->value);
+                int succ = succs->value;
+                if (succ == node)
                 {
-                    // printf("Path from %d can be extended to %d\n", i, succs->value);
-                    int succ = succs->value;
-                    if (succ == i)
-                    {
-                        continue;
-                    }
-                    if (extendable[succ] == NULL) {
-                        to_extend = true;
-                        extendable[succ] = Extendable_list_new(NULL, i, Extendable_copy(nextextendable[i]));
-                        active_nodes[active_nodes_nb] = succ;
-                        active_nodes_nb++;
-
-                    } else {
-                        extendable[succ] = Extendable_list_new(extendable[succ], i, Extendable_copy(nextextendable[i]));   
-                    }
-                    succs = succs->next;
+                    continue;
                 }
-               Extendable_free(nextextendable[i]);
-               nextextendable[i]=NULL;
+                if (extendable[succ] == NULL) {
+                    to_extend = true;
+                    extendable[succ] = Extendable_list_new(NULL, node, Extendable_copy(nextextendable[node]));
+                    active_nodes[active_nodes_nb] = succ;
+                    next_active_nodes_nb++;
+
+                } else {
+                    extendable[succ] = Extendable_list_new(extendable[succ], node, Extendable_copy(nextextendable[node]));   
+                }
+                succs = succs->next;
             }
         } 
+        active_nodes_nb = next_active_nodes_nb;
+        for (int i = 0 ; i < graph->nbNode ; i++) {
+            Extendable_free(nextextendable[i]);
+            nextextendable[i] = NULL;
+        }
         nbIter++;
     }
     
@@ -171,7 +175,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
     free(dist);
     free(nextextendable);
     free(minIgp);
-    printf("%d\n",nbIter);
     return 2;
 }
 
