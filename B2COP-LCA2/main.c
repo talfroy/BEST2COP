@@ -162,12 +162,14 @@ int main(int argc, char **argv)
             pf = NULL;
             pfront = NULL;
             int iteri = 0;
+            int init_time = 0;
             gettimeofday(&start, NULL);
-            iteri = Best2cop(&pfront, &pf, sr, sr_conv, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i], opt.bascule);
+            iteri = Best2cop(&pfront, &pf, sr, sr_conv, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i], opt.bascule, &init_time);
 
             gettimeofday(&stop, NULL);
             iterMax[i] = MAX(iteri, iterMax[i]);
             times[i] = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+            times[i] -= init_time;
             //RESULTS("Iter max : %d\n", iterMax[i]);
             // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iterMax[i], i);
             if (resFile)
@@ -210,17 +212,20 @@ int main(int argc, char **argv)
         pf = NULL;
         pfront = NULL;
         int *itersSolo = malloc(sr->nbNode * sizeof(int));
-        // Best2cop(&pfront, &pf, sr, sr_conv, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule);
+        // int test = 0;
+        // Best2cop(&pfront, &pf, sr, sr_conv, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule, &test);
         pf = NULL;
         pfront = NULL;
 
         //printf("params\nsrc = %d\ncstr1 = %d\ncstr2 = %d\ndict size = %d\nmaxSpread = %d\n", opt.src, opt.cstr1, opt.cstr2, max_dict_size, maxSpread);
+        int init_time = 0;
         gettimeofday(&start, NULL);
 
-        int iter = Best2cop(&pfront, &pf, sr, sr_conv, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo, opt.bascule);
+        int iter = Best2cop(&pfront, &pf, sr, sr_conv, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, &itersSolo, opt.bascule, &init_time);
 
         gettimeofday(&stop, NULL);
         long int time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+        time -= init_time;
         if (resFile)
             main_display_distances(resFile, pf, iter, sr->nbNode, opt.src, topo, NULL);
 

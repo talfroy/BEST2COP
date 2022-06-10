@@ -3,10 +3,11 @@
 
 
 int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_conv, int src, my_m1 cstrM1, 
-            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule)
+            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule, int* init_time)
 {
     (void) bascule;
-
+    struct timeval start, stop;
+    gettimeofday(&start, NULL);
     //Start of init
     // No SR : V-1 iteration at most
     int maxIter = graph->nbNode - 1;
@@ -50,18 +51,22 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
     int active_nodes[graph->nbNode];
     int active_nodes_nb = 0;
     // We only try to extend to v if the link u->v exists
+    // All the successors of u will need to extend the (0,0) path
     while(succs != NULL)
     {
         int succ = succs->value;
         if (succ == src)
         {
+            succs = succs->next;
             continue;
         }
+        // Create a new extendable list for succ if new
         if (extendable[succ] == NULL) {
             extendable[succ] = Extendable_list_new(NULL, src, NULL);   
             active_nodes[active_nodes_nb] = succ;
             active_nodes_nb++;
         }
+        // add the (0,0) path to the extendable list
         extendable[succ]->ext = Extendable_new(0, 0, 0, src, NODE_SEGMENT, extendable[succ]->ext);
      
         succs = succs->next;
@@ -96,8 +101,12 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
         (*iters)[src] = 0;
     }
     bool to_extend = true;
+    gettimeofday(&stop, NULL);
+    *init_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+
     while (to_extend && nbIter <= maxIter) {
        	#pragma omp parallel for schedule(dynamic)
+        // go through all active nodes (that have to extend something)
         for (int idst = 0 ; idst < active_nodes_nb ; idst++) {
             int dst = active_nodes[idst];
 
@@ -112,6 +121,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
             int t = 0;
             my_m1 imax = 0;
 
+            // extend the paths
             Best2cop_extend_path(dst, extendable[dst], &pf_cand, &pfcandlist, dist + dst, graph, sr_conv, &t, &imax, cstrM1, cstrM2);
 
             nextextendable[dst] = NULL;
@@ -129,31 +139,32 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
         }
 
 
-        // path were extended by/ƒmaxiƒto i, must be extended by/to succs of i next time
+
         to_extend = false;
         int next_active_nodes_nb = 0;
         int next_active_nodes[graph->nbNode];
         IntList_t* succs;
-        // printf("AN:%d\n", active_nodes_nb);
+
+        // Go through all active nodes that have have extended an ND paths to them
         for (int i = 0 ; i < active_nodes_nb ; i++) {
             if (nextextendable[active_nodes[i]] == NULL) {
                 continue;
             }
+
+            // go through the succ of the active node
             int node = active_nodes[i];
             succs = graph->nonEmptySlots[node];
             while(succs != NULL)
             {
-                // printf("Path from %d can be extended to %d\n", i, succs->value);
                 int succ = succs->value;
                 if (succ == node)
                 {
                     succs = succs->next;
                     continue;
                 }
-                // printf("NODE %d %d)\n", i, node);
 
+                // if new, create an extendable list for succ
                 if (extendable[succ] == NULL) {
-                    // printf("New node %d\n", succ);
                     to_extend = true;
                     extendable[succ] = Extendable_list_new(NULL, node, Extendable_copy(nextextendable[node]));
                     next_active_nodes[next_active_nodes_nb] = succ;
@@ -178,6 +189,8 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
         nbIter++;
     }
     
+    gettimeofday(&start, NULL);
+
 
     for (int j = 0 ; j < graph->nbNode ; j++) {
         Dict_free(&dist[j]);
@@ -187,6 +200,9 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
     free(dist);
     free(nextextendable);
     free(minIgp);
+    gettimeofday(&stop, NULL);
+    *init_time += (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
+
     return 2;
 }
 
