@@ -42,38 +42,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
     Pfront_insert_key(&(*pfront)[0][src], 0, 0);
     Dict_add( &dist[src],0, 0, 0, src, NODE_SEGMENT, 0);
 
-    // Create extendable of first distance
-    Extendable_list_t** extendable = calloc(graph->nbNode, sizeof(Extendable_list_t*));
-
-    ASSERT(extendable, -1, graph->nbNode);
-    IntList_t* succs = graph->nonEmptySlots[src];
-    int active_nodes[graph->nbNode];
-    int active_nodes_nb = 0;
-    // We only try to extend to v if the link u->v exists
-    while(succs != NULL)
-    {
-        int succ = succs->value;
-        if (succ == src)
-        {
-            continue;
-        }
-        if (extendable[succ] == NULL) {
-            extendable[succ] = Extendable_list_new(NULL, src, NULL);   
-            active_nodes[active_nodes_nb] = succ;
-            active_nodes_nb++;
-        }
-        extendable[succ]->ext = Extendable_new(0, 0, 0, src, NODE_SEGMENT, extendable[succ]->ext);
-     
-        succs = succs->next;
-    }
-
-    Extendable_t** nextextendable = malloc(graph->nbNode * sizeof(Extendable_t*));
-    ASSERT(nextextendable, -1, graph->nbNode);
-
-    for (int i = 0 ; i < graph->nbNode ; i++) {
-        nextextendable[i] = NULL;
-    }
-
 
     (*pf) = malloc((2) * sizeof(Dict_t*));
     ASSERT((*pf), -1, (2));
@@ -87,6 +55,17 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
     }
 
     Dict_add(&(*pf)[0][src], 0, 0, 0, src, NODE_SEGMENT, 0);
+    Extendable_list_t* extendable = NULL;
+
+    extendable = Extendable_list_new(NULL, src, NULL);
+    extendable->ext = Extendable_new(0, 0, 0, src, NODE_SEGMENT, NULL);
+
+    Extendable_t** nextextendable = malloc(graph->nbNode * sizeof(Extendable_t*));
+    ASSERT(nextextendable, -1, graph->nbNode);
+
+    for (int i = 0 ; i < graph->nbNode ; i++) {
+        nextextendable[i] = NULL;
+    }
 
     if (iters != NULL) {
         for (int i = 0 ; i < graph->nbNode ; i++) {
@@ -96,10 +75,13 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
         (*iters)[src] = 0;
     }
     bool to_extend = true;
-    while (to_extend && nbIter <= maxIter) {
+
+
+
+
+    while (extendable != NULL && nbIter <= maxIter) {
        	#pragma omp parallel for schedule(dynamic)
-        for (int idst = 0 ; idst < active_nodes_nb ; idst++) {
-            int dst = active_nodes[idst];
+        for (int dst = 0 ; dst < graph->nbNode ; dst++) {
 
             if (dst == src) {
                 continue;
@@ -112,7 +94,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
             int t = 0;
             my_m1 imax = 0;
 
-            Best2cop_extend_path(dst, extendable[dst], &pf_cand, &pfcandlist, dist + dst, graph, sr_conv, &t, &imax, cstrM1, cstrM2);
+            Best2cop_extend_path(dst, extendable, &pf_cand, &pfcandlist, dist + dst, graph, sr_conv, &t, &imax, cstrM1, cstrM2);
 
             nextextendable[dst] = NULL;
 
@@ -122,58 +104,15 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
             Pfront_free(&pfcandlist, SEG_MAX);
         }
 
-        
-        for (int j = 0; j < graph->nbNode; j++) {
-            Extendable_list_free(extendable[j]);
-            extendable[j] = NULL;
-        }
+        Extendable_list_free(extendable);
+        extendable = NULL;
 
-
-        // path were extended by/ƒmaxiƒto i, must be extended by/to succs of i next time
-        to_extend = false;
-        int next_active_nodes_nb = 0;
-        int next_active_nodes[graph->nbNode];
-        IntList_t* succs;
-        // printf("AN:%d\n", active_nodes_nb);
-        for (int i = 0 ; i < active_nodes_nb ; i++) {
-            if (nextextendable[active_nodes[i]] == NULL) {
-                continue;
-            }
-            int node = active_nodes[i];
-            succs = graph->nonEmptySlots[node];
-            while(succs != NULL)
-            {
-                // printf("Path from %d can be extended to %d\n", i, succs->value);
-                int succ = succs->value;
-                if (succ == node)
-                {
-                    succs = succs->next;
-                    continue;
-                }
-                // printf("NODE %d %d)\n", i, node);
-
-                if (extendable[succ] == NULL) {
-                    // printf("New node %d\n", succ);
-                    to_extend = true;
-                    extendable[succ] = Extendable_list_new(NULL, node, Extendable_copy(nextextendable[node]));
-                    next_active_nodes[next_active_nodes_nb] = succ;
-                    next_active_nodes_nb++;
-
-                } else {
-                    extendable[succ] = Extendable_list_new(extendable[succ], node, Extendable_copy(nextextendable[node]));   
-                }
-                succs = succs->next;
-            }
-        } 
-        active_nodes_nb = next_active_nodes_nb;
-        for (int i = 0 ; i < next_active_nodes_nb ; i++) {
-            active_nodes[i] = next_active_nodes[i];
-        }
-
-        
         for (int i = 0 ; i < graph->nbNode ; i++) {
-            Extendable_free(nextextendable[i]);
-            nextextendable[i] = NULL;
+            if (nextextendable[i] != NULL) {
+                extendable = Extendable_list_new(extendable, i, NULL);
+                extendable->ext = Extendable_copy(nextextendable[i]);
+                Extendable_free(nextextendable[i]);
+            }
         }
         nbIter++;
     }
@@ -181,7 +120,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
 
     for (int j = 0 ; j < graph->nbNode ; j++) {
         Dict_free(&dist[j]);
-        Extendable_list_free(extendable[j]);
+        // Extendable_list_free(extendable[j]);
     }
     free(extendable);
     free(dist);
@@ -399,7 +338,7 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
                 Pfront_insert_key(&(*pfront)[iter%2][dst], i,j);
 
                 if (pf_cand->paths[i][j].m2 != INF) {
-                    // printf("Adding %d %d %d from %d to %d\n", i, j, dist_v->paths[i][j].m2, dist_v->preds[i][j], dst);
+                   // printf("Adding %d %d %d from %d to %d\n", i, j, dist_v->paths[i][j].m2, dist_v->preds[i][j], dst);
                     Dict_add(pf, i,j, dist_v->paths[i][j].m2, dist_v->paths[i][j].currDag, dist_v->paths[i][j].lastSegment, 0);
                     pf->nb_add++;
                     (*nextextendable) = Extendable_new(i, j, pf_cand->paths[i][j].m2,dist_v->paths[i][j].currDag, dist_v->paths[i][j].lastSegment ,(*nextextendable));

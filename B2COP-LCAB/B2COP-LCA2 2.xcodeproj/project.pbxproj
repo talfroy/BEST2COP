@@ -1,0 +1,187 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXFileReference section */
+		13AF512E2850BFE7007B58C5 /* main.o */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.objfile"; path = main.o; sourceTree = "<group>"; };
+		13AF512F2850BFE7007B58C5 /* obj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = obj; sourceTree = "<group>"; };
+		13AF51302850BFE7007B58C5 /* 2Dres-sorted.xp */ = {isa = PBXFileReference; lastKnownFileType = text; path = "2Dres-sorted.xp"; sourceTree = "<group>"; };
+		13AF51312850BFE7007B58C5 /* B2COP-LCA2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "B2COP-LCA2.xcodeproj"; sourceTree = "<group>"; };
+		13AF51342850BFE7007B58C5 /* .DS_Store */ = {isa = PBXFileReference; lastKnownFileType = file; path = .DS_Store; sourceTree = "<group>"; };
+		13AF51352850BFE7007B58C5 /* best2cop */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = best2cop; sourceTree = "<group>"; };
+		13AF51362850BFE7007B58C5 /* BLCA-sorted.res */ = {isa = PBXFileReference; lastKnownFileType = text; path = "BLCA-sorted.res"; sourceTree = "<group>"; };
+		13AF51372850BFE7007B58C5 /* makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		13AF51382850BFE7007B58C5 /* test_prod_cart.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = test_prod_cart.c; sourceTree = "<group>"; };
+		13AF51392850BFE7007B58C5 /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; path = include; sourceTree = "<group>"; };
+		13AF513A2850BFE7007B58C5 /* 2Dres.xp */ = {isa = PBXFileReference; lastKnownFileType = text; path = 2Dres.xp; sourceTree = "<group>"; };
+		13AF513B2850BFE7007B58C5 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		13AF513C2850BFE7007B58C5 /* cmp_inclusions.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = cmp_inclusions.py; sourceTree = "<group>"; };
+		13AF513D2850BFE7007B58C5 /* test2Dsamcra.xp */ = {isa = PBXFileReference; lastKnownFileType = text; path = test2Dsamcra.xp; sourceTree = "<group>"; };
+		13AF513E2850BFE7007B58C5 /* .vscode */ = {isa = PBXFileReference; lastKnownFileType = folder; path = .vscode; sourceTree = "<group>"; };
+		13AF513F2850BFE7007B58C5 /* scriptBest2cop */ = {isa = PBXFileReference; lastKnownFileType = folder; path = scriptBest2cop; sourceTree = "<group>"; };
+		13AF51402850BFE7007B58C5 /* debug */ = {isa = PBXFileReference; lastKnownFileType = text; path = debug; sourceTree = "<group>"; };
+		13AF51412850BFE7007B58C5 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; path = src; sourceTree = "<group>"; };
+		13AF51422850BFE7007B58C5 /* BLCA.res */ = {isa = PBXFileReference; lastKnownFileType = text; path = BLCA.res; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		13AF51282850BFE7007B58C5 = {
+			isa = PBXGroup;
+			children = (
+				13AF512E2850BFE7007B58C5 /* main.o */,
+				13AF512F2850BFE7007B58C5 /* obj */,
+				13AF51302850BFE7007B58C5 /* 2Dres-sorted.xp */,
+				13AF51312850BFE7007B58C5 /* B2COP-LCA2.xcodeproj */,
+				13AF51342850BFE7007B58C5 /* .DS_Store */,
+				13AF51352850BFE7007B58C5 /* best2cop */,
+				13AF51362850BFE7007B58C5 /* BLCA-sorted.res */,
+				13AF51372850BFE7007B58C5 /* makefile */,
+				13AF51382850BFE7007B58C5 /* test_prod_cart.c */,
+				13AF51392850BFE7007B58C5 /* include */,
+				13AF513A2850BFE7007B58C5 /* 2Dres.xp */,
+				13AF513B2850BFE7007B58C5 /* main.c */,
+				13AF513C2850BFE7007B58C5 /* cmp_inclusions.py */,
+				13AF513D2850BFE7007B58C5 /* test2Dsamcra.xp */,
+				13AF513E2850BFE7007B58C5 /* .vscode */,
+				13AF513F2850BFE7007B58C5 /* scriptBest2cop */,
+				13AF51402850BFE7007B58C5 /* debug */,
+				13AF51412850BFE7007B58C5 /* src */,
+				13AF51422850BFE7007B58C5 /* BLCA.res */,
+			);
+			sourceTree = "<group>";
+		};
+		13AF51322850BFE7007B58C5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		13AF512D2850BFE7007B58C5 /* B2COP-LCA2 */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 13AF51442850BFE7007B58C5 /* Build configuration list for PBXLegacyTarget "B2COP-LCA2" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "/Users/jro/Documents/research/best2cop/best2cop/B2COP-LCA2";
+			dependencies = (
+			);
+			name = "B2COP-LCA2";
+			passBuildSettingsInEnvironment = 1;
+			productName = "B2COP-LCA2";
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		13AF51292850BFE7007B58C5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+			};
+			buildConfigurationList = 13AF512C2850BFE7007B58C5 /* Build configuration list for PBXProject "B2COP-LCA2 2" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 13AF51282850BFE7007B58C5;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 13AF51322850BFE7007B58C5 /* Products */;
+					ProjectRef = 13AF51312850BFE7007B58C5 /* B2COP-LCA2.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				13AF512D2850BFE7007B58C5 /* B2COP-LCA2 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		13AF512A2850BFE7007B58C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		13AF512B2850BFE7007B58C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				COPY_PHASE_STRIP = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+		13AF51452850BFE7007B58C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "B2COP-LCA2";
+			};
+			name = Debug;
+		};
+		13AF51462850BFE7007B58C5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "B2COP-LCA2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		13AF512C2850BFE7007B58C5 /* Build configuration list for PBXProject "B2COP-LCA2 2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13AF512A2850BFE7007B58C5 /* Debug */,
+				13AF512B2850BFE7007B58C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		13AF51442850BFE7007B58C5 /* Build configuration list for PBXLegacyTarget "B2COP-LCA2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				13AF51452850BFE7007B58C5 /* Debug */,
+				13AF51462850BFE7007B58C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 13AF51292850BFE7007B58C5 /* Project object */;
+}

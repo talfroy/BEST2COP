@@ -15,7 +15,8 @@
  * 
  * @param dist              list of the distance between two nodes
  * this parameter must not be filled and not allocate
- * @param graph             SR graph to compute
+ * @param graph             graph
+ * @param sr_conv           SR graph to use for conversion
  * @param src               source node
  * @param cstrM1            constraint on delay (the default value is 1000)
  * @param cstrM2            constraint on IGP value (the default value is MAX_INT)
@@ -29,8 +30,9 @@
  * @return return the number of iteration (between 1 and SEGMAX)
  */
 
-int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
-            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule, int* init_time);
+int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_conv, int src, my_m1 cstrM1, 
+            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule);
+
 
 
 /**
@@ -52,8 +54,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
  * @param c2                constraint on igp weight
  */
 
-extern void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, Pfront_t* pfcandlist, 
-                            Dict_t* dist_v, SrGraph_t* graph, int* t, my_m1* imax, my_m1 c1, my_m2 c2);
+void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, Pfront_t* pfcandlist,Dict_t* dist_v, SrGraph_t* graph, SrGraph_t* sr_conv, int* t, my_m1* imax, my_m1 c1, my_m2 c2);
 
 
 /**

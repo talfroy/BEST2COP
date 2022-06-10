@@ -4,13 +4,16 @@
 			"path": ".."
 		},
 		{
-			"path": "../../B2COP-LCA"
-		},
-		{
 			"path": "../../B2COP-LCA2"
 		},
 		{
 			"path": "../../../mysamcra/SAMCRA-LCA"
+		},
+		{
+			"path": "../../B2COP-LCAB"
+		},
+		{
+			"path": "../../../mysamcra/SAMCRA-2D"
 		}
 	],
 	"settings": {
