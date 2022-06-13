@@ -1,3 +1,14 @@
+
+# Ignore all
+*
+# Unignore all with extensions and Makefiles
+!*.*
+!Makefile
+# Unignore all dirs
+!*/
+
+
+
 *vscode/*
 obj/*.o
 topo/*
@@ -21,6 +32,7 @@ NBSEG/*
 !topoEU328.isp
 !test_topo_rand_zipf.isp
 *.sr
+
 #generate_random.c
 #genTopoNonAlign.c
 #randomSpread.c
