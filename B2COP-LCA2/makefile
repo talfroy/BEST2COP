@@ -15,7 +15,7 @@ CC ?= /usr/local/opt/llvm/bin/clang
 ## for M1
 LIBS := -L/opt/homebrew/lib -lomp
 
-FLAGS := -Wall -Wextra  -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude 
+FLAGS := -Wall -Wextra  -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude
 
 # for address sanitizer
 # -g -fsanitize=address -fno-omit-frame-pointer

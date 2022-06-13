@@ -16,13 +16,29 @@ void Dict_init(Dict_t* dic, int size, int msd)
         }
     }
 
-    dic->preds = calloc(msd, sizeof(short*));
+    dic->preds = NULL;
+    /*calloc(msd, sizeof(short*));
+    void * tmp = calloc(size * msd, sizeof(short));
      for (int i = 0 ; i < msd; i++) {
-        dic->preds[i] = calloc(size, sizeof(short));
-    }
+        dic->preds[i] = tmp + (i * size * sizeof(short));
+    }*/
 
     dic->max_m1 = size;
     dic->max_m0 = msd;
+    dic->nb_add = 0;
+}
+
+
+void Dict_reset(Dict_t *dic) 
+{
+    bzero(dic->paths, dic->max_m1 * sizeof(Path*));
+
+    for (int i = 0 ; i < dic->max_m0 ; i++) {
+        for (int j = 0 ; j < dic->max_m0 ; j++) {
+            dic->paths[i][j].m2 = INF;
+        }
+    }
+    //bzero(dic->preds[0], dic->max_m1 * dic->max_m0 * sizeof(short));
     dic->nb_add = 0;
 }
 
@@ -35,7 +51,7 @@ void Dict_add(Dict_t* dic, my_m0 key_seg, my_m1 key_cost, my_m2 value, int currD
         dic->paths[key_seg][key_cost].m1 = key_cost;
         dic->paths[key_seg][key_cost].currDag = currDag;
         dic->paths[key_seg][key_cost].lastSegment = lastSegment;
-        dic->preds[key_seg][key_cost] = pred;
+        //dic->preds[key_seg][key_cost] = pred;
     }
 }
 

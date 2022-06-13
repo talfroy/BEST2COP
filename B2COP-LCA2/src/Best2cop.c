@@ -101,11 +101,16 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
         (*iters)[src] = 0;
     }
     bool to_extend = true;
+
+
+    Dict_t pf_cand;
+    Dict_init(&pf_cand, dictSize, SEG_MAX);
+
     gettimeofday(&stop, NULL);
     *init_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
     while (to_extend && nbIter <= maxIter) {
-       	#pragma omp parallel for schedule(dynamic)
+       	//#pragma omp parallel for schedule(dynamic)
         // go through all active nodes (that have to extend something)
         for (int idst = 0 ; idst < active_nodes_nb ; idst++) {
             int dst = active_nodes[idst];
@@ -114,8 +119,8 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
                 continue;
             }
             
-            Dict_t pf_cand;
-            Dict_init(&pf_cand, dictSize, SEG_MAX);
+            Dict_reset(&pf_cand);
+
             Pfront_t pfcandlist;
             Pfront_init(&pfcandlist, dictSize, SEG_MAX);
             int t = 0;
@@ -128,7 +133,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
 
             Best2cop_cpt_extendable_paths(nextextendable+dst, pfront, &pf_cand, dist + dst, &pfcandlist, t, imax, nbIter, dst, &(*pf)[nbIter%2][dst], bascule);
 
-            Dict_free(&pf_cand);
             Pfront_free(&pfcandlist, SEG_MAX);
         }
 
@@ -190,6 +194,9 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
     }
     
     gettimeofday(&start, NULL);
+
+
+    Dict_free(&pf_cand);
 
 
     for (int j = 0 ; j < graph->nbNode ; j++) {

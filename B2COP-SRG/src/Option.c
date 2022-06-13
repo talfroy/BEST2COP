@@ -267,7 +267,7 @@ int Option_command_parser(int argc, char **argv)
         break;
 
     default:
-        ERROR("Please profide the loading method in command line\n");
+        ERROR("Please provide the loading method in command line\n");
         return -1;
     }
 
