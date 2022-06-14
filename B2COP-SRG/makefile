@@ -3,6 +3,13 @@ OBJDIR= obj
 SRC := $(wildcard $(SRCDIR)/*.c)
 OBJ  = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 
+OMPFLAGS = -fopenmp
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	OMPFLAGS := OMPFLAGS
+endif
+
 PG ?= -g
 # -pg 
 # -p -g on mac
@@ -11,10 +18,10 @@ PG ?= -g
 
 # For M1 
 # After brew install llvm libomp
-CC ?= /usr/local/opt/llvm/bin/clang
+CC ?= /usr/local/opt/llvm/bin/clang 
 
 ## for M1
-LIBS := -L/opt/homebrew/lib -lomp 
+LIBS := -L/opt/homebrew/lib $(OMPFLAGS) -lm
 FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude
 
 ## for clang

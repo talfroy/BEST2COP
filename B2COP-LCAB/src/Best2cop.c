@@ -74,8 +74,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, SrGraph_t* sr_c
         }
         (*iters)[src] = 0;
     }
-    bool to_extend = true;
-
 
 
 
