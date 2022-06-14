@@ -7,7 +7,7 @@ OMPFLAGS = -fopenmp
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	OMPFLAGS := OMPFLAGS
+	OMPFLAGS := -lomp
 endif
 
 PG ?= -g
