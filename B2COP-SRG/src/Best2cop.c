@@ -3,8 +3,11 @@
 
 
 int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
-            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule)
+            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule, int* init_time)
 {
+    struct timeval start, stop;
+    gettimeofday(&start, NULL);
+
     //Start of init
     int maxIter = SEG_MAX;
     my_m2* minIgp = malloc(graph->nbNode * sizeof(my_m2));
@@ -73,6 +76,10 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         }
         (*iters)[src] = 0;
     }
+
+    gettimeofday(&stop, NULL);
+    
+    if(init_time) *init_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
 
    
     while (extendable != NULL && nbIter <= maxIter) {

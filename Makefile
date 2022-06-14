@@ -10,7 +10,11 @@ neutre=\033[0;m
 all: $(SUBDIRS)
 $(SUBDIRS):
 	@echo "${vertclair} ------------- BUILDING FOLDER $@ ${neutre}"
-	$(MAKE) -C $@ clean
 	$(MAKE) -C $@
 
-.PHONY: all $(SUBDIRS)
+clean: 
+	for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir -f Makefile clean; \
+	done
+
+.PHONY: all $(SUBDIRS) clean

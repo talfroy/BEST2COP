@@ -29,7 +29,7 @@
  */
 
 int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
-            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule);
+            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule, int* init_time);
 
 
 /**

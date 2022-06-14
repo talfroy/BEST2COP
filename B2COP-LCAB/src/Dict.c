@@ -45,6 +45,7 @@ void Dict_reset(Dict_t *dic)
 
 void Dict_add(Dict_t* dic, my_m0 key_seg, my_m1 key_cost, my_m2 value, int currDag, int lastSegment, short pred)
 {
+    UNUSED(pred);
     if (key_seg < dic->max_m0 && key_cost < dic->max_m1) {
         dic->paths[key_seg][key_cost].m2 = value;
         dic->paths[key_seg][key_cost].m0 = key_seg;

@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Install build tool
-        run:  brew install make
+        run:  brew install make libomp
       - name: Test compil on macOS
         run: CC=gcc-10 make
       - name: Clean
