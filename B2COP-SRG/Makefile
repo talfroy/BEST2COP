@@ -7,7 +7,7 @@ OMPFLAGS = -fopenmp
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	OMPFLAGS := -lomp
+	OMPFLAGS := -L/usr/local/lib/ -lomp
 endif
 
 PG ?= -g
@@ -21,7 +21,7 @@ PG ?= -g
 CC ?= /usr/local/opt/llvm/bin/clang 
 
 ## for M1
-LIBS := -L/opt/homebrew/lib $(OMPFLAGS) -lm
+LIBS := $(OMPFLAGS) -lm
 FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude
 
 ## for clang
