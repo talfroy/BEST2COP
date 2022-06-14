@@ -99,18 +99,27 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         (*iters)[src] = 0;
     }
     bool to_extend = true;
+    // Dict_t pf_cand;
+    // Dict_init(&pf_cand, dictSize);
+    Dict_t pf_cand_all[8];
+    for (int i = 0 ; i < 8 ; i++) {
+        Dict_init(&pf_cand_all[i], dictSize);
+    }
+
     gettimeofday(&stop, NULL);
     *init_time = (stop.tv_sec - start.tv_sec) * 1000000 + stop.tv_usec - start.tv_usec;
     while (to_extend && nbIter <= maxIter) {
        	#pragma omp parallel for schedule(dynamic)
         for (int idst = 0 ; idst < active_nodes_nb ; idst++) {
             int dst = active_nodes[idst];
-
+            
             if (dst == src) {
                 continue;
             }
-            Dict_t pf_cand;
-            Dict_init(&pf_cand, dictSize);
+            Dict_t pf_cand = pf_cand_all[omp_get_thread_num()];
+            // Dict_t pf_cand;
+            // Dict_init(&pf_cand, dictSize);
+            Dict_reset(&pf_cand);
             Pfront_t pfcandlist;
             Pfront_init(&pfcandlist, dictSize);
             int t = 0;
@@ -122,7 +131,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
 
             Best2cop_cpt_extendable_paths(nextextendable+dst, pfront, &pf_cand, dist + dst, &pfcandlist, t, imax, nbIter, dst, &(*pf)[nbIter%2][dst], bascule);
 
-            Dict_free(&pf_cand);
+            // Dict_free(&pf_cand);
             Pfront_free(&pfcandlist);
         }
 
@@ -210,8 +219,10 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
         for (Extendable_t* path = d_list->ext ; path != NULL ; path = path->next) {
             for (Edge_t* edge = graph->pred[dst][edgeSrc] ; edge != NULL ; edge = edge->next) {
                 count ++;
+                
                 my_m1 d1v = path->infos.m1 + edge->m1;
                 my_m2 d2v = path->infos.m2 + edge->m2;
+              
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v, edgeSrc);
 

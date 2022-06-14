@@ -4,10 +4,10 @@
 
 void Dict_init(Dict_t* dic, int size)
 {
-    dic->paths = malloc(size * sizeof(int));
+    dic->paths = calloc(size, sizeof(int));
     ASSERT(dic->paths, , size);
 
-    dic->preds = malloc(size * sizeof(short));
+    dic->preds = calloc(size, sizeof(short));
     ASSERT(dic->preds, , size);
     
     for (int i = 0 ; i < size ; i++) {
@@ -17,15 +17,14 @@ void Dict_init(Dict_t* dic, int size)
     dic->nb_add = 0;
 }
 
-void Dict_zeroize(Dict_t* dic, int size)
+void Dict_reset(Dict_t *dic) 
 {
-    
-    for (int i = 0 ; i < size ; i++) {
+    // bzero(dic->paths, dic->size * sizeof(int));
+
+    for (int i = 0 ; i < dic->size ; i++) {
         dic->paths[i] = INF;
     }
-
-    memset(dic->preds, 0, size*sizeof(short));
-
+    //bzero(dic->preds[0], dic->max_m1 * dic->max_m0 * sizeof(short));
     dic->nb_add = 0;
 }
 

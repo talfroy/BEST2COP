@@ -180,10 +180,9 @@ int main(int argc, char **argv)
     }
 
     //SrGraph_print_in_file_labels(sr, stdout, topo->labels);
-    maxSpread *= SEG_MAX;
+    maxSpread *= sr->nbNode;
     opt.cstr1 *= my_pow(10, opt.accuracy);
     my_m1 max_dict_size = MIN(maxSpread, opt.cstr1);
-
     if (max_dict_size >= DICT_LIMIT)
     {
         ERROR("MaxSpread is too high. Please reduce the accuracy or your computer will probably die. "

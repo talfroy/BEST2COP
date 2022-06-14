@@ -31,12 +31,6 @@ void Dict_seglist_add(Dict_seglist_t* dic, my_m1 key, my_m2 value, struct segmen
     }
 }
 
-void Dict_reset(Dict_t* d)
-{
-    for (int i = 0 ; i < d->size ; i++) {
-        d->paths[i] = INF;
-    }
-}
 
 void Dict_sl_print(Dict_seglist_t* dic)
 {
