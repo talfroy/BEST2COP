@@ -178,7 +178,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                 // if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] == d2v) {
                 //     bag_counter[d1v]++;
                 // }
-
+                
                 if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
                     Dict_add(dist_v, d1v, d2v, edgeSrc);
 
