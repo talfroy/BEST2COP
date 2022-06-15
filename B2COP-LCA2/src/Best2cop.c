@@ -411,14 +411,14 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
     int ALL = nbNode;
     int min_currDag[nbNode+1];
     
-    for (my_m1 j = 0 ; j < dist_v->max_m1 ; j++) {
+    for (my_m0 i = 0 ; i < dist_v->max_m0 ; i++) {
 
         //init min_currDag to INF
         for (int i = 0 ; i < nbNode+1 ; i++) {
             min_currDag[i] = INF;
         }
+        for (my_m1 j = 0 ; j < dist_v->max_m1 ; j++) {
 
-        for (my_m0 i = 0 ; i < dist_v->max_m0 ; i++) {
             // update min_currDag for ALL
             if (i>0 && dist_v->paths[i-1][j].m2 < min_currDag[ALL]) {
                 min_currDag[ALL] = dist_v->paths[i-1][j].m2;
@@ -455,4 +455,3 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
     }
     // printf("End2\n");
 }
-
