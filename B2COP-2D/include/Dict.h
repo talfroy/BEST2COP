@@ -20,8 +20,8 @@
 struct Dict_s {
     my_m2* paths;             /**< all the existing paths */
     short* preds;
-    int size;               /**< max size of the Dictionnary */
-    int nb_add;
+    size_t size;               /**< max size of the Dictionnary */
+    size_t nb_add;
 };
 
 typedef struct Dict_s Dict_t;
@@ -42,9 +42,9 @@ extern Dict_t* Dict_new();
  * @param realSpread    real spread in the SR Graph
  */
 
-extern void Dict_init(Dict_t* dic, int size);
+extern void Dict_init(Dict_t* dic, size_t size);
 
-void Dict_zeroize(Dict_t* dic, int size);
+void Dict_zeroize(Dict_t* dic, size_t size);
 
 /**
  * @brief add a new path in a Dictionary

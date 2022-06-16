@@ -1,3 +1,4 @@
+#pragma once // Include this file only once
 
 //number max of segments
 #define SEG_MAX                 10
@@ -16,9 +17,22 @@
 
 //define which type of topology will be load
 
-typedef int my_m2;
-typedef int my_m1;
+typedef struct {
+    uint64_t value;
+} my_m2;
 
+#define CAST_M2(x) (x.value)
+#define TO_M2(x) (my_m2){x}
+#define M2_INF TO_M2(UINT64_MAX)
+
+
+typedef struct {
+    uint64_t value;
+} my_m1;
+
+#define CAST_M1(x) (x.value)
+#define TO_M1(x) (my_m1){x}
+#define M1_INF TO_M1(UINT64_MAX)
 
 
 #define MAX_SR_GRAPH_SIZE       1500

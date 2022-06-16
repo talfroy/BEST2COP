@@ -3,7 +3,7 @@
 
 
 int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
-            my_m2 cstrM2, my_m1 dictSize, char analyse, int** iters, int bascule, int* init_time)
+            my_m2 cstrM2, size_t dictSize, char analyse, int** iters, int bascule, int* init_time)
 {
 
     struct timeval start, stop;
@@ -34,7 +34,10 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
     }
 
     // Init first distance
-    Pfront_insert_key(&(*pfront)[0][src], 0);
+    
+    Pfront_insert_key(&(*pfront)[0][src], TO_M1(0));
+ 
+
 
     Dict_t* dist = malloc(graph->nbNode * sizeof(Dict_t));
     ASSERT(dist, -1, graph->nbNode);
@@ -43,7 +46,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         Dict_init(&dist[i], dictSize);
     }
 
-    Dict_add(&dist[src], 0, 0, src);
+    Dict_add(&dist[src], TO_M1(0), TO_M2(0), src);
 
     // Create extendable of first distance
     Extendable_list_t** extendable = calloc(graph->nbNode,sizeof(Extendable_list_t*));
@@ -63,7 +66,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         }
         if (extendable[succ] == NULL) {
             extendable[succ] = Extendable_list_new(NULL, src, NULL);
-            extendable[succ]->ext = Extendable_new(0, 0, NULL);
+            extendable[succ]->ext = Extendable_new(TO_M1(0), TO_M2(0), NULL);
         }
         active_nodes[active_nodes_nb] = succ;
         active_nodes_nb++;
@@ -89,12 +92,12 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
         }
     }
 
-    Dict_add(&(*pf)[0][src], 0, 0, src);
+    Dict_add(&(*pf)[0][src], TO_M1(0), TO_M2(0), src);
 
     if (iters != NULL) {
         for (int i = 0 ; i < graph->nbNode ; i++) {
             (*iters)[i] = -1;
-            minIgp[i] = INF;
+            minIgp[i] = M2_INF;
         }
         (*iters)[src] = 0;
     }
@@ -123,7 +126,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
             Pfront_t pfcandlist;
             Pfront_init(&pfcandlist, dictSize);
             int t = 0;
-            my_m1 imax = 0;
+            my_m1 imax = TO_M1(0);
 
             Best2cop_extend_path(dst, extendable[dst], &pf_cand, &pfcandlist, dist + dst, graph, &t, &imax, cstrM1, cstrM2);
 
