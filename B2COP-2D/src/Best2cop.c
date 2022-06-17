@@ -183,7 +183,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
 
         nbIter++;
     }
-    
+    // printf("nbIter = %d\n", nbIter);
     gettimeofday(&start, NULL);
 
     for (int j = 0 ; j < graph->nbNode ; j++) {
