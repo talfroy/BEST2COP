@@ -30,7 +30,7 @@
  */
 
 int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
-            my_m2 cstrM2, size_t dictSize, char analyse, int** iters, int bascule, int* init_time);
+            my_m2 cstrM2, size_t dictSize, char analyse, int** iters, size_t bascule, long* init_time);
 
 
 /**
@@ -53,7 +53,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 
  */
 
 extern void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_cand, Pfront_t* pfcandlist, 
-                            Dict_t* dist_v, SrGraph_t* graph, int* t, my_m1* imax, my_m1 c1, my_m2 c2);
+                            Dict_t* dist_v, SrGraph_t* graph, size_t* t, my_m1* imax, my_m1 c1, my_m2 c2);
 
 
 /**
@@ -74,8 +74,8 @@ extern void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t*
  */
 
 void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, __attribute__ ((unused)) Pfront_t* pfcandlist, __attribute__ ((unused)) int t, 
-                                    int imax, int iter, int dst, Dict_t* pf, int bascule);
+                                    Dict_t* pf_cand, Dict_t* dist_v, __attribute__ ((unused)) Pfront_t* pfcandlist, size_t t, 
+                                    my_m1 imax, int iter, int dst, Dict_t* pf, size_t bascule);
 /**
  * @brief Called if there are not a lot of paths added
  * 
@@ -95,7 +95,7 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_
  */
 
 void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, int imax, Dict_t* pf);
+                                    Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, my_m1 imax, Dict_t* pf);
 
 
 extern my_m2 update_min_igp(my_m2 old, Extendable_t* nextext);

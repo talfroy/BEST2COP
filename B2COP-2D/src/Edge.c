@@ -14,7 +14,7 @@ Edge_t* Edge_new(Edge_t* prev, my_m1 m1, my_m2 m2, char segType)
     if (prev == NULL) {
         new_e->id = 1;
     } else {
-        new_e->id = prev->id + 1;
+        new_e->id = (char)(prev->id + 1);
     }
 
     return new_e;
@@ -46,7 +46,7 @@ Edge_t* Edge_add(Edge_t* prev, my_m1 m1, my_m2 m2, char segType)
     }
 
     if (prev->next == NULL) {
-        prev->next = Edge_new_force_id(NULL, m1, m2, prev->id + 1, segType);
+        prev->next = Edge_new_force_id(NULL, m1, m2, (char)(prev->id + 1), segType);
         return prev;
     }
 
@@ -81,7 +81,7 @@ Edge_t* Edge_copy(Edge_t* old)
 void Edge_print_list(Edge_t* list, FILE* output)
 {
     for (Edge_t* tmp = list ; tmp != NULL ; tmp = tmp->next) {
-        fprintf(output, " (%d ; %d) ", tmp->m1, tmp->m2);
+        fprintf(output, " (%"M1_FMT" ; %"M2_FMT") ", tmp->m1, tmp->m2);
     }
     printf("\n");
 }

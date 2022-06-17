@@ -52,7 +52,7 @@ size_t Pfront_union(Pfront_t* pfront, Pfront_t* pfcand)
 void Pfront_print(Pfront_t* pf, FILE* out)
 {
     for (size_t i = 0 ; i < pf->heapSize ; i++) {
-        fprintf(out, " %d ", pf->keys[i]);
+        fprintf(out, " %"M1_FMT" ", pf->keys[i]);
     }
     printf("\n");
 }

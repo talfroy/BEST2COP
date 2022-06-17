@@ -33,7 +33,7 @@ void Extendable_print(Extendable_t* ext)
     }
 
     for (Extendable_t* tmp = ext ; tmp != NULL ; tmp = tmp->next) {
-        printf(" (%d ; %d) ", tmp->infos.m1, tmp->infos.m2);
+        printf(" (%"M1_FMT" ; %"M2_FMT") ", CAST_M1(tmp->infos.m1), CAST_M1(tmp->infos.m2));
     }
         printf("\n");
 }

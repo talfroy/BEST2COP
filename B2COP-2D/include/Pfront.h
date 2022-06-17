@@ -79,6 +79,6 @@ void Pfront_free(Pfront_t* bh);
  * false if not
  */
 
-bool hasapath(Pfront_t** pfront, int dst);
+bool hasapath(Pfront_t** pfront, size_t dst);
 
 #endif

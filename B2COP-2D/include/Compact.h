@@ -112,7 +112,7 @@ extern compact_front* compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter
  * segment lists.
  */
 
-extern Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, int c1, 
+extern Dict_seglist_t **cart(compact_front *pf1, compact_front *pf2, compact_front *pf2bis, my_m1 c1, 
 				int ABR, int other_ABR, SrGraph_t *sr_bb, Topology_t* topo_bb, Topology_t* topo_area, 
 				int src, bool analyse);
 

@@ -19,7 +19,7 @@
 
 struct Dict_s {
     my_m2* paths;             /**< all the existing paths */
-    short* preds;
+    int* preds;
     size_t size;               /**< max size of the Dictionnary */
     size_t nb_add;
 };
@@ -56,7 +56,7 @@ void Dict_zeroize(Dict_t* dic, size_t size);
  * this path
  */
 
-extern void Dict_add(Dict_t* dic, my_m1 key, my_m2 value, short pred);
+extern void Dict_add(Dict_t* dic, my_m1 key, my_m2 value, int pred);
 
 
 /**

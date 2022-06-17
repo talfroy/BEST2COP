@@ -172,7 +172,7 @@ int main(int argc, char **argv)
         maxSpread = SrGraph_get_max_spread(sr);
     }
 
-    if (maxSpread == -1)
+    if (maxSpread == M1_INF)
     {
         INFO("Segment Routing graph has been transform into one connexe component\n");
         sr = SrGraph_get_biggest_connexe_coponent(sr);
@@ -180,8 +180,8 @@ int main(int argc, char **argv)
     }
 
     //SrGraph_print_in_file_labels(sr, stdout, topo->labels);
-    maxSpread *= sr->nbNode;
-    opt.cstr1 *= my_pow(10, opt.accuracy);
+    maxSpread *= TO_M1(sr->nbNode);
+    opt.cstr1 *= TO_M1(my_pow(10, opt.accuracy));
     my_m1 max_dict_size = MIN(maxSpread, opt.cstr1);
     if (max_dict_size >= DICT_LIMIT)
     {
@@ -197,10 +197,10 @@ int main(int argc, char **argv)
     } 
     if (opt.allNodes && !opt.nb_areas)
     {
-        long int *times = malloc(opt.allNodes * sizeof(long int));
-        int **iters = malloc(opt.allNodes * sizeof(int *));
-        int *iterMax = calloc(opt.allNodes, sizeof(int));
-        int **isFeasible = malloc(opt.allNodes * sizeof(int *));
+        long int *times = malloc((size_t)opt.allNodes * sizeof(*times));
+        int **iters = malloc((size_t)opt.allNodes * sizeof(*iters));
+        int *iterMax = calloc((size_t)opt.allNodes, sizeof(*iterMax));
+        int **isFeasible = malloc((size_t)opt.allNodes * sizeof(*isFeasible));
         
         // Best2cop(&pfront, &pf, sr, 0, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, NULL, opt.bascule);
         // for (int j = 0; j <= 10; j++)
@@ -220,13 +220,13 @@ int main(int argc, char **argv)
         for (int i = 0; i < opt.allNodes; i++)
         {
             times[i] = 0;
-            iters[i] = calloc(sr->nbNode, sizeof(int));
-            isFeasible[i] = malloc(sr->nbNode * sizeof(int));
+            iters[i] = calloc((size_t)sr->nbNode, sizeof(*iters[i]));
+            isFeasible[i] = malloc((size_t)sr->nbNode * sizeof(*isFeasible[i]));
             pf = NULL;
             pfront = NULL;
             int iteri = 0;
             gettimeofday(&start, NULL);
-            int init_time = 0;
+            long init_time = 0;
             iteri = Best2cop(&pfront, &pf, sr, i, opt.cstr1, opt.cstr2, max_dict_size, opt.analyse, &iters[i], opt.bascule, &init_time);
 
             gettimeofday(&stop, NULL);
@@ -274,8 +274,8 @@ int main(int argc, char **argv)
         }
         pf = NULL;
         pfront = NULL;
-        int *itersSolo = malloc(sr->nbNode * sizeof(int));
-        int init_time = 0;
+        int *itersSolo = malloc((size_t)sr->nbNode * sizeof(*itersSolo));
+        long init_time = 0;
         // Best2cop(&pfront, &pf, sr, opt.src, opt.cstr1, opt.cstr2, max_dict_size + 1, opt.analyse, NULL, opt.bascule, &init_time);
         // pf = NULL;
         // pfront = NULL;
@@ -366,11 +366,11 @@ void Main_display_results(FILE *output, Dict_t **dist, int nbNodes, __attribute_
             //     fprintf(output, "%d %d %d %d\n", i, tmp->m1, tmp->m2, k);
             // }
 
-            for (int j = 0; j < dist[k][i].size; j++)
+            for (size_t j = 0; j < dist[k][i].size; j++)
             {
                 if (dist[k][i].paths[j] != INF)
                 {
-                    fprintf(output, "%d %d %d %d\n", i, j, dist[k][i].paths[j], k);
+                    fprintf(output, "%d %zu %"M2_FMT" %d\n", i, j, dist[k][i].paths[j], k);
                 }
             }
         }
@@ -387,7 +387,7 @@ void Main_display_all_paths(FILE *output, ParetoFront_t ***dist, int nbNodes, in
             {
                 for (ParetoFront_t *tmp = dist[j][i]; tmp != NULL; tmp = tmp->next)
                 {
-                    fprintf(output, "%d %d\n", tmp->m1, tmp->m2);
+                    fprintf(output, "%"M1_FMT" %"M2_FMT"\n", tmp->m1, tmp->m2);
                 }
                 break;
             }
@@ -404,7 +404,7 @@ void max_of_tab(FILE *output, long int *tab, int **tabIter, int size, char full,
         {
             for (int j = 0; j < size; j++)
             {
-                fprintf(output, "%d %d %d %d %d\n", i, j, opt.cstr1, tabIter[i][j], isFeasible[i][j]);
+                fprintf(output, "%d %d %"M1_FMT" %d %d\n", i, j, opt.cstr1, tabIter[i][j], isFeasible[i][j]);
             }
         }
     }
@@ -413,7 +413,7 @@ void max_of_tab(FILE *output, long int *tab, int **tabIter, int size, char full,
         fprintf(output, "NODE_ID C2 NB_THREADS TIME ITER\n");
         for (int i = 0; i < size; i++)
         {
-            fprintf(output, "%d %d %d %ld %d\n", i, opt.cstr1, opt.nbThreads, tab[i], (*tabIter)[i]);
+            fprintf(output, "%d %"M1_FMT" %d %ld %d\n", i, opt.cstr1, opt.nbThreads, tab[i], (*tabIter)[i]);
         }
     }
 }
@@ -437,7 +437,7 @@ void main_display_area_sr_time_mean(long int *times, int nb_areas)
         tot += (mean - times[i]) * (mean - times[i]);
     }
     square = tot / ((nb_areas - 2) * 2);
-    square = sqrt(square);
+    square = (long)sqrt(square);
 
     RESULTS("Mean time for areas transformation is %ld us\n", mean);
     RESULTS("Standard deviation (95%%) for areas transformation is %ld us\n", 2 * square);
@@ -453,7 +453,7 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
     {
         for (int j = 0; j < nbNodes; j++)
         {
-            for (int k = 0; k < dist[i][j].size; k++)
+            for (size_t k = 0; k < dist[i][j].size; k++)
             {
                 if (dist[i][j].paths[k] != INF)
                 {
@@ -464,7 +464,7 @@ void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int
                     //Segment_list_print_id(out, &sl[i][j][k]);
                     //fprintf(out, "\n");
                     //fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
-                    fprintf(out, "%d %d %d\n", j, k, dist[i][j].paths[k]);
+                    fprintf(out, "%d %zu %"M2_FMT"\n", j, k, dist[i][j].paths[k]);
                 }
             }
         }

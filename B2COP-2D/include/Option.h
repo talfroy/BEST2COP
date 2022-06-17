@@ -27,7 +27,7 @@ struct Options {
     char interface;         /**< activate the interactive mode */
     char nbThreads;         /**< set the number of threads to use (max_thread by default) */
     char randomTopo;  
-    int bascule;          
+    size_t bascule;          
     bool flex;              /**< enable flex algo (disble by default) */
     bool pretty;
     unsigned short nb_areas;

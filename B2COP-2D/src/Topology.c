@@ -5,10 +5,10 @@ Topology_t *Topology_init(int nbNode)
     Topology_t *topo = malloc(sizeof(Topology_t));
     ASSERT(topo, NULL, 1);
 
-    topo->pred = malloc(nbNode * sizeof(Llist_t *));
+    topo->pred = malloc((size_t)nbNode * sizeof(Llist_t *));
     ASSERT(topo->pred, NULL, nbNode);
 
-    topo->succ = malloc(nbNode * sizeof(Llist_t *));
+    topo->succ = malloc((size_t)nbNode * sizeof(Llist_t *));
     ASSERT(topo->succ, NULL, nbNode);
 
     for (int i = 0; i < nbNode; i++)
@@ -47,13 +47,13 @@ Topology_t *Topology_load_from_file_labels(const char *filename, int precision, 
 
     while (fgets(line, 1024, file))
     {
-        if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5)
+        if (sscanf(line, "%s %s %lf %"M2_SCNFMT" %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5)
         {
             src = LabelTable_add_node(labels, srcLabel);
             dst = LabelTable_add_node(labels, destLabel);
             nbNode = MAX(nbNode, labels->nextNodeId);
         }
-        else if (sscanf(line, "%s %s %lf %d\n", &srcLabel[0], &destLabel[0], &m1, &m2) == 4)
+        else if (sscanf(line, "%s %s %lf %"M2_SCNFMT"\n", &srcLabel[0], &destLabel[0], &m1, &m2) == 4)
         {
             src = LabelTable_add_node(labels, srcLabel);
             dst = LabelTable_add_node(labels, destLabel);
@@ -90,38 +90,38 @@ Topology_t *Topology_load_from_file_labels(const char *filename, int precision, 
     while (fgets(line, 1024, file))
     {
 
-        if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5)
+        if (sscanf(line, "%s %s %lf %"M2_SCNFMT" %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5)
         {
             src = LabelTable_get_id(labels, srcLabel);
             dst = LabelTable_get_id(labels, destLabel);
-            m1 *= my_pow(10, precision);
+            m1 *= (double)my_pow(10, precision);
             if (m2 == 0)
             {
                 m2 = 1;
             }
-            topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
-            topo->pred[dst] = Llist_new(topo->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
+            topo->succ[src] = Llist_new(topo->succ[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
+            topo->pred[dst] = Llist_new(topo->pred[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
             if (biDir)
             {
-                topo->succ[dst] = Llist_new(topo->succ[dst], m1, m2, src, ADJACENCY_SEGMENT);
-                topo->pred[src] = Llist_new(topo->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
+                topo->succ[dst] = Llist_new(topo->succ[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
+                topo->pred[src] = Llist_new(topo->pred[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
             }
         }
-        else if (sscanf(line, "%s %s %lf %d\n", &srcLabel[0], &destLabel[0], &m1, &m2) == 4)
+        else if (sscanf(line, "%s %s %lf %"M2_SCNFMT"\n", &srcLabel[0], &destLabel[0], &m1, &m2) == 4)
         {
             src = LabelTable_get_id(labels, srcLabel);
             dst = LabelTable_get_id(labels, destLabel);
-            m1 *= my_pow(10, precision);
+            m1 *= (double)my_pow(10, precision);
             if (m2 == 0)
             {
                 m2 = 1;
             }
-            topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
-            topo->pred[dst] = Llist_new(topo->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
+            topo->succ[src] = Llist_new(topo->succ[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
+            topo->pred[dst] = Llist_new(topo->pred[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
             if (biDir)
             {
-                topo->succ[dst] = Llist_new(topo->succ[dst], m1, m2, src, ADJACENCY_SEGMENT);
-                topo->pred[src] = Llist_new(topo->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
+                topo->succ[dst] = Llist_new(topo->succ[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
+                topo->pred[src] = Llist_new(topo->pred[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
             }
         }
         else
@@ -155,11 +155,11 @@ Topology_t *Topology_load_from_file_ids(const char *filename, int precision, cha
 
     while (fgets(line, 1024, file))
     {
-        if (sscanf(line, "%d %d %lf %d %d\n", &src, &dst, &m1, &m2, &area) == 5)
+        if (sscanf(line, "%d %d %lf %"M2_SCNFMT" %d\n", &src, &dst, &m1, &m2, &area) == 5)
         {
             nbNode = MAX(nbNode, MAX(src + 1, dst + 1));
         }
-        else if (sscanf(line, "%d %d %lf %d\n", &src, &dst, &m1, &m2) == 4)
+        else if (sscanf(line, "%d %d %lf %"M2_SCNFMT"\n", &src, &dst, &m1, &m2) == 4)
         {
             nbNode = MAX(nbNode, MAX(src + 1, dst + 1));
         }
@@ -192,34 +192,34 @@ Topology_t *Topology_load_from_file_ids(const char *filename, int precision, cha
     while (fgets(line, 1024, file))
     {
 
-        if (sscanf(line, "%d %d %lf %d %d\n", &src, &dst, &m1, &m2, &area) == 5)
+        if (sscanf(line, "%d %d %lf %"M2_SCNFMT" %d\n", &src, &dst, &m1, &m2, &area) == 5)
         {
-            m1 *= my_pow(10, precision);
+            m1 *= (double)my_pow(10, precision);
             if (m2 == 0)
             {
                 m2 = 1;
             }
-            topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
-            topo->pred[dst] = Llist_new(topo->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
+            topo->succ[src] = Llist_new(topo->succ[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
+            topo->pred[dst] = Llist_new(topo->pred[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
             if (biDir)
             {
-                topo->succ[dst] = Llist_new(topo->succ[dst], m1, m2, src, ADJACENCY_SEGMENT);
-                topo->pred[src] = Llist_new(topo->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
+                topo->succ[dst] = Llist_new(topo->succ[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
+                topo->pred[src] = Llist_new(topo->pred[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
             }
         }
-        else if (sscanf(line, "%d %d %lf %d\n", &src, &dst, &m1, &m2) == 4)
+        else if (sscanf(line, "%d %d %lf %"M2_SCNFMT"\n", &src, &dst, &m1, &m2) == 4)
         {
-            m1 *= my_pow(10, precision);
+            m1 *= (double)my_pow(10, precision);
             if (m2 == 0)
             {
                 m2 = 1;
             }
-            topo->succ[src] = Llist_new(topo->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
-            topo->pred[dst] = Llist_new(topo->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
+            topo->succ[src] = Llist_new(topo->succ[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
+            topo->pred[dst] = Llist_new(topo->pred[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
             if (biDir)
             {
-                topo->succ[dst] = Llist_new(topo->succ[dst], m1, m2, src, ADJACENCY_SEGMENT);
-                topo->pred[src] = Llist_new(topo->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
+                topo->succ[dst] = Llist_new(topo->succ[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
+                topo->pred[src] = Llist_new(topo->pred[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
             }
         }
         else
@@ -236,9 +236,9 @@ Topology_t *Topology_load_from_file_ids(const char *filename, int precision, cha
 
 Topology_t **Topology_load_multiple_areas(const char *filename, int precision, char bi_dir, int nb_areas)
 {
-    Topology_t **areas = calloc(nb_areas, sizeof(Topology_t *));
+    Topology_t **areas = calloc((size_t)nb_areas, sizeof(Topology_t *));
     LabelTable_t **labels;
-    labels = calloc(nb_areas, sizeof(LabelTable_t *));
+    labels = calloc((size_t)nb_areas, sizeof(LabelTable_t *));
 
     for (int i = 0; i < nb_areas; i++)
     {
@@ -263,7 +263,7 @@ Topology_t **Topology_load_multiple_areas(const char *filename, int precision, c
 
     while (fgets(line, 1024, file))
     {
-        if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5)
+        if (sscanf(line, "%s %s %lf %"M2_SCNFMT" %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5)
         {
             if (area >= nb_areas)
             {
@@ -305,18 +305,18 @@ Topology_t **Topology_load_multiple_areas(const char *filename, int precision, c
 
     while (fgets(line, 1024, file))
     {
-        if (sscanf(line, "%s %s %lf %d %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5)
+        if (sscanf(line, "%s %s %lf %"M2_SCNFMT" %d\n", &srcLabel[0], &destLabel[0], &m1, &m2, &area) == 5)
         {
             src = LabelTable_get_id(labels[area], srcLabel);
             dst = LabelTable_get_id(labels[area], destLabel);
-            m1 *= my_pow(10, precision);
+            m1 *= (double)my_pow(10, precision);
 
-            areas[area]->succ[src] = Llist_new(areas[area]->succ[src], m1, m2, dst, ADJACENCY_SEGMENT);
-            areas[area]->pred[dst] = Llist_new(areas[area]->pred[dst], m1, m2, src, ADJACENCY_SEGMENT);
+            areas[area]->succ[src] = Llist_new(areas[area]->succ[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
+            areas[area]->pred[dst] = Llist_new(areas[area]->pred[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
             if (bi_dir)
             {
-                areas[area]->succ[dst] = Llist_new(areas[area]->succ[dst], m1, m2, src, ADJACENCY_SEGMENT);
-                areas[area]->pred[src] = Llist_new(areas[area]->pred[src], m1, m2, dst, ADJACENCY_SEGMENT);
+                areas[area]->succ[dst] = Llist_new(areas[area]->succ[dst], TO_M1(m1), m2, src, ADJACENCY_SEGMENT);
+                areas[area]->pred[src] = Llist_new(areas[area]->pred[src], TO_M1(m1), m2, dst, ADJACENCY_SEGMENT);
             }
         }
         else
@@ -360,7 +360,7 @@ void Topology_print(Topology_t *topo, char *topoF)
         for (Llist_t *tmp = topo->succ[i]; tmp != NULL; tmp = tmp->next)
         {
             //printf("Petit test %d\n", tmp->infos.edgeDst);
-            fprintf(file, "%d %d %d %d\n", i, tmp->infos.edgeDst, tmp->infos.m1, tmp->infos.m2);
+            fprintf(file, "%d %d %"M1_FMT" %"M2_FMT"\n", i, tmp->infos.edgeDst, tmp->infos.m1, tmp->infos.m2);
         }
     }
 
@@ -394,7 +394,7 @@ void Topology_free(Topology_t *topo)
 void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t** ingraph, int root, my_m1** m1dists, my_m2** m2dists, int nbNodes)
 {
     BinHeap_t bp;
-    BinHeap_init(&bp, nbNodes);
+    BinHeap_init(&bp, (size_t)nbNodes);
 
     // if (stack == NULL) {
     //     ERROR("Stack for dijkstra can't be created\n");
@@ -411,9 +411,9 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
     (*m1dists)[root] = 0;
     (*m2dists)[root] = 0;
 
-    int** parents = malloc(nbNodes * sizeof(int*));
+    int** parents = malloc((size_t)nbNodes * sizeof(int*));
     for (int i = 0 ; i < nbNodes ; i++) {
-        parents[i] = malloc(NB_NODE_MAX * sizeof(int));
+        parents[i] = malloc((size_t)NB_NODE_MAX * sizeof(int));
         memset(parents[i], 0, NB_NODE_MAX * sizeof(int));
     }
 
@@ -479,7 +479,7 @@ void dikjstra_best_m1(Edge_t ****predOutGraph, Llist_t **ingraph,
     }
 
     BinHeap_t bp;
-    BinHeap_init(&bp, nbNodes);
+    BinHeap_init(&bp, (size_t)nbNodes);
 
     for (int i = 0; i < nbNodes; i++)
     {
@@ -492,10 +492,10 @@ void dikjstra_best_m1(Edge_t ****predOutGraph, Llist_t **ingraph,
     (*m1dists)[root] = 0;
     (*m2dists)[root] = 0;
 
-    int **parents = malloc(nbNodes * sizeof(int *));
+    int **parents = malloc((size_t)nbNodes * sizeof(int *));
     for (int i = 0; i < nbNodes; i++)
     {
-        parents[i] = malloc(NB_NODE_MAX * sizeof(int));
+        parents[i] = malloc((size_t)NB_NODE_MAX * sizeof(int));
         memset(parents[i], 0, NB_NODE_MAX * sizeof(int));
     }
 
@@ -575,38 +575,6 @@ void dikjstra_best_m1(Edge_t ****predOutGraph, Llist_t **ingraph,
 int rand_a_b(int a, int b)
 {
     return rand() % (b - a) + a;
-}
-
-Topology_t *Topology_create_random_quentin(int size, int v_delay[], int v_igp[], int exist)
-{
-    Topology_t *topo = Topology_init(size);
-
-    for (int i = 0; i < size; i++)
-    {
-        for (int j = i + 1; j < size; j++)
-        {
-            if (i == j)
-            {
-                continue;
-            }
-            if (RAND(0, 1000) > exist)
-            {
-                continue;
-            }
-            my_m1 m1 = v_delay[RAND(0, 100000)];
-            my_m2 m2 = v_igp[RAND(0, 100000)];
-            // if (m1 < 0) {
-            //     printf("There is a problem in random part : %d\n", m1);
-            // }
-            //printf("add a new arc (%d -> %d)\n", i, j);
-            topo->succ[i] = Llist_new(topo->succ[i], m1, m2, j, ADJACENCY_SEGMENT);
-            topo->pred[j] = Llist_new(topo->pred[j], m1, m2, i, ADJACENCY_SEGMENT);
-            topo->succ[j] = Llist_new(topo->succ[j], m1, m2, i, ADJACENCY_SEGMENT);
-            topo->pred[i] = Llist_new(topo->pred[i], m1, m2, j, ADJACENCY_SEGMENT);
-        }
-    }
-
-    return topo;
 }
 
 int Topology_search_abr_id(Topology_t *topo, int area1, int area2, int id)

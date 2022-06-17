@@ -8,15 +8,15 @@ void Dict_seglist_free(Dict_seglist_t* dic)
 }
 
 
-void Dict_seglist_init(Dict_seglist_t* dic, int size)
+void Dict_seglist_init(Dict_seglist_t* dic, my_m1 size)
 {
-    dic->paths = malloc(size * sizeof(my_m2));
+    dic->paths = malloc((size_t)size * sizeof(my_m2));
     ASSERT(dic->paths, , size);
 
-    dic->seg_list = malloc(size * sizeof(struct segment_list));
+    dic->seg_list = malloc((size_t)size * sizeof(struct segment_list));
     ASSERT(dic->seg_list, , size);
     
-    for (int i = 0 ; i < size ; i++) {
+    for (my_m1 i = 0 ; i < size ; i++) {
         dic->paths[i] = INF;
     }
     dic->size = size;
@@ -37,7 +37,7 @@ void Dict_sl_print(Dict_seglist_t* dic)
     printf("Dict : ");
     for (my_m1 i = 0 ; i < MAX_SIZE ; i++) {
         if (dic->paths[i] != INF) {
-            printf("(%d ; %d) ", i, dic->paths[i]);
+            printf("(%"M1_FMT" ; %"M2_FMT") ", i, dic->paths[i]);
         }
     }
     printf("\n\n\n");
@@ -105,7 +105,7 @@ void segment_list_free(struct segment_list*** sl, int maxiter, int nbNodes){
 
 void segment_list_invert(struct segment_list *sl)
 {
-    short tmp;
+    int tmp;
     for (int i = 0 ; i < sl->size / 2 ; i++) {
         tmp = sl->seg[i];
         sl->seg[i] = sl->seg[sl->size - i - 1];
@@ -115,14 +115,14 @@ void segment_list_invert(struct segment_list *sl)
 
 struct segment_list*** Segment_list_retreive_paths(Dict_t** d, SrGraph_t* sr, int maxiter, short src)
 {
-    struct segment_list*** sl = calloc(maxiter + 1, sizeof(struct segment_list**));
+    struct segment_list*** sl = calloc((size_t)maxiter + 1, sizeof(struct segment_list**));
     for (int j = 0 ; j <= maxiter ; j++) {
-        sl[j] = calloc(sr->nbNode, sizeof(struct segment_list*));
+        sl[j] = calloc((size_t)sr->nbNode, sizeof(struct segment_list*));
         for (int i = 0 ; i < sr->nbNode ; i++) {
             sl[j][i] = calloc(1000, sizeof(struct segment_list));
         }
     }
-    short pred = 0;
+    int pred = 0;
     struct segment_list* stack[SSTACK_SIZE];
     memset(stack, 0, SSTACK_SIZE * sizeof(struct segment_list*));
     int  stacksize = -1;
@@ -131,9 +131,9 @@ struct segment_list*** Segment_list_retreive_paths(Dict_t** d, SrGraph_t* sr, in
     my_m2 n_d2 = 0;
 
     /* for each segment list length */
-    for (short iter = maxiter ; iter > 0 ; iter--) {
+    for (int iter = maxiter ; iter > 0 ; iter--) {
         /* for each destination node */
-        for (short v = 0 ; v < sr->nbNode ; v++) {
+        for (int v = 0 ; v < sr->nbNode ; v++) {
             if (v == src) {
                 continue;
             }
@@ -155,7 +155,7 @@ struct segment_list*** Segment_list_retreive_paths(Dict_t** d, SrGraph_t* sr, in
                 curr_iter = iter;
                 stacksize = 0;
                 memset(stack, 0, SSTACK_SIZE * sizeof(struct segment_list*));
-                short p_pred = 0;
+                int p_pred = 0;
                 my_m2 p_n_d1 = 0;
                 my_m2 p_n_d2 = 0;
                 while (pred != src) {

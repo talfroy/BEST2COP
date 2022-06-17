@@ -3,23 +3,23 @@
 
 SrGraph_t *SrGraph_init(int nbNodes)
 {
-    SrGraph_t *graph = malloc(sizeof(SrGraph_t));
+    SrGraph_t *graph = malloc(sizeof(*graph));
     ASSERT(graph, NULL, 1);
 
     graph->nbNode = nbNodes;
 
-    graph->pred = malloc(nbNodes * sizeof(Edge_t **));
+    graph->pred = malloc((size_t)nbNodes * sizeof(*graph->pred));
     ASSERT(graph->pred, NULL, nbNodes);
 
-    graph->succ = malloc(nbNodes * sizeof(Edge_t **));
+    graph->succ = malloc((size_t)nbNodes * sizeof(*graph->succ));
     ASSERT(graph->succ, NULL, nbNodes);
 
     for (int i = 0; i < nbNodes; i++)
     {
-        graph->succ[i] = malloc(nbNodes * sizeof(Edge_t *));
+        graph->succ[i] = malloc((size_t)nbNodes * sizeof(*graph->succ[i]));
         ASSERT(graph->succ[i], NULL, nbNodes);
 
-        graph->pred[i] = malloc(nbNodes * sizeof(Edge_t *));
+        graph->pred[i] = malloc((size_t)nbNodes * sizeof(*graph->pred[i]));
         ASSERT(graph->pred[i], NULL, nbNodes);
         for (int j = 0; j < nbNodes; j++)
         {
@@ -28,23 +28,23 @@ SrGraph_t *SrGraph_init(int nbNodes)
         }
     }
 
-    graph->m1dists = malloc(nbNodes * sizeof(my_m1 *));
+    graph->m1dists = malloc((size_t)nbNodes * sizeof(*graph->m1dists));
     ASSERT(graph->m1dists, NULL, nbNodes);
 
-    graph->m2dists = malloc(nbNodes * sizeof(my_m2 *));
+    graph->m2dists = malloc((size_t)nbNodes * sizeof(*graph->m2dists));
     ASSERT(graph->m2dists, NULL, nbNodes);
 
     for (int i = 0; i < nbNodes; i++)
     {
 
-        graph->m2dists[i] = malloc(nbNodes * sizeof(my_m2));
+        graph->m2dists[i] = malloc((size_t)nbNodes * sizeof(*graph->m2dists[i]));
         ASSERT(graph->m2dists[i], NULL, nbNodes);
 
-        graph->m1dists[i] = malloc(nbNodes * sizeof(my_m1));
+        graph->m1dists[i] = malloc((size_t)nbNodes * sizeof(*graph->m1dists[i]));
         ASSERT(graph->m1dists[i], NULL, nbNodes);
     }
 
-    graph->nonEmptySlots = malloc(nbNodes * sizeof(IntList_t *));
+    graph->nonEmptySlots = malloc((size_t)nbNodes * sizeof(*graph->nonEmptySlots));
     for (int i = 0; i < nbNodes; i++)
         graph->nonEmptySlots[i] = NULL;
     return graph;
@@ -265,11 +265,11 @@ SrGraph_t *SrGraph_load_with_id(char *filename, int nbNodes, int accuracy, char 
 
     while (fgets(line, 1024, file))
     {
-        if (sscanf(line, "%d %d %lf %d\n", &src, &dst, &m1, &m2))
+        if (sscanf(line, "%d %d %lf %"M2_SCNFMT"\n", &src, &dst, &m1, &m2))
         {
             m1 *= my_pow(10, accuracy);
             m2 = MAX(m2, 1);
-            sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2,NODE_SEGMENT);
+            sr->succ[src][dst] = Edge_add(sr->succ[src][dst], TO_M1(m1), m2,NODE_SEGMENT);
             //sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2);
             sr->nbNode = MAX(sr->nbNode, src + 1);
             sr->nbNode = MAX(sr->nbNode, dst + 1);
@@ -277,17 +277,17 @@ SrGraph_t *SrGraph_load_with_id(char *filename, int nbNodes, int accuracy, char 
 
             if (bi_dir)
             {
-                sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2,NODE_SEGMENT);
+                sr->succ[dst][src] = Edge_add(sr->succ[dst][src], TO_M1(m1), m2,NODE_SEGMENT);
              //   sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2);
                 IntListAdd(src, &(sr->nonEmptySlots[dst]));
             }
         }
-        else if (sscanf(line, "%d %d %lf %d %d\n", &src, &dst, &m1, &m2, &type))
+        else if (sscanf(line, "%d %d %lf %"M2_SCNFMT" %d\n", &src, &dst, &m1, &m2, &type))
         {
             if (type == ADJACENCY_SEGMENT) continue;
             m1 *= my_pow(10, accuracy);
             m2 = MAX(m2, 1);
-            sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2,NODE_SEGMENT);
+            sr->succ[src][dst] = Edge_add(sr->succ[src][dst], TO_M1(m1), m2,NODE_SEGMENT);
             //sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2);
             sr->nbNode = MAX(sr->nbNode, src + 1);
             sr->nbNode = MAX(sr->nbNode, dst + 1);
@@ -295,7 +295,7 @@ SrGraph_t *SrGraph_load_with_id(char *filename, int nbNodes, int accuracy, char 
 
             if (bi_dir)
             {
-                sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2,NODE_SEGMENT);
+                sr->succ[dst][src] = Edge_add(sr->succ[dst][src], TO_M1(m1), m2,NODE_SEGMENT);
              //   sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2);
                 IntListAdd(src, &(sr->nonEmptySlots[dst]));
             }
@@ -341,7 +341,7 @@ SrGraph_t* SrGraph_load_bin(char* filename)
             {
                 ERROR("Unable to read edge %d %d\n",i,j);
             }
-            while(edge.m1 != -1)
+            while(edge.m1 != M1_INF)
             {
                 
                 if(fread(&edge.m2, sizeof(edge.m2), 1, in) == 0)
@@ -397,7 +397,7 @@ SrGraph_t *SrGraph_load_with_label(char *filename, int accuracy, char bi_dir, La
 
     while (fgets(line, 1024, file))
     {
-        if (sscanf(line, "%s %s %lf %d\n", &srcLabel[0], &dstLabel[0], &m1, &m2) == 4)
+        if (sscanf(line, "%s %s %lf %"M2_SCNFMT"\n", &srcLabel[0], &dstLabel[0], &m1, &m2) == 4)
         {
             src = LabelTable_add_node(labels, srcLabel);
             dst = LabelTable_add_node(labels, dstLabel);
@@ -434,19 +434,19 @@ SrGraph_t *SrGraph_load_with_label(char *filename, int accuracy, char bi_dir, La
 
     while (fgets(line, 1024, file))
     {
-        if (sscanf(line, "%s %s %lf %d\n", &srcLabel[0], &dstLabel[0], &m1, &m2) == 4)
+        if (sscanf(line, "%s %s %lf %"M2_SCNFMT"\n", &srcLabel[0], &dstLabel[0], &m1, &m2) == 4)
         {
             src = LabelTable_get_id(labels, srcLabel);
             dst = LabelTable_get_id(labels, dstLabel);
             m2 = MAX(m2, 1);
             m1 *= my_pow(10, accuracy);
-            sr->succ[src][dst] = Edge_add(sr->succ[src][dst], m1, m2,NODE_SEGMENT);
-            sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2,NODE_SEGMENT);
+            sr->succ[src][dst] = Edge_add(sr->succ[src][dst], TO_M1(m1), m2,NODE_SEGMENT);
+            sr->pred[dst][src] = Edge_add(sr->pred[dst][src], TO_M1(m1), m2,NODE_SEGMENT);
             IntListAdd(dst, &(sr->nonEmptySlots[src]));
             if (bi_dir)
             {
-                sr->succ[dst][src] = Edge_add(sr->succ[dst][src], m1, m2,NODE_SEGMENT);
-                sr->pred[src][dst] = Edge_add(sr->pred[src][dst], m1, m2,NODE_SEGMENT);
+                sr->succ[dst][src] = Edge_add(sr->succ[dst][src], TO_M1(m1), m2,NODE_SEGMENT);
+                sr->pred[src][dst] = Edge_add(sr->pred[src][dst], TO_M1(m1), m2,NODE_SEGMENT);
                 IntListAdd(src, &(sr->nonEmptySlots[dst]));
             }
         }
@@ -505,7 +505,7 @@ void SrGraph_print_in_file(SrGraph_t *sr, FILE *output)
             }
             for (Edge_t *edge = sr->succ[i][j]; edge != NULL; edge = edge->next)
             {
-                fprintf(output, "%d %d %d %d\n", i, j, edge->m1, edge->m2);
+                fprintf(output, "%d %d %"M1_FMT" %"M2_FMT"\n", i, j, edge->m1, edge->m2);
             }
             // fprintf(output, "%d -> %d : ", i, j);
             // Edge_print_list(sr->succ[i][j], output);
@@ -546,10 +546,10 @@ my_m1 SrGraph_get_max_spread(SrGraph_t *sr)
     }
 
     INFO("There are %d adjacencies\n", nbEdge - (sr->nbNode) * (sr->nbNode - 1));
-    RESULTS("Max delay : %d\n", max);
-    RESULTS("Min delay : %d\n", minM1);
-    RESULTS("Max igp : %d\n", maxM2);
-    RESULTS("Min igp : %d\n", minM2);
+    RESULTS("Max delay : %"M1_FMT"\n", max);
+    RESULTS("Min delay : %"M1_FMT"\n", minM1);
+    RESULTS("Max igp : %"M2_FMT"\n", maxM2);
+    RESULTS("Min igp : %"M2_FMT"\n", minM2);
     RESULTS("NB edges with 0 : %d\n", nbzero);
     return max;
 }
@@ -576,10 +576,10 @@ bool SrGraph_is_connex(SrGraph_t *sr)
 
 SrGraph_t *SrGraph_get_biggest_connexe_coponent(SrGraph_t *sr)
 {
-    int *nbNeighbors = malloc(sr->nbNode * sizeof(int));
+    int *nbNeighbors = malloc((size_t)sr->nbNode * sizeof(*nbNeighbors));
     ASSERT(nbNeighbors, NULL, sr->nbNode);
 
-    memset(nbNeighbors, 0, sr->nbNode * sizeof(int));
+    memset(nbNeighbors, 0, (size_t)sr->nbNode * sizeof(*nbNeighbors));
 
     for (int i = 0; i < sr->nbNode; i++)
     {
@@ -601,12 +601,12 @@ SrGraph_t *SrGraph_get_biggest_connexe_coponent(SrGraph_t *sr)
         maxNeighbor = MAX(maxNeighbor, nbNeighbors[i]);
     }
 
-    int *nodes = malloc(sr->nbNode * sizeof(int));
+    int *nodes = malloc((size_t)sr->nbNode * sizeof(*nodes));
     ASSERT(nodes, NULL, sr->nbNode);
 
     int nbNodes = 0;
 
-    memset(nodes, 0, sr->nbNode * sizeof(int));
+    memset(nodes, 0, (size_t)sr->nbNode * sizeof(*nodes));
 
     for (int i = 0; i < sr->nbNode; i++)
     {
@@ -642,7 +642,7 @@ void SrGraph_save_bin(SrGraph_t* sr, char* filename)
     }
     fwrite(&(sr->nbNode), sizeof(sr->nbNode), 1, out);
 
-    const Edge_t emptyEdge = {.m1=-1};
+    const Edge_t emptyEdge = {.m1=M1_INF};
 
     for (int i = 0 ; i < sr->nbNode ; i++) {
         for (int j = 0 ; j < sr->nbNode ; j++) {

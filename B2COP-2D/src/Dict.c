@@ -4,10 +4,10 @@
 
 void Dict_init(Dict_t* dic, size_t size)
 {
-    dic->paths = calloc(size, sizeof(my_m2));
+    dic->paths = calloc(size, sizeof(dic->paths[0]));
     ASSERT(dic->paths, , size);
 
-    dic->preds = calloc(size, sizeof(short));
+    dic->preds = calloc(size, sizeof(dic->preds[0]));
     ASSERT(dic->preds, , size);
     
     for (size_t i = 0 ; i < size ; i++) {
@@ -29,7 +29,7 @@ void Dict_reset(Dict_t *dic)
 }
 
 
-void Dict_add(Dict_t* dic, my_m1 key, my_m2 value, short pred)
+void Dict_add(Dict_t* dic, my_m1 key, my_m2 value, int pred)
 {
     if (key < dic->size) {
         dic->paths[key] = value;
@@ -43,7 +43,7 @@ void Dict_print(Dict_t* dic)
     printf("Dict : ");
     for (my_m1 i = 0 ; i < MAX_SIZE ; i++) {
         if (dic->paths[i] != INF) {
-            printf("(%d ; %d) ", i, dic->paths[i]);
+            printf("(%"M1_FMT" ; %"M2_FMT") ", i, dic->paths[i]);
         }
     }
     printf("\n\n\n");

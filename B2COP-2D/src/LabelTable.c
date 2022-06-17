@@ -23,7 +23,7 @@ int LabelTable_add_node(LabelTable_t* hash, char* name)
     }
 
     if ((hash->nextNodeId % NB_NODE_ALLOC) == 0 && hash->nextNodeId != 0) {
-        hash->node = realloc(hash->node, (hash->nextNodeId + NB_NODE_ALLOC) * sizeof(node));
+        hash->node = realloc(hash->node, (size_t)(hash->nextNodeId + NB_NODE_ALLOC) * sizeof(node));
         ASSERT(hash->node, -1, (hash->nextNodeId + NB_NODE_ALLOC));
 
         for (int i = 0 ; i < NB_NODE_ALLOC ; i++) {
@@ -84,5 +84,5 @@ static int compare_hash (void const *a, void const *b)
 
 void LabelTable_sort(LabelTable_t* hash)
 {
-    qsort(hash->node, hash->nextNodeId, sizeof(node), compare_hash);
+    qsort(hash->node, (size_t)hash->nextNodeId, sizeof(node), compare_hash);
 }
