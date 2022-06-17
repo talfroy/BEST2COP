@@ -441,7 +441,7 @@ void main_display_area_sr_time_mean(long int *times, int nb_areas)
         tot += (mean - times[i]) * (mean - times[i]);
     }
     square = tot / ((nb_areas - 2) * 2);
-    square = (long)sqrt(square);
+    square = (long)sqrt((double)square);
 
     RESULTS("Mean time for areas transformation is %ld us\n", mean);
     RESULTS("Standard deviation (95%%) for areas transformation is %ld us\n", 2 * square);
