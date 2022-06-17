@@ -37,8 +37,8 @@ int main(int argc, char **argv)
     Dict_t **pf1 = NULL, **pf2 = NULL;
     Pfront_t **pfront1 = NULL, **pfront2 = NULL;
 
-    int iter1 = Best2cop(&pfront1, &pf1, sr1, abr, 1000, INF, 1000, false, NULL);
-    int iter2 = Best2cop(&pfront2, &pf2, sr2, leaf, 1000, INF, 1000, false, NULL);
+    int iter1 = Best2cop(&pfront1, &pf1, sr1, abr, 1000, M2_INF, 1000, false, NULL);
+    int iter2 = Best2cop(&pfront2, &pf2, sr2, leaf, 1000, M2_INF, 1000, false, NULL);
 
     INFO("End of best2cops\n");
 

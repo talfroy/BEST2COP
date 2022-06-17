@@ -22,7 +22,7 @@ CC ?= /usr/local/opt/llvm/bin/clang
 
 ## for M1
 LIBS := $(OMPFLAGS) -lm
-FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude 
+FLAGS := -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion
 
 # for address sanitizer
 # -g -fsanitize=address -fno-omit-frame-pointer

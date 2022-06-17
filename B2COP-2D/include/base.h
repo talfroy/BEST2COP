@@ -70,7 +70,7 @@ typedef char bool;
 
 #define ASSERT(value, code, size)\
     if(!value) {\
-        fprintf(stderr,RED "ASSERTION FAILED - file : \"%s\", line : %d, function \"%s\". with size %d" MAGENTA ,__FILE__,__LINE__,__func__, size); \
+        fprintf(stderr,RED "ASSERTION FAILED - file : \"%s\", line : %d, function \"%s\". with size %lld" MAGENTA ,__FILE__,__LINE__,__func__, (long long)size); \
         return code;\
     }
 

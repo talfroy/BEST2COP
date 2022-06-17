@@ -25,7 +25,7 @@ void Main_display_results(FILE *output, Dict_t **dist, int nbNodes, Pfront_t **h
 void Main_display_all_paths(FILE *output, ParetoFront_t ***dist, int nbNodes, int iter);
 
 
-void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int src,
+void main_display_distances(FILE *out, Dict_t *dist, int iter, int nbNodes, int src,
                             Topology_t *topo, struct segment_list ***sl);
 
 int main(int argc, char **argv)
@@ -138,7 +138,7 @@ int main(int argc, char **argv)
         ERROR("MaxSpread is too high. Please reduce the accuracy or your computer will probably die. "
               "You can also modifie the DICT_LIMIT value in include/params.h at line 44 if you are confident\n");
     }
-    Dict_t **pf = NULL;
+    Dict_t *pf = NULL;
     Pfront_t **pfront = NULL;
 
     if (opt.allNodes)
@@ -177,19 +177,20 @@ int main(int argc, char **argv)
             //segment_list_free(sl, iter, sr->nbNode);
             //printf("\r");
 
+            for (int k = 0; k < sr->nbNode; k++)
+            {
+                Dict_free(&pf[k]);
+            }
             for (int j = 0; j < iteri; j++)
             {
                 for (int k = 0; k < sr->nbNode; k++)
                 {
                     Pfront_free(&pfront[j][k], SEG_MAX);
-                    Dict_free(&pf[j][k]);
                 }
                 free(pfront[j]);
-                free(pf[j]);
             }
 
             free(pfront);
-            free(pf);
         }
         // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
         max_of_tab(output, times, &iterMax, opt.allNodes, opt.analyse, isFeasible, opt);
@@ -242,16 +243,18 @@ int main(int argc, char **argv)
 
         // TO PRINT RESULTS
        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
-       main_display_distances(output, pf, iter, sr->nbNode, opt.src,topo, NULL);
+        //main_display_distances(output, pf, iter, sr->nbNode, opt.src,topo, NULL);
+        for (int k = 0; k < sr->nbNode; k++)
+        {
+            Dict_free(&pf[k]);
+        }
         for (int j = 0; j < iter; j++)
         {
             for (int k = 0; k < sr->nbNode; k++)
             {
                 Pfront_free(&pfront[j][k], SEG_MAX);
-                Dict_free(&pf[j][k]);
             }
             free(pfront[j]);
-            free(pf[j]);
         }
         if (opt.analyse)
         {
@@ -263,7 +266,6 @@ int main(int argc, char **argv)
 
         // segment_list_free(sl, iter, sr->nbNode);
         free(pfront);
-        free(pf);
         free(itersSolo);
     }
    
@@ -356,34 +358,48 @@ void main_display_area_sr_time_mean(long int *times, int nb_areas)
     RESULTS("Standard deviation (95%%) for areas transformation is %ld us\n", 2 * square);
 }
 
-void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int src,
+void main_display_distances(FILE *out, Dict_t *dist, int iter, int nbNodes, int src,
                             Topology_t *topo, struct segment_list ***sl)
 {
     UNUSED(sl);
     UNUSED(topo);
     UNUSED(src);
     UNUSED(iter);
-    for (int i=0; i<2; i++){
-        for (int j = 0; j < nbNodes; j++)
+    for (int j = 0; j < nbNodes; j++)
+    {
+        for (int k = 0; k < dist->max_m0 ; k++)
         {
-            for (int k = 0; k < dist[i]->max_m0 ; k++)
+            int last_d2 = INF;
+            for (int l = 0; l < dist->max_m1 ; l++)
             {
-                for (int l = 0; l < dist[i]->max_m1 ; l++)
+                if(l > 0)
+                    last_d2 = MIN(last_d2, dist[j].paths[k][l-1].m2);
+                if(k > 0)
+                    last_d2 = MIN(last_d2, dist[j].paths[k-1][l].m2);
+                    
+                if(dist[j].paths[k][l].m2 < last_d2)
                 {
-                    if (dist[i][j].paths[k][l].m2 != INF)
-                    {
-                        //fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
-                        //LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
-                        //segment_list_invert(&sl[i][j][k]);
-                        //Segment_list_print(out, &sl[i][j][k], topo, NULL);
-                        //Segment_list_print_id(out, &sl[i][j][k]);
-                        //fprintf(out, "\n");
-                        //fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
-                        fprintf(out, "%d %d %d %d\n", j, l, dist[i][j].paths[k][l].m2, k);
-                    }
+                    last_d2 = dist[j].paths[k][l].m2;
+                   // printf("last_d2 reduced to %i (path to %i (seg=%i m1=%i m2=%i))\n", last_d2, j, k, l, dist[j].paths[k][l].m2);
+                    //fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
+                    //LabelTable_get_name(topo->labels, j), i, k, dist[j].paths[k]);
+                    //segment_list_invert(&sl[i][j][k]);
+                    //Segment_list_print(out, &sl[i][j][k], topo, NULL);
+                    //Segment_list_print_id(out, &sl[i][j][k]);
+                    //fprintf(out, "\n");
+                    //fprintf(out, "%d %d %d %d\n", j, k, dist[j].paths[k], i);
+                    fprintf(out, "%d %d %d %d\n", j, l, dist[j].paths[k][l].m2, k);
+                } 
+                else 
+                {   
+                    //if(dist[j].paths[k][l].m2 != INF) {
+                        //printf("ignore path to %i (seg=%i m1=%i m2=%i)\n", j, k, l, dist[j].paths[k][l].m2);
+                    //}
+                    dist[j].paths[k][l].m2 = last_d2;
                 }
             }
-        } 
-    }              
+        }
+    } 
+             
 }
 

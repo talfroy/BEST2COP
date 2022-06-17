@@ -65,7 +65,7 @@ int Option_command_parser(int argc, char **argv)
             opt.analyse = ANALYSE_QUENTIN;
             break;
         case 'g':
-            opt.bascule = atoi(optarg);
+            opt.bascule = strtoull(optarg, NULL, 10);
             break;
             
         case 'B':
@@ -78,11 +78,11 @@ int Option_command_parser(int argc, char **argv)
                 WARNING("You are going to overide file loading mode with option --areas %s\n", optarg);
             }
             opt.loadingMode = LOAD_TOPO_AREAS;
-            opt.nb_areas = atoi(optarg);
+            opt.nb_areas = (unsigned short)atoi(optarg);
             break;
 
         case 'j':
-            opt.nbThreads = atoi(optarg);
+            opt.nbThreads = (char)atoi(optarg);
             break;
 
         case 'r':
@@ -152,7 +152,7 @@ int Option_command_parser(int argc, char **argv)
 
         case '1':
             //change the delay cstr value
-            opt.cstr1 = atoi(optarg);
+            opt.cstr1 = TO_M1(atoi(optarg));
             break;
 
         case 'p':
@@ -162,7 +162,7 @@ int Option_command_parser(int argc, char **argv)
 
         case '2':
             //change the IGP ctsr value
-            opt.cstr2 = atoi(optarg);
+            opt.cstr2 = TO_M2(atoi(optarg));
             break;
 
         case 'l':

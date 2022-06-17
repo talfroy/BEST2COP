@@ -69,7 +69,7 @@ int main() {
                 //INFO("before\n");
                 gettimeofday(&start, NULL);
 
-                Best2cop(&pfront, &dist, sr, j, 1000, INF, 1000, 0, NULL);
+                Best2cop(&pfront, &dist, sr, j, 1000, M2_INF, 1000, 0, NULL);
 
                 gettimeofday(&stop, NULL);
                 //INFO("nb max iters = %d\n", iters[i][n][j]);

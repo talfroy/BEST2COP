@@ -18,8 +18,8 @@ typedef struct Pfront_s Pfront_t;
 
 struct Pfront_s {
     my_m1* keys;
-    int heapSize;
-    int maxSize;
+    size_t heapSize;
+    size_t maxSize;
 };
 
 /**
@@ -29,8 +29,8 @@ struct Pfront_s {
  * @param size          size of the given heao
  */
 
-void Pfront_init(Pfront_t* bp, int size);
-void Pfront_zeroize(Pfront_t* bp, int size);
+void Pfront_init(Pfront_t* bp, size_t size);
+void Pfront_zeroize(Pfront_t* bp, size_t size);
 
 
 /**
@@ -79,6 +79,6 @@ void Pfront_free(Pfront_t* bh);
  * false if not
  */
 
-bool hasapath(Pfront_t** pfront, int dst);
+bool hasapath(Pfront_t** pfront, size_t dst);
 
 #endif

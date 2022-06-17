@@ -24,9 +24,9 @@ typedef struct BinHeap_s BinHeap_t;
 
 struct BinHeap_s {
     Nodes_t* keys;
-    int heapSize;
-    int maxSize;
-    int* isPresent;
+    size_t heapSize;
+    size_t maxSize;
+    size_t* isPresent;
 };
 
 /**
@@ -36,7 +36,7 @@ struct BinHeap_s {
  * @param size          size of the given heao
  */
 
-void BinHeap_init(BinHeap_t* bp, int size);
+void BinHeap_init(BinHeap_t* bp, size_t size);
 
 
 /**
@@ -47,7 +47,7 @@ void BinHeap_init(BinHeap_t* bp, int size);
  * @return return the parent index
  */
 
-int parent(int i); 
+size_t parent(size_t i); 
 
 
 /**
@@ -58,7 +58,7 @@ int parent(int i);
  * @return return the left child index
  */
 
-int left(int i);
+size_t left(size_t i);
  
 
 /**
@@ -69,7 +69,7 @@ int left(int i);
  * @return return the left right index
  */
 
-int right(int i);
+size_t right(size_t i);
 
 
 /**
@@ -89,7 +89,7 @@ void swap(Nodes_t* x, Nodes_t* y);
  * @param y             second value
  */
 
-void swap_int(int* x, int* y);
+void swap_idx(size_t* x, size_t* y);
 
 
 /**
@@ -112,7 +112,7 @@ void BinHeap_insert_key(BinHeap_t* bp, int node, my_m1 m1, my_m2 m2);
  * @param i             index of the first element (0)
  */
 
-void BinHeap_min_heapify(BinHeap_t* bp, int i);
+void BinHeap_min_heapify(BinHeap_t* bp, size_t i);
 
 
 /**

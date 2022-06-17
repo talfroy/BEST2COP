@@ -13,10 +13,10 @@
  */
 
 struct segment_list {
-    short seg[SSTACK_SIZE];
-    char seg_type[SSTACK_SIZE];
     int size;
     int abr_index;
+    int seg[SSTACK_SIZE];
+    char seg_type[SSTACK_SIZE];
 };
 
 typedef struct segment_list Segment_list_t;
@@ -31,7 +31,7 @@ typedef struct segment_list Segment_list_t;
 struct Dict_seg_list_s {
     my_m2* paths;
     Segment_list_t* seg_list;
-    int size;
+    my_m1 size;
 };
 
 typedef struct Dict_seg_list_s Dict_seglist_t;
@@ -44,7 +44,7 @@ typedef struct Dict_seg_list_s Dict_seglist_t;
  * @param size              size of the paths structure
  */
 
-extern void Dict_seglist_init(Dict_seglist_t* dic, int size);
+extern void Dict_seglist_init(Dict_seglist_t* dic, my_m1 size);
 
 
 /**

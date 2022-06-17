@@ -46,8 +46,8 @@ typedef char bool;
 #define NODE_SEGMENT            2
 #define OSEF_SEGMENT            3
 
-#define MIN(a,b) ((a < b) ? a : b)
-#define MAX(a,b) ((a > b) ? a : b)
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) > (b) ? (a) : (b))
 
 #define INF     INT_MAX
 

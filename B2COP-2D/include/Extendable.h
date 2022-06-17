@@ -36,7 +36,7 @@ typedef struct Extendable_list_s Extendable_list_t;
  */
 
 struct Extendable_list_s {
-    short node;
+    int node;
     Extendable_t* ext;
     Extendable_list_t* next;
 };

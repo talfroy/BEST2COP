@@ -9,11 +9,11 @@ myStack* initStack(int nbNode)
     stack->stackSize = 0;
 
     stack->maxSize = nbNode;
-    stack->isPresent = malloc(nbNode * sizeof(bool));
+    stack->isPresent = malloc((size_t)nbNode * sizeof(bool));
     for (int i = 0 ; i < nbNode ; i++) {
         stack->isPresent[i] = false;
     }
-    stack->stack = malloc(nbNode * sizeof(int));
+    stack->stack = malloc((size_t)nbNode * sizeof(int));
 
     return stack;
 }

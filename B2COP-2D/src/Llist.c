@@ -150,7 +150,7 @@ void Llist_print_label(Llist_t* list, FILE* file, LabelTable_t* hash)
         return;
     }
 
-    fprintf(file, " %d (%d, %d) ", list->infos.edgeDst, list->infos.m1, list->infos.m2);
+    fprintf(file, " %d (%"M1_FMT", %"M2_FMT") ", list->infos.edgeDst, list->infos.m1, list->infos.m2);
     Llist_print_label(list->next, file, hash);
 }
 
@@ -161,7 +161,7 @@ void Llist_print_infos(Llist_t* list, FILE* file)
         return;
     }
 
-    fprintf(file, " %d (%d, %d) ", list->infos.edgeDst, list->infos.m1, list->infos.m2);
+    fprintf(file, " %d (%"M1_FMT", %"M2_FMT") ", list->infos.edgeDst, list->infos.m1, list->infos.m2);
     Llist_print_infos(list->next, file);
 }
 

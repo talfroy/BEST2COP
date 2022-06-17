@@ -1,3 +1,6 @@
+#pragma once // Include this file only once
+
+#include <inttypes.h>
 
 //number max of segments
 #define SEG_MAX                 10
@@ -16,8 +19,55 @@
 
 //define which type of topology will be load
 
-typedef int my_m2;
-typedef int my_m1;
+
+#ifdef NOT_DEFINED
+typedef struct {
+    uint64_t value;
+} my_m2;
+
+#define CAST_M2(x) (x.value)
+#define TO_M2(x) (my_m2){x}
+#define M2_INF TO_M2(UINT64_MAX)
+#define M2_FMT PRIu64
+
+#define M2_GT(x,y) (CAST_M2(x) > CAST_M2(y))
+
+typedef struct {
+    uint64_t value;
+} my_m1;
+
+#define CAST_M1(x) (x.value)
+#define TO_M1(x) (my_m1){x}
+#define M1_INF TO_M1(UINT64_MAX)
+#define M1_FMT PRIu64
+
+#define M1_GT(x,y) (CAST_M1(x) > CAST_M1(y))
+#else
+
+typedef uint64_t my_m2;
+
+#define CAST_M2(x) (x)
+#define TO_M2(x) ((my_m2)(x))
+#define M2_INF TO_M2(UINT64_MAX)
+#define M2_FMT PRIu64
+#define M2_SCNFMT SCNu64
+
+#define M2_GT(x,y) (CAST_M2(x) > CAST_M2(y))
+
+
+
+
+typedef uint64_t my_m1;
+
+#define CAST_M1(x) (x)
+#define TO_M1(x) ((my_m1)(x))
+#define M1_INF TO_M1(UINT64_MAX)
+#define M1_FMT PRIu64
+#define M1_SCNFMT SCNu64
+
+#define M1_GT(x,y) (CAST_M1(x) > CAST_M1(y))
+
+#endif
 
 
 

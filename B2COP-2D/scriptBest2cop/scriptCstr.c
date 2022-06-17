@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 
             gettimeofday(&start, NULL);
 
-            Best2cop(&pfront, &dist, sr, j, i, INF, dictSize, 1, &iters[j]);
+            Best2cop(&pfront, &dist, sr, j, i, M2_INF, dictSize, 1, &iters[j]);
 
             gettimeofday(&stop, NULL);
 
