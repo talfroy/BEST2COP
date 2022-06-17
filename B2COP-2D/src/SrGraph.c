@@ -516,8 +516,8 @@ void SrGraph_print_in_file(SrGraph_t *sr, FILE *output)
 my_m1 SrGraph_get_max_spread(SrGraph_t *sr)
 {
     my_m1 max = 0;
-    my_m1 minM1 = INF;
-    my_m2 minM2 = INF;
+    my_m1 minM1 = M2_INF;
+    my_m2 minM2 = M2_INF;
     my_m2 maxM2 = 0;
     int nbzero = 0;
     int nbEdge = 0;
@@ -528,7 +528,7 @@ my_m1 SrGraph_get_max_spread(SrGraph_t *sr)
             //printf("debut (%d ; %d)\n", i, j);
             for (Edge_t *tmp = sr->pred[i][j]; tmp != NULL; tmp = tmp->next)
             {
-                // if (tmp->m1 == INF) {
+                // if (tmp->m1 == M2_INF) {
                 //     return -1;
                 // }
                 minM1 = MIN(minM1, tmp->m1);
@@ -563,7 +563,7 @@ bool SrGraph_is_connex(SrGraph_t *sr)
             //printf("debut (%d ; %d)\n", i, j);
             for (Edge_t *tmp = sr->pred[i][j]; tmp != NULL; tmp = tmp->next)
             {
-                if (tmp->m1 == INF)
+                if (tmp->m1 == M1_INF)
                 {
                     return false;
                 }
@@ -587,7 +587,7 @@ SrGraph_t *SrGraph_get_biggest_connexe_coponent(SrGraph_t *sr)
         {
             for (Edge_t *edge = sr->succ[i][j]; edge != NULL; edge = edge->next)
             {
-                if (edge->id == 1 && edge->m1 != INF)
+                if (edge->id == 1 && edge->m1 != M1_INF)
                 {
                     nbNeighbors[i]++;
                 }

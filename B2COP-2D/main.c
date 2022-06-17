@@ -25,7 +25,7 @@ void Main_display_results(FILE *output, Dict_t **dist, int nbNodes, Pfront_t **h
 void Main_display_all_paths(FILE *output, ParetoFront_t ***dist, int nbNodes, int iter);
 
 
-void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int src,
+void main_display_distances(FILE *out, Dict_t *dist, int iter, int nbNodes, int src,
                             Topology_t *topo, struct segment_list ***sl);
 
 int main(int argc, char **argv)
@@ -188,7 +188,7 @@ int main(int argc, char **argv)
         ERROR("MaxSpread is too high. Please reduce the accuracy or your computer will probably die. "
               "You can also modifie the DICT_LIMIT value in include/params.h at line 44 if you are confident\n");
     }
-    Dict_t **pf = NULL;
+    Dict_t *pf = NULL;
     Pfront_t **pfront = NULL;
    // int maxIter = 0;
     if (opt.allNodes)
@@ -240,15 +240,17 @@ int main(int argc, char **argv)
             //segment_list_free(sl, iter, sr->nbNode);
             //printf("\r");
 
+            for (int k = 0; k < sr->nbNode; k++)
+            {
+                Dict_free(&pf[k]);
+            }
             for (int j = 0; j < iteri; j++)
             {
                 for (int k = 0; k < sr->nbNode; k++)
                 {
                     Pfront_free(&pfront[j][k]);
-                    Dict_free(&pf[j][k]);
                 }
                 free(pfront[j]);
-                free(pf[j]);
             }
 
             free(pfront);
@@ -305,15 +307,17 @@ int main(int argc, char **argv)
         // TO PRINT RESULTS
        // struct segment_list ***sl = Segment_list_retreive_paths(pf, sr, iter, opt.src);
       //  main_display_distances(output, pf, iter, sr->nbNode, opt.src, topo, NULL);
+        for (int k = 0; k < sr->nbNode; k++)
+        {
+            Dict_free(&pf[k]);
+        }
         for (int j = 0; j < iter; j++)
         {
             for (int k = 0; k < sr->nbNode; k++)
             {
                 Pfront_free(&pfront[j][k]);
-                Dict_free(&pf[j][k]);
             }
             free(pfront[j]);
-            free(pf[j]);
         }
         if (opt.analyse)
         {
@@ -368,7 +372,7 @@ void Main_display_results(FILE *output, Dict_t **dist, int nbNodes, __attribute_
 
             for (size_t j = 0; j < dist[k][i].size; j++)
             {
-                if (dist[k][i].paths[j] != INF)
+                if (dist[k][i].paths[j] != M2_INF)
                 {
                     fprintf(output, "%d %zu %"M2_FMT" %d\n", i, j, dist[k][i].paths[j], k);
                 }
@@ -443,30 +447,31 @@ void main_display_area_sr_time_mean(long int *times, int nb_areas)
     RESULTS("Standard deviation (95%%) for areas transformation is %ld us\n", 2 * square);
 }
 
-void main_display_distances(FILE *out, Dict_t **dist, int iter, int nbNodes, int src,
+void main_display_distances(FILE *out, Dict_t *dist, int iter, int nbNodes, int src,
                             Topology_t *topo, struct segment_list ***sl)
 {
     UNUSED(sl);
     UNUSED(topo);
     UNUSED(src);
-    for (int i = 0; i < iter; i++)
+    UNUSED(iter);
+    for (int j = 0; j < nbNodes; j++)
     {
-        for (int j = 0; j < nbNodes; j++)
+        my_m2 last_d2 = M2_INF;
+        for (size_t k = 0; k < dist[j].size; k++)
         {
-            for (size_t k = 0; k < dist[i][j].size; k++)
+            if (dist[j].paths[k] != M2_INF &&  dist[j].paths[k] < last_d2)
             {
-                if (dist[i][j].paths[k] != INF)
-                {
-                    //fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
-                    //LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
-                    //segment_list_invert(&sl[i][j][k]);
-                    //Segment_list_print(out, &sl[i][j][k], topo, NULL);
-                    //Segment_list_print_id(out, &sl[i][j][k]);
-                    //fprintf(out, "\n");
-                    //fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
-                    fprintf(out, "%d %zu %"M2_FMT"\n", j, k, dist[i][j].paths[k]);
-                }
+                last_d2 = dist[j].paths[k];
+                //fprintf(out, "%s %s %d %d %d", LabelTable_get_name(topo->labels, src),
+                //LabelTable_get_name(topo->labels, j), i, k, dist[i][j].paths[k]);
+                //segment_list_invert(&sl[i][j][k]);
+                //Segment_list_print(out, &sl[i][j][k], topo, NULL);
+                //Segment_list_print_id(out, &sl[i][j][k]);
+                //fprintf(out, "\n");
+                //fprintf(out, "%d %d %d %d\n", j, k, dist[i][j].paths[k], i);
+                fprintf(out, "%d %zu %"M2_FMT"\n", j, k, dist[j].paths[k]);
             }
         }
     }
+    
 }

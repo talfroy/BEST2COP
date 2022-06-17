@@ -29,7 +29,7 @@
  * @return return the number of iteration (between 1 and SEGMAX)
  */
 
-int Best2cop(Pfront_t*** pfront, Dict_t*** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
+int Best2cop(Pfront_t*** pfront, Dict_t** pf, SrGraph_t* graph, int src, my_m1 cstrM1, 
             my_m2 cstrM2, size_t dictSize, char analyse, int** iters, size_t bascule, long* init_time);
 
 

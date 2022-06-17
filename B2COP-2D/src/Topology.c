@@ -402,8 +402,8 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
     // }
 
     for (int i = 0 ; i < nbNodes ; i++) {
-        (*m1dists)[i] = INF;
-        (*m2dists)[i] = INF;
+        (*m1dists)[i] = M1_INF;
+        (*m2dists)[i] = M1_INF;
     }
     my_m1 pathM1 = 0;
     my_m2 pathM2 = 0;
@@ -420,7 +420,7 @@ void dikjstra_best_m2(Edge_t**** succOutGraph, Edge_t**** predOutGraph, Llist_t*
 
     for (int currNode = root, nbSeen = 0 ; nbSeen < nbNodes * nbNodes && currNode != -1 ; nbSeen++) {
         for (Llist_t* neighbor = ingraph[currNode] ; neighbor != NULL ; neighbor = neighbor->next) {
-            if (neighbor->infos.edgeDst == root || neighbor->infos.m1 == INF || neighbor->infos.m2 == INF) {
+            if (neighbor->infos.edgeDst == root || neighbor->infos.m1 == M1_INF || neighbor->infos.m2 == M2_INF) {
                 continue;
             }
             if ((pathM2 = neighbor->infos.m2 + (*m2dists)[currNode]) == (*m2dists)[neighbor->infos.edgeDst]) {
@@ -483,8 +483,8 @@ void dikjstra_best_m1(Edge_t ****predOutGraph, Llist_t **ingraph,
 
     for (int i = 0; i < nbNodes; i++)
     {
-        (*m1dists)[i] = INF;
-        (*m2dists)[i] = INF;
+        (*m1dists)[i] = M1_INF;
+        (*m2dists)[i] = M2_INF;
     }
     my_m1 pathM1 = 0;
     my_m2 pathM2 = 0;
@@ -503,7 +503,7 @@ void dikjstra_best_m1(Edge_t ****predOutGraph, Llist_t **ingraph,
     {
         for (Llist_t *neighbor = ingraph[currNode]; neighbor != NULL; neighbor = neighbor->next)
         {
-            if (neighbor->infos.edgeDst == root || neighbor->infos.m1 == INF || neighbor->infos.m2 == INF)
+            if (neighbor->infos.edgeDst == root || neighbor->infos.m1 == M1_INF || neighbor->infos.m2 == M2_INF)
             {
                 continue;
             }
@@ -512,11 +512,11 @@ void dikjstra_best_m1(Edge_t ****predOutGraph, Llist_t **ingraph,
             pathM2 = neighbor->infos.m2 + (*m2dists)[currNode];
             // printf("Path m1 : %d\n", pathM1);
             // printf("Path m2 : %d\n", pathM2);
-            // if ((*m1dists)[currNode] == INF) {
-            //     printf("M1 == INF : %d\n", currNode);
+            // if ((*m1dists)[currNode] == M1_INF) {
+            //     printf("M1 == M1_INF : %d\n", currNode);
             // }
-            // if ((*m2dists)[currNode] == INF) {
-            //     printf("M2 == INF : %d\n", currNode);
+            // if ((*m2dists)[currNode] == M2_INF) {
+            //     printf("M2 == M2_INF : %d\n", currNode);
             // }
 
             if (pathM1 == (*m1dists)[neighbor->infos.edgeDst])

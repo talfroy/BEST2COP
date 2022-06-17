@@ -63,7 +63,7 @@ int main() {
                 dist = NULL;
                 pfront = NULL;
 
-                //iters[i][n][j] = Best2cop(&pfront, &dist, sr, j, 1000, INF, 1000, ANALYSE_2COP, &iters2cop[j]);
+                //iters[i][n][j] = Best2cop(&pfront, &dist, sr, j, 1000, M2_INF, 1000, ANALYSE_2COP, &iters2cop[j]);
                 //iters[i][n][j]--;
                 //INFO("nb max iters = %d\n", iters[i][n][j]);
 

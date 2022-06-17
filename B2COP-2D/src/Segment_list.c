@@ -17,7 +17,7 @@ void Dict_seglist_init(Dict_seglist_t* dic, my_m1 size)
     ASSERT(dic->seg_list, , size);
     
     for (my_m1 i = 0 ; i < size ; i++) {
-        dic->paths[i] = INF;
+        dic->paths[i] = M2_INF;
     }
     dic->size = size;
 }
@@ -36,7 +36,7 @@ void Dict_sl_print(Dict_seglist_t* dic)
 {
     printf("Dict : ");
     for (my_m1 i = 0 ; i < MAX_SIZE ; i++) {
-        if (dic->paths[i] != INF) {
+        if (dic->paths[i] != M2_INF) {
             printf("(%"M1_FMT" ; %"M2_FMT") ", i, dic->paths[i]);
         }
     }
@@ -139,7 +139,7 @@ struct segment_list*** Segment_list_retreive_paths(Dict_t** d, SrGraph_t* sr, in
             }
             /*for each available distance */
             for (my_m1 dist = 0 ; dist < d[iter][v].size ; dist++) {
-                if (d[iter][v].paths[dist] == INF) {
+                if (d[iter][v].paths[dist] == M2_INF) {
                     continue;
                 }
 
@@ -226,7 +226,7 @@ int Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes
 
     if (analyse == ANALYSE_DCLC) {
         for (int node = 0 ; node < nbNodes ; node++) {
-            min_igp = INF;
+            min_igp = M2_INF;
             nb_seg_min_igp = -1;
 
             for (int iter = 0 ; iter < nbIters ; iter++) {
@@ -246,7 +246,7 @@ int Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes
 
             for (int iter = 0 ; iter < nbIters ; iter++) {
                 for (my_m1 delay = 0 ; delay < final[iter][node].size ; delay++) {
-                    if (final[iter][node].paths[delay] != INF) {
+                    if (final[iter][node].paths[delay] != M2_INF) {
                         nb_seg_min_igp = iter;
                     }
                 }
@@ -260,7 +260,7 @@ int Segment_list_print_analyse(FILE *stream, Dict_seglist_t **final, int nbNodes
 
             for (int iter = 0 ; iter < nbIters ; iter++) {
                 for (my_m1 delay = 0 ; delay < final[iter][node].size ; delay++) {
-                    if (final[iter][node].paths[delay] != INF) {
+                    if (final[iter][node].paths[delay] != M2_INF) {
                         nb_path++;
                         fprintf(stream, "%s %s %d\n", opt.src_lab, LabelTable_get_name(topo_area->labels, node), iter);
                     }

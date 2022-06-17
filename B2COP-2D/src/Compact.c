@@ -10,7 +10,7 @@ int *get_nb_paths_per_dest(Dict_t **dist, int nbNodes, int iter)
 		{
 			for (size_t j = 0; j < dist[k][i].size; j++)
 			{
-				if (dist[k][i].paths[j] != INF)
+				if (dist[k][i].paths[j] != M2_INF)
 				{
 					nb_paths[i] += 1;
 				}
@@ -35,7 +35,7 @@ int **get_nb_paths_per_delay(Dict_t **dist, int nbNodes, int iter)
 		{
 			for (size_t j = 0; j < dist[k][i].size; j++)
 			{
-				if (dist[k][i].paths[j] != INF)
+				if (dist[k][i].paths[j] != M2_INF)
 				{
 					nb_paths[i][j] += 1;
 				}
@@ -59,7 +59,7 @@ static int **get_nb_paths_per_segments(Dict_t **dist, int nbNodes, int iter)
 		{
 			for (size_t j = 0; j < dist[k][i].size; j++)
 			{
-				if (dist[k][i].paths[j] != INF)
+				if (dist[k][i].paths[j] != M2_INF)
 				{
 					nb_paths[i][k] += 1;
 				}
@@ -89,7 +89,7 @@ static int **get_nb_paths_per_segments_list(Dict_seglist_t **dist, int nbNodes, 
 		{
 			for (my_m1 j = 0; j < dist[k][i].size; j++)
 			{
-				if (dist[k][i].paths[j] != INF)
+				if (dist[k][i].paths[j] != M2_INF)
 				{
 					nb_paths[i][k] += 1;
 				}
@@ -189,7 +189,7 @@ compact_front *compact_to_array_2D(Pfront_t **pf, Dict_t **dist, int iter, int n
 			int index = 0;
 			for (size_t delay = 0; delay < dist[seg][i].size ; delay++)
 			{
-				if (dist[seg][i].paths[delay] != INF)
+				if (dist[seg][i].paths[delay] != M2_INF)
 				{
 					struct segment_list sl2 = sl[seg][i][delay];
 					path p = {.cost = dist[seg][i].paths[delay], .delay = TO_M1(delay), .sl = sl2};
@@ -233,7 +233,7 @@ compact_front *dict_seglist_to_compact(Pfront_t **pf, Dict_seglist_t **dist, int
 			int index = 0;
 			for (my_m1 delay = 0; delay < dist[seg][i].size; delay++)
 			{
-				if (dist[seg][i].paths[delay] != INF)
+				if (dist[seg][i].paths[delay] != M2_INF)
 				{
 					struct segment_list sl2 = dist[seg][i].seg_list[delay];
 					path p = {.cost = dist[seg][i].paths[delay], .delay = TO_M1(delay), .sl = sl2};
@@ -272,7 +272,7 @@ path **compact_to_array_1D(Dict_t **dist, int *nb_paths, int iter, int nbNodes, 
 		{
 			for (size_t delay = 0; delay < dist[seg][i].size; delay++)
 			{
-				if (dist[seg][i].paths[delay] != INF)
+				if (dist[seg][i].paths[delay] != M2_INF)
 				{
 					struct segment_list sl2 = sl[seg][i][delay];
 					path p = {.cost = dist[seg][i].paths[delay], .delay = CAST_M1(delay), .sl = sl2};
@@ -469,8 +469,8 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 		}
 	}
 
-	my_m2 last_m2 = INF;
-	my_m2 min = INF;
+	my_m2 last_m2 = M2_INF;
+	my_m2 min = M2_INF;
 	my_m2 pfcand[1000];
 	//Dict_init(&pfcand, 1000);
 
@@ -478,7 +478,7 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 	{
 		for (int j = 0; j < nbNodes; j++)
 		{
-			last_m2 = INF;
+			last_m2 = M2_INF;
 
 			//Dict_reset(&pfcand);
 			memset(pfcand, 0xff, 1000 * sizeof(my_m2));
@@ -499,7 +499,7 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 				if (dist[j].paths[k] < last_m2)
 				{
 					last_m2 = dist[j].paths[k];
-					if (pfcand[k] != INF)
+					if (pfcand[k] != M2_INF)
 					{
 						if (dist[j].paths[k] == merged[0][i][j].paths[k])
 						{
@@ -556,8 +556,8 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 // 		}
 // 	}
 
-// 	my_m2 last_m2 = INF;
-// 	my_m2 min = INF;
+// 	my_m2 last_m2 = M2_INF;
+// 	my_m2 min = M2_INF;
 // 	Dict_t pfcand;
 // 	Dict_init(&pfcand, 1000);
 
@@ -565,7 +565,7 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 // 	{
 // 		for (int j = 0; j < nbNodes; j++)
 // 		{
-// 			last_m2 = INF;
+// 			last_m2 = M2_INF;
 
 // 			Dict_reset(&pfcand);
 // 			for (int k = 0; k < 1000; k++)
@@ -584,7 +584,7 @@ Dict_seglist_t **compact_pareto_front_ify(Dict_seglist_t **merged[2], int nbNode
 // 				if (dist[j].paths[k] < last_m2)
 // 				{
 // 					last_m2 = dist[j].paths[k];
-// 					if (pfcand.paths[k] != INF)
+// 					if (pfcand.paths[k] != M2_INF)
 // 					{
 // 						if (dist[j].paths[k] == merged[0][i][j].paths[k])
 // 						{
@@ -641,15 +641,15 @@ Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNod
 		}
 	}
 
-	my_m2 last_m2 = INF;
-	my_m2 min = INF;
+	my_m2 last_m2 = M2_INF;
+	my_m2 min = M2_INF;
 	Dict_t pfcand;
 	Dict_init(&pfcand, 1000);
 	for (int i = 0; i <= maxIter; i++)
 	{
 		for (int j = 0; j < nbNodes; j++)
 		{
-			last_m2 = INF;
+			last_m2 = M2_INF;
 
 			Dict_reset(&pfcand);
 			for (my_m1 k = 0; k < merged[0][i][j].size; k++)
@@ -668,7 +668,7 @@ Dict_seglist_t **compact_pareto_front_ify_3D(Dict_seglist_t ***merged, int nbNod
 				if (dist[j].paths[k] < last_m2)
 				{
 					last_m2 = dist[j].paths[k];
-					if (pfcand.paths[k] != INF)
+					if (pfcand.paths[k] != M2_INF)
 					{
 						if (dist[j].paths[k] == merged[0][i][j].paths[k])
 						{
