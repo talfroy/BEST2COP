@@ -267,7 +267,7 @@ SrGraph_t *SrGraph_load_with_id(char *filename, int nbNodes, int accuracy, char 
     {
         if (sscanf(line, "%d %d %lf %"M2_SCNFMT"\n", &src, &dst, &m1, &m2))
         {
-            m1 *= my_pow(10, accuracy);
+            m1 *= (double)my_pow(10, accuracy);
             m2 = MAX(m2, 1);
             sr->succ[src][dst] = Edge_add(sr->succ[src][dst], TO_M1(m1), m2,NODE_SEGMENT);
             //sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2);
@@ -285,7 +285,7 @@ SrGraph_t *SrGraph_load_with_id(char *filename, int nbNodes, int accuracy, char 
         else if (sscanf(line, "%d %d %lf %"M2_SCNFMT" %d\n", &src, &dst, &m1, &m2, &type))
         {
             if (type == ADJACENCY_SEGMENT) continue;
-            m1 *= my_pow(10, accuracy);
+            m1 *= (double)my_pow(10, accuracy);
             m2 = MAX(m2, 1);
             sr->succ[src][dst] = Edge_add(sr->succ[src][dst], TO_M1(m1), m2,NODE_SEGMENT);
             //sr->pred[dst][src] = Edge_add(sr->pred[dst][src], m1, m2);
@@ -356,9 +356,6 @@ SrGraph_t* SrGraph_load_bin(char* filename)
                 {
                     sr->m1dists[i][j] = edge.m1;
                     sr->m2dists[i][j] = edge.m2;
-                    if (edge.m1 < 0 || edge.m2 < 0){
-                    	ERROR("Edge with negative value\n");	
-                    }
                     /*
                     sr->pred[i][j] = Edge_add(sr->pred[i][j], edge.m1, edge.m2);
                     sr->succ[j][i] = Edge_add(sr->pred[j][i], edge.m1, edge.m2);
@@ -439,7 +436,7 @@ SrGraph_t *SrGraph_load_with_label(char *filename, int accuracy, char bi_dir, La
             src = LabelTable_get_id(labels, srcLabel);
             dst = LabelTable_get_id(labels, dstLabel);
             m2 = MAX(m2, 1);
-            m1 *= my_pow(10, accuracy);
+            m1 *= (double)my_pow(10, accuracy);
             sr->succ[src][dst] = Edge_add(sr->succ[src][dst], TO_M1(m1), m2,NODE_SEGMENT);
             sr->pred[dst][src] = Edge_add(sr->pred[dst][src], TO_M1(m1), m2,NODE_SEGMENT);
             IntListAdd(dst, &(sr->nonEmptySlots[src]));
