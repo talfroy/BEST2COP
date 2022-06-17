@@ -75,16 +75,6 @@ int Best2cop(Pfront_t*** pfront, Dict_t** pf, SrGraph_t* graph, int src, my_m1 c
     }
 
 
-    (*pf) = malloc((size_t)graph->nbNode * sizeof(**pf));
-
-    ASSERT((*pf), -1, graph->nbNode);
-
-    for (int j = 0 ; j < graph->nbNode ; j++) {
-        Dict_init((*pf) + j, dictSize);
-    }
-
-    Dict_add(&(*pf)[src], TO_M1(0), TO_M2(0), src);
-
     if (iters != NULL) {
         for (int i = 0 ; i < graph->nbNode ; i++) {
             (*iters)[i] = -1;
@@ -127,7 +117,7 @@ int Best2cop(Pfront_t*** pfront, Dict_t** pf, SrGraph_t* graph, int src, my_m1 c
             Best2cop_extend_path(dst, extendable[dst], &pf_cand, &pfcandlist, dist + dst, graph, &t, &imax, cstrM1, cstrM2);
 
             nextextendable[dst] = NULL;
-            Best2cop_cpt_extendable_paths(nextextendable+dst, pfront, &pf_cand, dist + dst, &pfcandlist, t, imax, nbIter, dst, &(*pf)[dst], bascule);
+            Best2cop_cpt_extendable_paths(nextextendable+dst, pfront, &pf_cand, dist + dst, &pfcandlist, t, imax, nbIter, dst, bascule);
 
             // Dict_free(&pf_cand);
             Pfront_free(&pfcandlist);
@@ -176,17 +166,19 @@ int Best2cop(Pfront_t*** pfront, Dict_t** pf, SrGraph_t* graph, int src, my_m1 c
     gettimeofday(&start, NULL);
 
 
+    (*pf) = malloc((size_t)graph->nbNode * sizeof(**pf));
+
+    ASSERT((*pf), -1, graph->nbNode);
+
     for (int j = 0 ; j < graph->nbNode ; j++) {
-        Dict_reset((*pf) + j);
+        Dict_init((*pf) + j, dictSize);
         // copy dist into pf
-        //for (int i = 0 ; i < graph->nbNode ; i++) {
-            for(my_m1 k = 0 ; k < dist[j].size ; k++) {
-                if (dist[j].paths[k] != M2_INF) {
-                    Dict_add((*pf) + j, k, dist[j].paths[k], dist[j].preds[k]);
-                    //printf("%i -> %i : %"M1_FMT"\n", j, i, dist[j].paths[i]);
-                }
+        for(my_m1 k = 0 ; k < dist[j].size ; k++) {
+            if (dist[j].paths[k] != M2_INF) {
+                Dict_add((*pf) + j, k, dist[j].paths[k], dist[j].preds[k]);
+                //printf("%i -> %i : %"M1_FMT"\n", j, i, dist[j].paths[i]);
             }
-        //}
+        }
     }
 
     for (int j = 0 ; j < graph->nbNode ; j++) {
@@ -247,10 +239,9 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
 
 void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, __attribute__ ((unused)) Pfront_t* pfcandlist, size_t t, 
-                                    my_m1 imax, int iter, int dst, Dict_t* pf, size_t bascule)
+                                    my_m1 imax, int iter, int dst, size_t bascule)
 {
     UNUSED(imax);
-    UNUSED(pf);
 
     // if (t * log(t) + t + (*pfront)[iter-1][dst].heapSize < imax / 10) {
     //     if (dst == 8) {
@@ -270,18 +261,18 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pf
 
     if (bascule) {
         if (t  + (*pfront)[iter-1][dst].heapSize < bascule) {
-            Best2cop_cpt_extendable_paths_select(nextextendable, pfront, pf_cand, dist_v, pfcandlist, iter, dst, pf);
+            Best2cop_cpt_extendable_paths_select(nextextendable, pfront, pf_cand, dist_v, pfcandlist, iter, dst);
         } else {
-            Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
+            Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax);
         }
     } else {
-        Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax, pf);
+        Best2cop_cpt_extendable_paths_all(nextextendable, pfront, pf_cand, dist_v, iter, dst, imax);
     }
 }
 
 
 void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int iter, int dst, Dict_t* pf)
+                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int iter, int dst)
 {
     // UNUSED(pf_cand);
     // int pfrontIndex = 0;
@@ -352,9 +343,7 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_
             last_d2 = d2;
             
             if (pf_cand->paths[d1] != M2_INF) {
-                Dict_add(pf, d1, d2, dist_v->preds[d1]);
                 (*nextextendable) = Extendable_new(d1, d2, (*nextextendable));
-                 pf->nb_add++;
             }
         }
     }
@@ -363,7 +352,7 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_
 }
 
 void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, my_m1 imax, Dict_t* pf)
+                                    Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, my_m1 imax)
 {
     UNUSED(imax);
     my_m2 last_d2 = M2_INF;
@@ -373,8 +362,6 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
             last_d2 = dist_v->paths[i];
             Pfront_insert_key(&(*pfront)[iter%2][dst], i);
             if (pf_cand->paths[i] != M2_INF) {
-                Dict_add(pf, i, dist_v->paths[i], dist_v->preds[i]);
-                pf->nb_add++;
                 (*nextextendable) = Extendable_new(i, pf_cand->paths[i], (*nextextendable));
             }
         }

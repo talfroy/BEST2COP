@@ -75,7 +75,7 @@ extern void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t*
 
 void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pfront, 
                                     Dict_t* pf_cand, Dict_t* dist_v, __attribute__ ((unused)) Pfront_t* pfcandlist, size_t t, 
-                                    my_m1 imax, int iter, int dst, Dict_t* pf, size_t bascule);
+                                    my_m1 imax, int iter, int dst, size_t bascule);
 /**
  * @brief Called if there are not a lot of paths added
  * 
@@ -84,7 +84,7 @@ void Best2cop_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** pf
  */
 
 void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int iter, int dst, Dict_t* pf);
+                                    Dict_t* pf_cand, Dict_t* dist_v, Pfront_t* pfcandlist, int iter, int dst);
 
 /**
  * @brief Called if there are a lot of elements added ath the
@@ -95,7 +95,7 @@ void Best2cop_cpt_extendable_paths_select(Extendable_t** nextextendable, Pfront_
  */
 
 void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t*** pfront, 
-                                    Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, my_m1 imax, Dict_t* pf);
+                                    Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, my_m1 imax);
 
 
 extern my_m2 update_min_igp(my_m2 old, Extendable_t* nextext);
