@@ -3,6 +3,9 @@
 
 long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread)
 {
+    printf("CrashTest is not up to date with the remaining of the project\n");
+    exit(1);
+    
     int src = 0;
     Dict_t* dist = malloc((size_t)graph->nbNode * sizeof(Dict_t));
     ASSERT(dist, -1, graph->nbNode);
@@ -26,10 +29,11 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 
     Pfront_insert_key(&pfront[0][src], 0);
 
-    Extendable_list_t* extendable = NULL;
+    Extendable_list_t* extendable = Extendable_list_create();
 
-    extendable = Extendable_list_new(NULL, src, NULL);
-    extendable->ext = Extendable_new(0, 0, NULL);
+    Extendable_list_add(extendable, src, NULL);
+    extendable->ext[0] = Extendable_create();
+    Extendable_add(extendable->ext[0], 0, 0);
 
     Extendable_t** nextextendable = malloc((size_t)graph->nbNode * sizeof(Extendable_t*));
     ASSERT(nextextendable, -1, graph->nbNode);
@@ -72,8 +76,8 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 
         for (int i = 0 ; i < graph->nbNode ; i++) {
             if (nextextendable[i] != NULL) {
-                extendable = Extendable_list_new(extendable, i, NULL);
-                extendable->ext = Extendable_copy(nextextendable[i]);
+                // TODO: fix this
+                //Extendable_list_add(extendable, i, Extendable_copy(nextextendable[i]));
                 Extendable_free(nextextendable[i]);
             }
         }
@@ -106,12 +110,15 @@ long int CrashTest(SrGraph_t* graph, my_m1 cstrM1, int nbPlLinks, int realSpread
 
 void CrashTest_extend_path(SrGraph_t* graph, Extendable_list_t* extendable, Dict_t* dist_v, Dict_t* pf_cand, Pfront_t* pfcandlist, int dst)
 {
-    for (Extendable_list_t* d_list = extendable ; d_list != NULL ; d_list = d_list->next) {
-        int edgeSrc = d_list->node;
-        for (Extendable_t* path = d_list->ext ; path != NULL ; path = path->next) {
+    for(size_t ext_list_id = 0 ; ext_list_id < extendable->size ; ext_list_id++) {
+
+        Extendable_t* path = extendable->ext[ext_list_id];
+        int edgeSrc = extendable->sources[ext_list_id];
+        
+        for (size_t path_idx = 0; path_idx < path->size ;path_idx++) {
             for (Edge_t* edge = graph->pred[dst][edgeSrc] ; edge != NULL ; edge = edge->next) {
-                my_m1 d1v = path->infos.m1 + edge->m1;
-                my_m2 d2v = path->infos.m2 + edge->m2;
+                my_m1 d1v = path->infos[path_idx].m1 + edge->m1;
+                my_m2 d2v = path->infos[path_idx].m2 + edge->m2;
 
                 Dict_add(dist_v, d1v, d2v, edgeSrc);
                 Dict_add(pf_cand, d1v, d2v, edgeSrc);
@@ -136,7 +143,7 @@ void CrashTest_cpt_extendable_paths(Extendable_t** nextextendable, Pfront_t*** p
     for (my_m1 i = 0 ; i < nbIter ; i++) {
         if (dist_v->paths[i] != M2_INF) {
             Pfront_insert_key(&(*pfront)[currStep][dst], i);
-            (*nextextendable) = Extendable_new(1, 1, (*nextextendable));
+            Extendable_add((*nextextendable), 1, 1);
         }
     }
 }

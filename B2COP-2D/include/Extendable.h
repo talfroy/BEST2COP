@@ -24,8 +24,10 @@ typedef struct Extendable_s Extendable_t;
  */
 
 struct Extendable_s {
-    Path infos;
-    Extendable_t* next;
+    Path *infos;
+
+    size_t allocated;
+    size_t size;
 };
 
 
@@ -37,10 +39,17 @@ typedef struct Extendable_list_s Extendable_list_t;
 
 struct Extendable_list_s {
     int node;
-    Extendable_t* ext;
-    Extendable_list_t* next;
+    //array of extendable
+    Extendable_t ** ext;
+    //array of extendable source
+    int * sources;
+
+    //allocated size
+    size_t allocated;
+    size_t size;
 };
 
+Extendable_t* Extendable_create(void);
 
 /**
  * @brief add a new Extendable Path
@@ -52,8 +61,10 @@ struct Extendable_list_s {
  * @return return the new list
  */
 
-extern Extendable_t* Extendable_new(my_m1 m1, my_m2 m2, Extendable_t* next);
+void Extendable_add(Extendable_t* next, my_m1 m1, my_m2 m2);
 
+
+void Extendable_clear(Extendable_t* next);
 
 extern void Extendable_free(Extendable_t* ext);
 
@@ -75,20 +86,6 @@ extern void Extendable_print(Extendable_t* ext);
 
 extern bool Extendable_is_empty(Extendable_t** ext, int nbNode);
 
-void Extendable_add(Extendable_t* og, Extendable_t* to_add);
-
-
-/**
- * @brief copy ext into an other extendable list
- * 
- * @param ext               list to copy
- * 
- * @return return the copied list
- */
-
-extern Extendable_t* Extendable_copy(Extendable_t* ext);
-
-
 /**
  * @brief create a new element for a list of Extendable_list
  * 
@@ -99,8 +96,12 @@ extern Extendable_t* Extendable_copy(Extendable_t* ext);
  * @return return the new list
  */
 
-extern Extendable_list_t* Extendable_list_new(Extendable_list_t* next, int node, Extendable_t* ext);
+Extendable_list_t* Extendable_list_create(void);
+
+void Extendable_list_add(Extendable_list_t* next, int node, Extendable_t* ext);
 
 void Extendable_list_free(Extendable_list_t* next);
+void Extendable_list_clear(Extendable_list_t* next);
 
+size_t Extendable_list_size(Extendable_list_t* next);
 #endif

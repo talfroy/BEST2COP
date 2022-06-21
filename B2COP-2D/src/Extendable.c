@@ -2,27 +2,39 @@
 
 
 
-
-Extendable_t* Extendable_new(my_m1 m1, my_m2 m2, Extendable_t* next)
+Extendable_t* Extendable_create(void) 
 {
-    Extendable_t* new = calloc(1,sizeof(Extendable_t));
+    Extendable_t* new = calloc(1, sizeof(*new));
 
-    ASSERT(new, NULL, 1);
+    new->allocated = 2;
+    new->size = 0;
+    new->infos = malloc(new->allocated * sizeof(*new->infos));
 
-    new->infos.m1 = m1;
-    new->infos.m2 = m2;
-    new->next = next;
     return new;
 }
 
+void Extendable_add(Extendable_t* next, my_m1 m1, my_m2 m2)
+{
+    if (next->size == next->allocated) {
+        next->allocated = (size_t)(next->allocated * 1.5 + 2);
+        next->infos = realloc(next->infos, next->allocated * sizeof(*next->infos));
+    }
+
+    next->infos[next->size].m1 = m1;
+    next->infos[next->size].m2 = m2;
+    next->size++;
+}
+
+void Extendable_clear(Extendable_t* next)
+{
+    next->size = 0;
+}
 
 void Extendable_free(Extendable_t* ext)
 {
-    if (ext == NULL) {
-        return;
-    }
-    if (ext->next != NULL)
-        Extendable_free(ext->next);
+    if(ext->infos) 
+        free(ext->infos);
+
     free(ext);
 }
 
@@ -31,18 +43,17 @@ void Extendable_print(Extendable_t* ext)
     if (ext == NULL) {
         return;
     }
-
-    for (Extendable_t* tmp = ext ; tmp != NULL ; tmp = tmp->next) {
-        printf(" (%"M1_FMT" ; %"M2_FMT") ", CAST_M1(tmp->infos.m1), CAST_M1(tmp->infos.m2));
+    for(size_t i = 0 ; i < ext->size ; i++) {
+        printf(" (%"M1_FMT" ; %"M2_FMT") ", CAST_M1(ext->infos[i].m1), CAST_M2(ext->infos[i].m2));
     }
-        printf("\n");
+    printf("\n");
 }
 
 
 bool Extendable_is_empty(Extendable_t** ext, int nbNode)
 {
     for (int i = 0 ; i < nbNode ; i++){
-        if (ext[i] != NULL) {
+        if (ext[i]->size > 0) {
             return false;
         }
     }
@@ -51,45 +62,52 @@ bool Extendable_is_empty(Extendable_t** ext, int nbNode)
 }
 
 
-Extendable_t* Extendable_copy(Extendable_t* ext)
+Extendable_list_t* Extendable_list_create()
 {
-    Extendable_t* newExt = NULL;
-    for (Extendable_t* tmp = ext ; tmp != NULL ; tmp = tmp->next) {
-        newExt = Extendable_new(tmp->infos.m1, tmp->infos.m2, newExt);
-    }
-    return newExt;
+    Extendable_list_t* new = calloc(1, sizeof(*new));
+
+    new->allocated = 2;
+    new->size = 0;
+    new->ext = malloc(new->allocated * sizeof(*new->ext));
+    new->sources = malloc(new->allocated * sizeof(*new->sources));
+
+    return new;
 }
-
-void Extendable_add(Extendable_t* og, Extendable_t* to_add){
-    Extendable_t* end;
-    for (end = og ; end != NULL ; end = og->next) {
-
-    }
-    og->next = Extendable_copy(to_add);
-    
-}
-
-
-Extendable_list_t* Extendable_list_new(Extendable_list_t* next, int node, Extendable_t* ext)
+void Extendable_list_add(Extendable_list_t* next, int node, Extendable_t* ext)
 {
-    Extendable_list_t* new_e = calloc(1,sizeof(Extendable_list_t));
-    ASSERT(new_e, NULL, 1);
-
-    new_e->node = node;
-    new_e->ext = ext;
-    new_e->next = next;
-
-    return new_e;
+    if(next->size == next->allocated) {
+        next->allocated = (size_t)(next->allocated*1.5 + 2);
+        next->ext = realloc(next->ext, next->allocated * sizeof(*next->ext));
+        next->sources = realloc(next->sources, next->allocated * sizeof(*next->sources));
+    }
+    next->ext[next->size] = ext;
+    next->sources[next->size] = node;
+    next->size++;
 }
 
+
+void Extendable_list_clear(Extendable_list_t* next)
+{
+    //for (size_t i = 0 ; i < next->size ; i++) {
+    //    Extendable_free(next->ext[i]);
+    //}
+    next->size = 0;
+}
+
+size_t Extendable_list_size(Extendable_list_t* next)
+{
+    return next->size;
+}
 
 void Extendable_list_free(Extendable_list_t* next)
 {
     if (next == NULL) {
         return;
     }
-
-    Extendable_list_free(next->next);
-    Extendable_free(next->ext);
+    //for (size_t i = 0 ; i < next->size ; i++) {
+    //    Extendable_free(next->ext[i]);
+    //}
+    free(next->ext);
+    free(next->sources);
     free(next);
 }

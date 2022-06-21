@@ -98,7 +98,7 @@ void Best2cop_cpt_extendable_paths_all(Extendable_t** nextextendable, Pfront_t**
                                     Dict_t* pf_cand, Dict_t* dist_v, int iter, int dst, my_m1 imax);
 
 
-extern my_m2 update_min_igp(my_m2 old, Extendable_t* nextext);
+extern my_m2 update_min_igp(Extendable_t* nextext);
 
 
 #endif
