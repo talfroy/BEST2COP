@@ -1,28 +1,28 @@
 make --dry-run --always-make --keep-going --print-directory
 make: Entering directory `/Users/quentinbramas/Documents/Articles/jean-romain/best2cop/best2cop/B2COP-2D'
 mkdir -p obj
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Best2cop.o -c src/Best2cop.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/BinHeap.o -c src/BinHeap.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Compact.o -c src/Compact.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/CrashTest.o -c src/CrashTest.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Dict.o -c src/Dict.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Edge.o -c src/Edge.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Extendable.o -c src/Extendable.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/IntList.o -c src/IntList.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/LabelTable.o -c src/LabelTable.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Latrix.o -c src/Latrix.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Llist.o -c src/Llist.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Option.o -c src/Option.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/ParetoFront.o -c src/ParetoFront.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Pfront.o -c src/Pfront.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/ScopeStack.o -c src/ScopeStack.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Segment_list.o -c src/Segment_list.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/SrGraph.o -c src/SrGraph.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Topology.o -c src/Topology.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/Zipf.o -c src/Zipf.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o obj/my_printf.o -c src/my_printf.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o main.o -c main.c
-cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude  -o best2cop obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o main.o -L/usr/local/lib/ -lomp -lm
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Best2cop.o -c src/Best2cop.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/BinHeap.o -c src/BinHeap.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Compact.o -c src/Compact.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/CrashTest.o -c src/CrashTest.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Dict.o -c src/Dict.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Edge.o -c src/Edge.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Extendable.o -c src/Extendable.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/IntList.o -c src/IntList.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/LabelTable.o -c src/LabelTable.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Latrix.o -c src/Latrix.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Llist.o -c src/Llist.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Option.o -c src/Option.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/ParetoFront.o -c src/ParetoFront.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Pfront.o -c src/Pfront.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/ScopeStack.o -c src/ScopeStack.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Segment_list.o -c src/Segment_list.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/SrGraph.o -c src/SrGraph.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Topology.o -c src/Topology.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/Zipf.o -c src/Zipf.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o obj/my_printf.o -c src/my_printf.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o main.o -c main.c
+cc -Wall -Wextra -Werror -O3 -Xpreprocessor -fopenmp -I/opt/homebrew/include -Iinclude -Wconversion -o best2cop obj/Best2cop.o obj/BinHeap.o obj/Compact.o obj/CrashTest.o obj/Dict.o obj/Edge.o obj/Extendable.o obj/IntList.o obj/LabelTable.o obj/Latrix.o obj/Llist.o obj/Option.o obj/ParetoFront.o obj/Pfront.o obj/ScopeStack.o obj/Segment_list.o obj/SrGraph.o obj/Topology.o obj/Zipf.o obj/my_printf.o main.o -L/usr/local/lib/ -lomp -lm
 echo "[\033[1;32mINFO\033[0;m]" "Best2cop succesfully compiled"
 make: Leaving directory `/Users/quentinbramas/Documents/Articles/jean-romain/best2cop/best2cop/B2COP-2D'
  
