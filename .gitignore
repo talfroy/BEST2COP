@@ -8,7 +8,9 @@
 !*/
 
 
-
+**/.vscode
+**/.DS_Store
+.DS_Store
 *vscode/*
 obj/*.o
 topo/*
