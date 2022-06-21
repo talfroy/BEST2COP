@@ -16,7 +16,7 @@ Extendable_t* Extendable_create(void)
 void Extendable_add(Extendable_t* next, my_m1 m1, my_m2 m2)
 {
     if (next->size == next->allocated) {
-        next->allocated = (size_t)(next->allocated * 1.5 + 2);
+        next->allocated = (size_t)((double)(next->allocated) * 1.5 + 2);
         next->infos = realloc(next->infos, next->allocated * sizeof(*next->infos));
     }
 
@@ -76,7 +76,7 @@ Extendable_list_t* Extendable_list_create()
 void Extendable_list_add(Extendable_list_t* next, int node, Extendable_t* ext)
 {
     if(next->size == next->allocated) {
-        next->allocated = (size_t)(next->allocated*1.5 + 2);
+        next->allocated = (size_t)((double)(next->allocated)*1.5 + 2);
         next->ext = realloc(next->ext, next->allocated * sizeof(*next->ext));
         next->sources = realloc(next->sources, next->allocated * sizeof(*next->sources));
     }
