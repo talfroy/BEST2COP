@@ -241,7 +241,7 @@ void Best2cop_extend_path(int dst, Extendable_list_t* extendable, Dict_t* pf_can
                 my_m1 d1v = path->infos[path_idx].m1 + edge->m1;
                 my_m2 d2v = path->infos[path_idx].m2 + edge->m2;
               
-                if (d1v < c1 && d2v < c2 && dist_v->paths[d1v] > d2v) {
+                if (d1v <= c1 && d2v <= c2 && dist_v->paths[d1v] > d2v) {
                     //printf("extend path from %i -> %llu %llu (%llu, %llu)\n", edgeSrc, path->infos.m1, path->infos.m2, d1v, d2v);
                     Dict_add(dist_v, d1v, d2v, edgeSrc);
 
